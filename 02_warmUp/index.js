@@ -249,4 +249,55 @@ function star2(n) {
 }
 // star2(4);
 
-function star3(n) {}
+function star3(n) {
+  for (let i = 1; i <= n; i++) {
+    let str = '';
+    for (let j = 1; j <= i; j++) {
+      str = str + ' ' + j;
+    }
+    console.log(str);
+  }
+}
+
+function star3(n) {
+  for (let i = 1; i <= n; i++) {
+    let str = '';
+    for (let j = 1; j < i + 1; j++) {
+      str = str + ' ' + j;
+    }
+    console.log(str);
+  }
+}
+
+function star3(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j < i + 1; j++) {
+      str += j + 1;
+    }
+    console.log(str);
+  }
+}
+
+// star3(5);
+
+function star4(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j < i + 1; j++) {
+      str += i + 1;
+    }
+    console.log(str);
+  }
+}
+
+function star4(n) {
+  for (let i = 1; i <= n; i++) {
+    let str = '';
+    for (let j = 1; j <= i; j++) {
+      str += i;
+    }
+    console.log(str);
+  }
+}
+// star4(5);
