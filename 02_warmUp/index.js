@@ -300,4 +300,206 @@ function star4(n) {
     console.log(str);
   }
 }
+
+function star4(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j <= i; j++) {
+      str = str + (i + 1);
+    }
+    console.log(str);
+  }
+}
+
 // star4(5);
+
+function star5(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 1; j <= n - i; j++) {
+      str += j;
+    }
+    console.log(str);
+  }
+}
+
+function star5(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j < n - i; j++) {
+      str += j + 1;
+    }
+    console.log(str);
+  }
+}
+
+function star5(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 1; j <= 6 - i - 1; j++) {
+      str += j;
+    }
+    console.log(str);
+  }
+}
+
+// star5(5);
+
+function star6(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 1; j <= n - i; j++) {
+      str += '*';
+    }
+    console.log(str);
+  }
+}
+
+function star6(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j < n - i; j++) {
+      str += '*';
+    }
+    console.log(str);
+  }
+}
+
+// star6(5);
+
+function star7(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j <= n - (i + 1); j++) {
+      str += ' ';
+    }
+    for (let k = 1; k <= i + 1; k++) {
+      str += '*';
+    }
+    console.log(str);
+  }
+}
+
+function star7(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j <= 6 - i - 1; j++) {
+      str += ' ';
+    }
+    for (let k = 1; k <= i + 1; k++) {
+      str += '*';
+    }
+    console.log(str);
+  }
+}
+
+// star7(5);
+
+function star8(n) {
+  for (let i = 1, k = 1; i <= n; i++) {
+    let str = '';
+    for (let j = 1; j <= i; j++) {
+      if (j % 2 === 0) {
+        k = 0;
+      } else {
+        k = 1;
+      }
+      str += k;
+    }
+    console.log(str);
+  }
+}
+
+function star8(n) {
+  for (let i = 0; i < n; i++) {
+    let str = '',
+      k = 1;
+    for (let j = 0; j < i + 1; j++) {
+      str += k;
+      if (k == 1) {
+        k = 0;
+      } else {
+        k = 1;
+      }
+    }
+    console.log(str);
+  }
+}
+
+// star8(6);
+
+function star9(n) {
+  let k = 1;
+  for (let i = 0; i < n; i++) {
+    let str = '';
+    for (let j = 0; j < i + 1; j++) {
+      str += k;
+      if (k == 1) {
+        k = 0;
+      } else {
+        k = 1;
+      }
+    }
+    console.log(str);
+  }
+}
+
+// star9(6);
+
+// --------------------------------------------
+
+//! Write a function that returns the count of digits in a number
+let num = 39455447647;
+// let num = 0;
+function digitCounter(num) {
+  if (num == 0) return 1;
+  num = Math.abs(num);
+  let count = 0;
+  num;
+  while (num > 0) {
+    num = Math.floor(num / 10);
+    count++;
+  }
+  return count;
+}
+
+// console.log(digitCounter(num));
+
+//! Leetcode 9. Palindrome Number
+
+function palindrome(x) {
+  if (x == 0) return true;
+  if (x < 0) return false;
+  let original = x;
+  let rev = 0;
+  while (x > 0) {
+    let rem = x % 10;
+    rev = 10 * rev + rem;
+    x = Math.floor(x / 10);
+  }
+  return rev === original;
+}
+
+// console.log(palindrome(-121));
+// console.log(palindrome(2552));
+
+//! Leetcode 7. Reverse Integer
+// 123 -> 321
+// -123 -> -321
+function reverse(n) {
+  let copyN = n;
+  let rev = 0;
+  n = Math.abs(n);
+  while (n > 0) {
+    let rem = n % 10;
+    rev = 10 * rev + rem;
+    n = Math.floor(n / 10);
+  }
+
+  let limit = Math.pow(2, 31);
+  if (rev < -limit || rev > limit) return 0;
+  return copyN < 0 ? -rev : rev;
+}
+// console.log(reverse(123));
+// console.log(reverse(-123));
+// console.log(reverse(1534236469));
