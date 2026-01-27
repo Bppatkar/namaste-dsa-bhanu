@@ -51,7 +51,7 @@ var removeDuplicates = function (arr) {
 // It does not matter what you leave beyond the returned k (hence they are underscores).
 
 // let nums = [3, 2, 2, 3];
-let nums = [0, 1, 2, 2, 3, 0, 4, 2];
+// let nums = [0, 1, 2, 2, 3, 0, 4, 2];
 
 var removeElement = function (arr, val) {
   let j = 0;
@@ -148,6 +148,8 @@ let prices = [7, 1, 5, 3, 6, 4]; // 5
 // let ans = maxProfit(prices);
 // console.log(ans);
 
+//* --------------------------------------------------------
+
 //! Leetcode - 88. Merge Sorted Array
 
 //* Brute Forec Approch - O(m+n) + O(log(m+n))
@@ -218,3 +220,23 @@ let nums1 = [1, 2, 3, 0, 0, 0],
   nums2 = [2, 5, 6],
   n = 3;
 // console.log(merger(nums1, m, nums2, n));
+
+//* --------------------------------------------------------
+
+//! Leetcode 283. Move Zeros
+
+// let nums = [0];
+let nums = [0, 1, 0, 3, 12]; // [1,3,12,0,0];
+var moveZeros = function (nums) {
+  let temp;
+  for (let i = 0, k = 0; i < nums.length; i++) {
+    if (nums[i] != '0') {
+      temp = nums[k];
+      nums[k] = nums[i];
+      nums[i] = temp;
+      k++;
+    }
+  }
+  return nums;
+};
+console.log(moveZeros(nums));
