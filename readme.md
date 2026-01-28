@@ -100,6 +100,8 @@ By the end of this journey, I aim to:
 _Consistency. Dedication. Practice._ 🚀
 
 **Bhanu_Pratap_Patkar**
-**🔗 GitHub**
-**🔗 LinkedIn**
-**🔗 Portfolio**
+## 🔗 Links
+
+- **[GitHub](https://github.com/Bppatkar)** - My GitHub profile
+- **[LinkedIn](https://www.linkedin.com/in/bhanu-pratap-patkar/)** - Connect with me professionally
+- **[Portfolio](https://portfolio-bhanu-2026.vercel.app/)** - Check out my portfolio website
