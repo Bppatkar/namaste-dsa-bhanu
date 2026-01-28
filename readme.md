@@ -102,6 +102,6 @@ _Consistency. Dedication. Practice._ 🚀
 **Bhanu_Pratap_Patkar**
 ## 🔗 Links
 
-- **[GitHub](https://github.com/Bppatkar)** - My GitHub profile
-- **[LinkedIn](https://www.linkedin.com/in/bhanu-pratap-patkar/)** - Connect with me professionally
-- **[Portfolio](https://portfolio-bhanu-2026.vercel.app/)** - Check out my portfolio website
+- **[Leetcode](https://leetcode.com/u/Bppatkar/)** - Leetcode
+- **[LinkedIn](https://www.linkedin.com/in/bhanu-pratap-patkar/)** - LinkedIN
+- **[Portfolio](https://portfolio-bhanu-2026.vercel.app/)** - Portfolio 
