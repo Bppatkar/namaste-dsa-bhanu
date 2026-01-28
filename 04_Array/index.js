@@ -258,17 +258,129 @@ var moveZeros = function (nums) {
 //* --------------------------------------------------------
 
 //! 485. Max Consecutive Ones
-let nums = [1, 1, 0, 1, 1, 1]; //3
+// let nums = [1, 1, 0, 1, 1, 1]; //3
 // let nums = [1, 0, 1, 1, 0, 1]; //2
+// let nums = [1, 1, 0, 0, 1, 1, 1, 0, 1, 1];
 var findMaxConsecutiveOnes = function (nums) {
   let count = 0;
-  // let first = nums[0];
+  let maxCount = 0;
   for (let i = 0; i < nums.length; i++) {
-    for (let j = 1; j < nums.length; j++) {
+    if (nums[i] === 1) count++;
+    if (nums[i] === 0) count = 0;
+    if (maxCount < count) {
+      maxCount = count;
+    }
+  }
+  return maxCount;
+};
+var findMaxConsecutiveOnes = function (nums) {
+  let count = 0;
+  let maxCount = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] === 1) {
+      count++;
+    } else {
+      maxCount = Math.max(count, maxCount);
+      count = 0;
+    }
+  }
+  return Math.max(maxCount, count);
+};
+// console.log(findMaxConsecutiveOnes(nums));
+//* --------------------------------------------------------
+
+//! Leetcode 268. Missing Number
+// let nums = [3, 0, 1]; //2
+// let nums = [0, 1]; //2
+// let nums = [9, 6, 4, 2, 3, 5, 7, 0, 1]; //8
+var missingNumber = function (nums) {
+  let len = nums.length;
+  let sumOfNums = 0,
+    sumOfFormulla = 0;
+  sumOfFormulla = (len * (len + 1)) / 2;
+  for (let i = 0; i < len; i++) {
+    sumOfNums += nums[i];
+  }
+  let diff = sumOfFormulla - sumOfNums;
+  return diff;
+};
+// console.log(missingNumber(nums));
+
+//* --------------------------------------------------------
+//! Leetcode 136. Single Number
+// let nums = [2, 2, 1]; //1
+// let nums = [4, 1, 2, 1, 2]; //4
+// let nums = [1]; //1
+
+//* Approch 1
+var singleNumber = function (nums) {
+  for (let i = 0; i < nums.length; i++) {
+    let foundDuplicate = false;
+    for (let j = 0; j < nums.length; j++) {
+      if (i !== j && nums[i] === nums[j]) {
+        foundDuplicate = true;
+        break;
+      }
+    }
+    if (!foundDuplicate) {
+      return nums[i];
+    }
+  }
+};
+
+//* Approch 2
+var singleNumber = function (nums) {
+  let count = 0;
+  temp = -1;
+
+  for (let i = 0; i < nums.length; i++) {
+    count = 0;
+    for (let j = 0; j < nums.length; j++) {
       if (nums[i] === nums[j]) {
         count++;
       }
     }
+    if (count === 1) {
+      temp = i;
+      break;
+    }
   }
+  return nums[temp];
 };
-console.log(findMaxConsecutiveOnes(nums));
+
+//* Approch 3
+var singleNumber = function (nums) {
+  let obj = {};
+  for (let i = 0; i < nums.length; i++) {
+    let num = nums[i];
+    if (obj[num]) {
+      obj[num] += 1;
+    } else {
+      obj[num] = 1;
+    }
+  }
+
+  for (let key in obj) {
+    if (obj[key] === 1) {
+      return parseInt(key);
+    }
+  }
+  return -1;
+};
+
+//* Approch 4 using XOR
+var singleNumber = function (nums) {
+  let result = 0;
+
+  for (let i = 0; i < nums.length; i++) {
+    result ^= nums[i];
+  }
+
+  return result;
+};
+/* [2, 2, 1]: 2 ^ 2 ^ 1 = 0 ^ 1 = 1
+[4, 1, 2, 1, 2]: 4 ^ 1 ^ 2 ^ 1 ^ 2 = 4 ^ (1 ^ 1) ^ (2 ^ 2) = 4 ^ 0 ^ 0 = 4
+ */
+
+// console.log(singleNumber(nums));
+//* --------------------------------------------------------
