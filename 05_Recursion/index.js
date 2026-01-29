@@ -72,4 +72,4 @@ var fib = function (n) {
   if (n == 1) return 1;
   return (n = fib(n - 1) + fib(n - 2));
 };
-console.log(fib(9));
+// console.log(fib(9));
