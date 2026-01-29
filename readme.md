@@ -100,8 +100,9 @@ By the end of this journey, I aim to:
 _Consistency. Dedication. Practice._ 🚀
 
 **Bhanu_Pratap_Patkar**
+
 ## 🔗 Links
 
-- **[Leetcode](https://leetcode.com/u/Bppatkar/)** - Leetcode
-- **[LinkedIn](https://www.linkedin.com/in/bhanu-pratap-patkar/)** - LinkedIN
-- **[Portfolio](https://portfolio-bhanu-2026.vercel.app/)** - Portfolio 
+- **[Leetcode](https://leetcode.com/u/Bppatkar/)**
+- **[LinkedIn](https://www.linkedin.com/in/bhanu-pratap-patkar/)**
+- **[Portfolio](https://portfolio-bhanu-2026.vercel.app/)**
