@@ -165,24 +165,30 @@ function merge(left, right) {
   return [...result, ...left, ...right];
 }
 
-//! Example
-function exampleMerge(arr) {
+//! Leetcode 912. Sort an Array
+var sortArray = function (arr) {
   if (arr.length <= 1) return arr;
   let mid = Math.floor(arr.length / 2);
-  let left = exampleMerge(arr.slice(0, mid));
-  let right = exampleMerge(arr.slice(mid));
-  return arrayOfMerger(left, right);
-}
+  let left = sortArray(arr.slice(0, mid));
+  let right = sortArray(arr.slice(mid));
+  return merger(left, right);
+};
 
-function arrayOfMerger(left, right) {
-  let result = [];
-  while (left.length && right.length) {
-    if (left[0] < right[0]) {
-      result.push(left.shift());
+function merger(left, right) {
+  let result = [],
+    i = 0,
+    j = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] < right[j]) {
+      result.push(left[i]);
+      i++;
     } else {
-      result.push(right.shift());
+      result.push(right[j]);
+      j++;
     }
   }
-  return [...result, ...left, ...right];
+  return [...result, ...left.slice(i), ...right.slice(j)];
 }
-console.log(exampleMerge([8, 4, 5, 6, 9, 1, 3, 6]));
+console.log(sortArray([8, 4, 5, 6, 9, 1, 3, 6]));
+console.log(sortArray([5, 2, 3, 1]));
+console.log(sortArray([5, 1, 1, 2, 0, 0]));
