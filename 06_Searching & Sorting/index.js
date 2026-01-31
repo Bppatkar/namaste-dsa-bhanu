@@ -189,7 +189,7 @@ function merger(left, right) {
   }
   return [...result, ...left.slice(i), ...right.slice(j)];
 }
-console.log(sortArray([8, 4, 5, 6, 9, 1, 3, 6]));
-console.log(sortArray([5, 2, 3, 1]));
-console.log(sortArray([5, 1, 1, 2, 0, 0]));
+// console.log(sortArray([8, 4, 5, 6, 9, 1, 3, 6]));
+// console.log(sortArray([5, 2, 3, 1]));
+// console.log(sortArray([5, 1, 1, 2, 0, 0]));
 
