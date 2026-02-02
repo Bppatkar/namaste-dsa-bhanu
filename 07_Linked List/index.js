@@ -9,7 +9,9 @@ const Node = function (val) {
 //! How to create LinkedList [a series of node and its a representation of its head]
 //* creating empty linkedlist [empty linkedlist has head and size]
 var MyLinkedList = function () {
-  this.head = null; // null - because it is empty
+  this.head = null; // null - because linkedList is empty
+  // head is only pointing on a first node, not a node itself ok, and there is no node so that is pointing to null in starting phase and size is 0
+  //? Head ≠ node, Head = null (खाली)
   this.size = 0;
 };
 // let newMyLinkedList = new MyLinkedList();
@@ -21,6 +23,15 @@ var MyLinkedList = function () {
 Design your implementation of the linked list. You can choose to use a singly or doubly linked list.
 A node in a singly linked list should have two attributes: val and next. val is the value of the current node, and next is a pointer/reference to the next node.
 If you want to use the doubly linked list, you will need one more attribute prev to indicate the previous node in the linked list. Assume all nodes in the linked list are 0-indexed.
+
+Implement the MyLinkedList class:
+
+- MyLinkedList() Initializes the MyLinkedList object.
+- int get(int index) Get the value of the indexth node in the linked list. If the index is invalid, return -1.
+- void addAtHead(int val) Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list.
+- void addAtTail(int val) Append a node of value val as the last element of the linked list.
+- void addAtIndex(int index, int val) Add a node of value val before the indexth node in the linked list. If index equals the length of the linked list, the node will be appended to the end of the linked list. If index is greater than the length, the node will not be inserted.
+- void deleteAtIndex(int index) Delete the indexth node in the linked list, if the index is valid.
  */
 //! ==============================================
 
@@ -54,7 +65,7 @@ MyLinkedList.prototype.addAtHead = function (val) {
  */
 MyLinkedList.prototype.addAtTail = function (val) {
   let newNode = new Node(val);
-  if ((this.size = 0)) this.head = newNode;
+  if (this.size === 0) this.head = newNode;
   else {
     let current = this.head;
     while (current.next != null) {
@@ -73,7 +84,7 @@ MyLinkedList.prototype.addAtTail = function (val) {
 MyLinkedList.prototype.addAtIndex = function (index, val) {
   if (index < 0 || index > this.size) return;
   if (index == 0) {
-    this.addAtHead(index);
+    this.addAtHead(val);
     return;
   } else if (index == this.size) {
     this.addAtTail(val);
@@ -81,7 +92,7 @@ MyLinkedList.prototype.addAtIndex = function (index, val) {
   } else {
     let newNode = new Node(val);
     let current = this.head;
-    for (let i = 0; i < index; i++) {
+    for (let i = 0; i < index - 1; i++) {
       current = current.next;
     }
     newNode.next = current.next;
