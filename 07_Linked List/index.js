@@ -9,7 +9,8 @@ const Node = function (val) {
 //! How to create LinkedList [a series of node and its a representation of its head]
 //* creating empty linkedlist [empty linkedlist has head and size]
 var MyLinkedList = function () {
-  this.head = null; // null - because linkedList is empty
+  this.head = null;
+  // null - because linkedList is empty
   // head is only pointing on a first node, not a node itself ok, and there is no node so that is pointing to null in starting phase and size is 0
   //? Head ≠ node, Head = null (खाली)
   this.size = 0;
@@ -40,8 +41,9 @@ Implement the MyLinkedList class:
  * @return {number}
  */
 MyLinkedList.prototype.get = function (index) {
-  if (index < 0 || index >= this.size) return -1;
   let current = this.head;
+  if (index < 0 || index >= this.size) return -1;
+
   for (let i = 0; i < index; i++) {
     current = current.next;
   }
@@ -54,6 +56,7 @@ MyLinkedList.prototype.get = function (index) {
  */
 MyLinkedList.prototype.addAtHead = function (val) {
   let newNode = new Node(val);
+
   newNode.next = this.head;
   this.head = newNode;
   this.size++;
@@ -65,9 +68,9 @@ MyLinkedList.prototype.addAtHead = function (val) {
  */
 MyLinkedList.prototype.addAtTail = function (val) {
   let newNode = new Node(val);
-  if (this.size === 0) this.head = newNode;
+  let current = this.head;
+  if (this.head == null) this.head = newNode;
   else {
-    let current = this.head;
     while (current.next != null) {
       current = current.next;
     }
@@ -82,23 +85,23 @@ MyLinkedList.prototype.addAtTail = function (val) {
  * @return {void}
  */
 MyLinkedList.prototype.addAtIndex = function (index, val) {
-  if (index < 0 || index > this.size) return;
-  if (index == 0) {
+  if (index < 0 || index >= this.size) return;
+  let newNode = new Node(val);
+  if (index === 0) {
     this.addAtHead(val);
     return;
-  } else if (index == this.size) {
+  } else if (index === this.size) {
     this.addAtTail(val);
     return;
   } else {
-    let newNode = new Node(val);
     let current = this.head;
     for (let i = 0; i < index - 1; i++) {
       current = current.next;
     }
     newNode.next = current.next;
     current.next = newNode;
-    this.size++;
   }
+  this.size++;
 };
 
 /**
@@ -106,12 +109,12 @@ MyLinkedList.prototype.addAtIndex = function (index, val) {
  * @return {void}
  */
 MyLinkedList.prototype.deleteAtIndex = function (index) {
-  if (index < 0 || index > this.size) return;
-  if (index == 0) {
+  if (index < 0 || index >= this.size) return;
+  if (index === 0) {
     this.head = this.head.next;
   } else {
     let current = this.head;
-    for (let i = 0; i < index; i++) {
+    for (let i = 0; i < index - 1; i++) {
       current = current.next;
     }
     current.next = current.next.next;
