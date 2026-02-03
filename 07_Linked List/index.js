@@ -69,7 +69,7 @@ MyLinkedList.prototype.addAtHead = function (val) {
 MyLinkedList.prototype.addAtTail = function (val) {
   let newNode = new Node(val);
   let current = this.head;
-  if (this.head == null) this.head = newNode;
+  if (this.head === null) this.head = newNode;
   else {
     while (current.next != null) {
       current = current.next;
@@ -85,7 +85,7 @@ MyLinkedList.prototype.addAtTail = function (val) {
  * @return {void}
  */
 MyLinkedList.prototype.addAtIndex = function (index, val) {
-  if (index < 0 || index >= this.size) return;
+  if (index < 0 || index > this.size) return;
   let newNode = new Node(val);
   if (index === 0) {
     this.addAtHead(val);
@@ -100,8 +100,8 @@ MyLinkedList.prototype.addAtIndex = function (index, val) {
     }
     newNode.next = current.next;
     current.next = newNode;
+    this.size++;
   }
-  this.size++;
 };
 
 /**
@@ -131,3 +131,12 @@ MyLinkedList.prototype.deleteAtIndex = function (index) {
  * obj.addAtIndex(index,val)
  * obj.deleteAtIndex(index)
  */
+
+//! Test Cases
+let list = new MyLinkedList();
+list.addAtHead(1);
+list.addAtTail(3);
+list.addAtIndex(1, 2);  // List: 1->2->3
+console.log(list.get(1));  // Should return 2
+list.deleteAtIndex(1);     // List: 1->3
+console.log(list.get(1));  // Should return 3
