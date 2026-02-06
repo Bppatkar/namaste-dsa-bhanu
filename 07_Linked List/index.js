@@ -133,10 +133,48 @@ MyLinkedList.prototype.deleteAtIndex = function (index) {
  */
 
 //! Test Cases
-let list = new MyLinkedList();
-list.addAtHead(1);
-list.addAtTail(3);
-list.addAtIndex(1, 2);  // List: 1->2->3
-console.log(list.get(1));  // Should return 2
-list.deleteAtIndex(1);     // List: 1->3
-console.log(list.get(1));  // Should return 3
+// let list = new MyLinkedList();
+// list.addAtHead(1);
+// list.addAtTail(3);
+// list.addAtIndex(1, 2);  // List: 1->2->3
+// console.log(list.get(1));  // Should return 2
+// list.deleteAtIndex(1);     // List: 1->3
+// console.log(list.get(1));  // Should return 3
+
+// ---------------------------------------
+
+//! Leetcode 876. Middle of the Linked List
+
+let head = [1, 2, 3, 4, 5];
+// let head = [1, 2, 3, 4, 5, 6];
+
+/**
+ * Leetcode 876. Middle of the Linked List
+ * Approach 1: Convert to Array
+ * Time Complexity: O(N), Space Complexity: O(N)
+ */
+var middleNodeArray = function (head) {
+  let arr = [];
+  let current = head;
+  while (current !== null) {
+    arr.push(current);
+    current = current.next;
+  }
+  return arr[Math.floor(arr.length / 2)];
+};
+
+/**
+ * Approach 2: Fast & Slow Pointers (Tortoise and Hare)
+ * Time Complexity: O(N), Space Complexity: O(1)
+ */
+var middleNodeFastSlow = function (head) {
+  let slow = head;
+  let fast = head;
+
+  while (fast !== null && fast.next !== null) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+  return slow;
+};
+
