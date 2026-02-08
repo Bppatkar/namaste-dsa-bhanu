@@ -289,3 +289,178 @@ var isPalindrome1 = function (head) {
   }
   return true;
 };
+
+//! Leetcode 160. Intersection of Two Linked Lists
+/**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
+var getIntersectionNode = function (headA, headB) {
+  let newSet = new Set();
+  while (headB) {
+    newSet.add(headB);
+    headB = headB.next;
+  }
+  while (headA) {
+    if (newSet.has(headA)) return headA;
+    headA = headA.next;
+  }
+  return null;
+};
+
+//! 203. Remove Linked List Elements
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} val
+ * @return {ListNode}
+ */
+var removeElements = function (head, val) {
+  //? sentinel - a soldier or guard whose job is to stand and keep watch.
+  let sentinel = new ListNode();
+
+  sentinel.next = head;
+
+  let prev = sentinel;
+  while (prev && prev.next) {
+    if (prev.next.val === val) {
+      prev.next = prev.next.next;
+    } else {
+      prev = prev.next;
+    }
+  }
+  return sentinel.next;
+};
+
+//! 19. Remove Nth Node From End of List
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+//* Approch 1
+var removeNthFromEnd = function (head, n) {
+  let sentinel = new ListNode();
+  sentinel.next = head;
+  let length = 0;
+  let first = head;
+
+  while (first) {
+    length++;
+    first = first.next;
+  }
+  let prevPos = length - n;
+  let prev = sentinel;
+  for (let i = 0; i < prevPos; i++) {
+    prev = prev.next;
+  }
+  prev.next = prev.next.next;
+  return sentinel.next;
+};
+
+//? - this is 2 pass means - 1 for finding length and 2 for prevPos
+//! Follow up: Could you do this in 1 pass?
+//* Approch 2 [two pointer approach]
+var removeElements1 = function (head, n) {
+  let sentinel = new ListNode();
+  sentinel.next = head;
+
+  let firstNode = sentinel;
+  for (let i = 0; i < n; i++) {
+    firstNode = firstNode.next;
+  }
+  let secondNode = sentinel;
+  while (firstNode) {
+    firstNode = firstNode.next;
+    secondNode = secondNode.next;
+  }
+  secondNode.next = secondNode.next.next;
+
+  return sentinel.next;
+};
+
+//! Leetcode - 83. Remove Duplicates from Sorted List
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+var deleteDuplicates = function (head) {
+  let curr = head;
+
+  while (curr && curr.next) {
+    if (curr.val === curr.next.val) {
+      curr.next = curr.next.next;
+    } else {
+      curr = curr.next;
+    }
+  }
+  return head;
+};
+
+//! Leetcode - 328. Odd Even Linked List
+var oddEvenList = function (head) {
+  if (!head || !head.next) return head;
+  let odd = head;
+  let even = head.next;
+  let evenStart = even;
+  while (even.next && odd.next) {
+    // connect all odd nodes
+    odd.next = odd.next.next;
+    // connect all even nodes
+    even.next = even.next.next;
+    odd = odd.next;
+    even = even.next;
+  }
+  // connect odd to where even node start
+  odd.next = evenStart;
+  return head;
+};
+
+//! Leetcode - 2. Add Two Numbers
+
+var addTwoNumbers = function (l1, l2) {
+  let newNode = new ListNode(0);
+  let curr = newNode;
+  let carry = 0;
+  while (l1 !== null || l2 !== null || carry !== 0) {
+    let val1 = l1 ? l1.val : 0;
+    let val2 = l2 ? l2.val : 0;
+
+    let sum = val1 + val2 + carry;
+    carry = Math.floor(sum / 10);
+    digit = sum % 10;
+
+    curr.next = new ListNode(digit);
+    curr = curr.next;
+
+    if (l1) {
+      l1 = l1.next;
+    }
+    if (l2) {
+      l2 = l2.next;
+    }
+  }
+  return newNode.next;
+};
+
