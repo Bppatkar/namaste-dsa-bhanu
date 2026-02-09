@@ -567,15 +567,26 @@ var swapPairs = function (head) {
   let c = head;
   let n = head.next;
 
-  while (c && n ) {
+  while (c && n) {
     p.next = n;
     c.next = n.next;
     n.next = c;
-   
+
     p = c;
     c = p.next;
     n = c && c.next;
   }
 
   return sentinel.next;
+};
+
+//! Approch 2 - [using recursion]
+var swapPairs = function (head) {
+  if (!head || !head.next) return head;
+  let l = head;
+  let r = head.next;
+
+  l.next = swapPairs(r.next);
+  r.next = l;
+  return r;
 };
