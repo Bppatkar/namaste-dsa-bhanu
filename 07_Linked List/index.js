@@ -556,5 +556,26 @@ var rotateRight = function (head, k) {
   return newHead;
 };
 
-
 //! Leetcode - 24 Swap Nodes in pair
+var swapPairs = function (head) {
+  if (!head || !head.next) return head;
+
+  let sentinel = new ListNode();
+  sentinel.next = head;
+
+  let p = sentinel;
+  let c = head;
+  let n = head.next;
+
+  while (c && n ) {
+    p.next = n;
+    c.next = n.next;
+    n.next = c;
+   
+    p = c;
+    c = p.next;
+    n = c && c.next;
+  }
+
+  return sentinel.next;
+};
