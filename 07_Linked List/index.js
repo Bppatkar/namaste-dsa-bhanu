@@ -440,27 +440,121 @@ var oddEvenList = function (head) {
 //! Leetcode - 2. Add Two Numbers
 
 var addTwoNumbers = function (l1, l2) {
-  let newNode = new ListNode(0);
-  let curr = newNode;
+  let ans = new ListNode();
+  let ansHead = ans;
   let carry = 0;
-  while (l1 !== null || l2 !== null || carry !== 0) {
+  while (l1 || l2 || carry) {
     let val1 = l1 ? l1.val : 0;
     let val2 = l2 ? l2.val : 0;
 
     let sum = val1 + val2 + carry;
     carry = Math.floor(sum / 10);
-    digit = sum % 10;
+    let digit = sum % 10;
 
-    curr.next = new ListNode(digit);
-    curr = curr.next;
+    let newNode = new ListNode(digit);
+    ans.next = newNode;
+    ans = ans.next;
 
-    if (l1) {
+    if (l1) l1 = l1.next;
+    if (l2) l2 = l2.next;
+  }
+  return ansHead.next;
+};
+
+//! Leetcode - 21. Merge Two Sorted Lists
+var mergeTwoLists = function (l1, l2) {
+  if (!l1) return l2;
+  if (!l2) return l1;
+
+  let curr = null;
+  if (l1.val < l2.val) {
+    curr = l1;
+    l1 = l1.next;
+  } else {
+    curr = l2;
+    l2 = l2.next;
+  }
+
+  let currCopy = curr;
+  while (l1 && l2) {
+    if (l1.val < l2.val) {
+      curr.next = l1;
       l1 = l1.next;
-    }
-    if (l2) {
+    } else {
+      curr.next = l2;
       l2 = l2.next;
     }
+    curr = curr.next;
   }
+  if (!l1) curr.next = l2;
+  else curr.next = l1;
+  return currCopy;
+};
+
+//* using dummy node to remove code that is using two times
+var mergeTwoLists = function (l1, l2) {
+  // if (!l1) return l2;
+  // if (!l2) return l1;
+  // let curr = null;
+  // if (l1.val < l2.val) {
+  //   curr = l1;
+  //   l1 = l1.next;
+  // } else {
+  //   curr = l2;
+  //   l2 = l2.next;
+  // }
+
+  // let currCopy = curr;
+  let newNode = new ListNode();
+  let curr = newNode;
+  while (l1 && l2) {
+    if (l1.val < l2.val) {
+      curr.next = l1;
+      l1 = l1.next;
+    } else {
+      curr.next = l2;
+      l2 = l2.next;
+    }
+    curr = curr.next;
+  }
+  if (!l1) curr.next = l2;
+  else curr.next = l1;
   return newNode.next;
 };
 
+//! Leetcode - 61. Rotate List
+var rotateRight = function (head, k) {
+  // handling corner cases
+  if (!head || !head.next) return head;
+  // using slow and fast pointer approch
+  let slow = head;
+  let fast = head;
+
+  // finding length
+  let length = 0;
+  let curr = head;
+
+  while (curr) {
+    length++;
+    curr = curr.next;
+  }
+  k = k % length;
+
+  // move fast to the kth
+  for (let i = 0; i < k; i++) {
+    fast = fast.next;
+  }
+
+  while (fast.next) {
+    slow = slow.next;
+    fast = fast.next;
+  }
+
+  fast.next = head;
+  let newHead = slow.next;
+  slow.next = null;
+  return newHead;
+};
+
+
+//! Leetcode - 24 Swap Nodes in pair
