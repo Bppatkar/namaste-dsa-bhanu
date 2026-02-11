@@ -121,10 +121,35 @@ var numJewelsInStones = function (jewels, stones) {
 
 //! Leetcode 3541. Find Most Frequent Vowel and Consonant
 var maxFreqSum = function (s) {
- let vowels = ['a', 'e', 'i', 'o', 'u'];
-  let consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+  let vowels = ['a', 'e', 'i', 'o', 'u'];
+  let consonants = [
+    'b',
+    'c',
+    'd',
+    'f',
+    'g',
+    'h',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+  ];
 
-  let vCount = {}, cCount = {}, vMax = 0, cMax = 0;
+  let vCount = {},
+    cCount = {},
+    vMax = 0,
+    cMax = 0;
 
   for (let i = 0; i < s.length; i++) {
     let ch = s[i];
@@ -171,17 +196,69 @@ var maxFreqSum = function (s) {
   // running loop on map keys not the whole string [Optimisation]
   let mapKey = Object.keys(map);
 
-   for (let i = 0; i < mapKey.length; i++) {
+  for (let i = 0; i < mapKey.length; i++) {
     if (vowels.includes(mapKey[i])) {
       // if (map[mapKey[i]] > maxVowel) maxVowel = map[mapKey[i]];
-      maxVowel = Math.max(map[mapKey[i]],maxVowel)
+      maxVowel = Math.max(map[mapKey[i]], maxVowel);
     } else {
       // if (map[mapKey[i]] > maxConsonant) maxConsonant = map[mapKey[i]];
-      maxConsonant = Math.max(map[mapKey[i]],maxConsonant)
+      maxConsonant = Math.max(map[mapKey[i]], maxConsonant);
     }
   }
   return maxVowel + maxConsonant;
 };
-let s = 'successes'; // 2+4=6
+// let s = 'successes'; // 2+4=6
 // let s = 'aeiaeia'; // 3+0=3
-console.log(maxFreqSum(s));
+// console.log(maxFreqSum(s));
+
+//! Leetcode 1221. Split a String in Balanced Strings
+var balanceStringSplit = function (s) {
+  let pair = 0,
+    temp = 0;
+  for (let i = 0; i < s.length; i++) {
+    s[i] === 'R' ? temp++ : temp--;
+    if (temp === 0) pair++;
+  }
+  return pair;
+};
+
+// let s = 'RLRRLLRLRL'; //4
+// let s = "RLRRRLLRLL" //2
+// let s = "LLLLRRRR" //1
+// console.log(balanceStringSplit(s));
+
+//! Leetcode 541. Reverse String II
+
+var reverseStr = function (s, k) {
+  let arr = s.split('');
+  let n = s.length;
+  for (let i = 0; i < n; i += 2 * k) {
+    let left = i;
+    let right = Math.min(i + k - 1, n - 1);
+
+    while (left < right) {
+      let temp = arr[left];
+      arr[left] = arr[right];
+      arr[right] = temp;
+      left++;
+      right--;
+    }
+  }
+  return arr.join('');
+};
+var reverseStr = function (s, k) {
+  s = s.split('');
+  for (let i = 0; i < s.length; i += 2 * k) {
+    let mid = Math.floor(k / 2);
+    for (let j = 0; j < mid; j++) {
+      let temp = s[i + j];
+      s[i + j] = s[i + k - 1 - j];
+      s[i + k - 1 - j] = temp;
+    }
+  }
+  return s.join('');
+};
+let s = 'abcdefg',
+  k = 2; //  "bacdfeg"
+// let s = "abcd", k = 2; //"bacd"
+console.log(reverseStr(s, k));
