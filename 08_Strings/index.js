@@ -258,7 +258,21 @@ var reverseStr = function (s, k) {
   }
   return s.join('');
 };
-let s = 'abcdefg',
-  k = 2; //  "bacdfeg"
+// let s = 'abcdefg',  k = 2; //  "bacdfeg"
 // let s = "abcd", k = 2; //"bacd"
-console.log(reverseStr(s, k));
+// console.log(reverseStr(s, k));
+
+//! Leetcode 125. Valid Palindrome
+var isPalindrome = function (s) {
+  s = s.toLowerCase();
+  let filteredStr = '';
+  for (let i = 0; i < s.length; i++) {
+    if (s[i].match(/[a-z0-9]/i)) filteredStr += s[i];
+  }
+  let rev = filteredStr.split('').reverse().join('');
+  return filteredStr === rev;
+};
+// let s = 'A man, a plan, a canal: Panama';
+// let s = "race a car"
+// let s = ''
+// console.log(isPalindrome(s));
