@@ -273,13 +273,19 @@ var isPalindrome = function (s) {
   return filteredStr === rev;
 };
 
-//! Without Using Built In Method [minor  only 1 line change]
+//! Without Using Built In Method [minor  only 1 line change]  --- T-O(n) || S -O(n)
 var isPalindrome = function (s) {
   s = s.toLowerCase();
   let filteredStr = '';
   let rev = '';
   for (let i = 0; i < s.length; i++) {
-    if (s[i].match(/[a-z0-9]/i)) {
+    if (
+      (s[i].charCodeAt() >= 'a'.charCodeAt() &&
+        s[i].charCodeAt() >= 'z'.charCodeAt()) ||
+      (s[i].charCodeAt() >= '0'.charCodeAt() &&
+        s[i].charCodeAt() >= '9'.charCodeAt())
+    ) {
+      // if (s[i].match(/[a-z0-9]/i)) {     //if dont want to use REGEX then use above charCodeAt
       filteredStr += s[i]; // adding string in the right hand side of filteredStr
       rev = s[i] + rev; // adding string in the left hand side of the rev
     }
@@ -287,9 +293,22 @@ var isPalindrome = function (s) {
   return filteredStr === rev;
 };
 
-// let s = 'A man, a plan, a canal: Panama';
+//! More Optimisation - S-O(1) [using Two Pointer approach]
+var isPalindrome = function (s) {
+  let i = 0;
+  let j = s.length - 1;
+  while (i < j) {
+    if (!s[i].match(/[a-z0-9]/i)) ++i;
+    else if (!s[j].match(/[a-z0-9]/i)) --j;
+    else if (s[i].toLowerCase() === s[j].toLowerCase()) {++i; --j;}
+    else {return false};
+  }
+  return true
+};
+
+let s = 'A man, a plan, a canal: Panama';
 // let s = "race a car"
 // let s = ''
-// console.log(isPalindrome(s));
+console.log(isPalindrome(s));
 
 //!
