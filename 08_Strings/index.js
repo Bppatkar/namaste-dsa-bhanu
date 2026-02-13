@@ -416,16 +416,39 @@ var isIsomorphic = function (s, t) {
 
 
 //! Leetcode 49. Group Anagrams
+//? that solution takes T- [O(n*mlogn)] S-[O(n*m)]
+// var groupAnagrams = function (strs) {
+//   let obj = {};
+//   for (let i = 0; i < strs.length; i++) {
+//     let sortedStrs = strs[i].split('').sort().join('');
+//     !obj[sortedStrs] ? obj[sortedStrs] = [strs[i]] : obj[sortedStrs].push([strs[i]]);
+//     // if (!obj[sortedStrs]) obj[sortedStrs] = [strs[i]];
+//     // else obj[sortedStrs].push(strs[i])
+//   }
+//   return [...Object.values(obj)]
+// };
+
+//! More Optimise solution
 var groupAnagrams = function (strs) {
-  let obj = {};
+  let obj = {}
   for (let i = 0; i < strs.length; i++) {
-    let sortedStrs = strs[i].split('').sort().join('');
-    if (!obj[sortedStrs]) obj[sortedStrs] = [strs[i]];
-    else obj[sortedStrs].push(strs[i])
+    let freqArr = new Array(26).fill(0);
+    let s = strs[i]
+    for (let j = 0; j < s.length; j++) {
+      let index = s[j].charCodeAt() - 'a'.charCodeAt()
+      ++freqArr[index]
+    }
+
+    let key = '';
+    for (let k = 0; k < 26; k++) {
+      key += String.fromCharCode(k) + freqArr[k]
+    }
+
+    if (!obj[key]) obj[key] = [s]
+    else obj[key].push(s)
   }
   return [...Object.values(obj)]
-
-};
+}
 let strs = ["eat", "tea", "tan", "ate", "nat", "bat"] //Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
 // let strs = [""] // Output: [[""]]
 // let strs = ["a"] // Output: [["a"]]
