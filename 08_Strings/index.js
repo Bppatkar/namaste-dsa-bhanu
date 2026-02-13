@@ -353,12 +353,80 @@ var longestCommonPrefix = function (strs) {
   }
   return strs[0]
 }
-let strs = ["flower", "flow", "flight"] // "fl"
+// let strs = ["flower", "flow", "flight"] // "fl"
 // let strs = ["dog", "racecar", "car"] // ""
 // console.log(longestCommonPrefix(strs))
 
 
 //! Leetcode 242. Valid Anagram
- var isAnagram = function(s, t) {
-    
+var isAnagram = function (s, t) {
+  s = s.split('')
+  t = t.split('')
+  for (let i = 0; i < s.length; i++) {
+    for (let j = 0; j < t.length; j++) {
+      if (s[i] === t[j]) {
+        s[i] = 0; t[j] = 0;
+      }
+    }
+  }
+  if (s.join('') === t.join('')) return true;
+  return false;
 };
+//! Using Built In Method  [sort method TSC ->> T- O(nlogn), S- O(n)]
+var isAnagram = function (s, t) {
+  s = s.split('').sort().join('')
+  t = t.split('').sort().join('')
+  if (s == t) return true;
+  else return false;
+}
+
+//! More Optimisation using hashmap
+var isAnagram = function (s, t) {
+  if (s.length != t.length) return false;
+  let obj = {}
+  for (let i = 0; i < s.length; i++) {
+    obj[s[i]] = !obj[s[i]] ? 1 : ++obj[s[i]]
+  }
+  for (let i = 0; i < t.length; i++) {
+    if (!obj[t[i]] || obj[t[i]] < 0) return false
+    else --obj[t[i]];
+  }
+  return true;
+}
+// let s = "anagram", t = "nagaram"
+// let s = "rat", t = "car"
+// console.log(isAnagram(s, t));
+
+//! Leetcode 205. Isomorphic Strings
+var isIsomorphic = function (s, t) {
+  let mapStoT = {}
+  let mapTtoS = {}
+  for (let i = 0; i < s.length; i++) {
+    if (!mapStoT[s[i]] && !mapTtoS[t[i]]) {
+      mapStoT[s[i]] = t[i];
+      mapTtoS[t[i]] = s[i];
+    } else if (mapTtoS[t[i]] !== s[i] || mapStoT[s[i]] !== t[i]) return false;
+  }
+  return true;
+};
+// let s = "egg", t = "add" // true
+// let s = "f11", t = "b23" // false
+// let s = "paper", t = "title" // true
+// console.log(isIsomorphic(s, t))
+
+
+//! Leetcode 49. Group Anagrams
+var groupAnagrams = function (strs) {
+  let obj = {};
+  for (let i = 0; i < strs.length; i++) {
+    let sortedStrs = strs[i].split('').sort().join('');
+    if (!obj[sortedStrs]) obj[sortedStrs] = [strs[i]];
+    else obj[sortedStrs].push(strs[i])
+  }
+  return [...Object.values(obj)]
+
+};
+let strs = ["eat", "tea", "tan", "ate", "nat", "bat"] //Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+// let strs = [""] // Output: [[""]]
+// let strs = ["a"] // Output: [["a"]]
+console.log(groupAnagrams(strs))
