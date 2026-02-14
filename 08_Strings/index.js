@@ -428,7 +428,7 @@ var isIsomorphic = function (s, t) {
 //   return [...Object.values(obj)]
 // };
 
-//! More Optimise solution
+//! More Optimise solution  T -[O(n * m)] S - [O(n*m)]
 var groupAnagrams = function (strs) {
   let obj = {}
   for (let i = 0; i < strs.length; i++) {
@@ -452,4 +452,4 @@ var groupAnagrams = function (strs) {
 let strs = ["eat", "tea", "tan", "ate", "nat", "bat"] //Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
 // let strs = [""] // Output: [[""]]
 // let strs = ["a"] // Output: [["a"]]
-console.log(groupAnagrams(strs))
+// console.log(groupAnagrams(strs))
