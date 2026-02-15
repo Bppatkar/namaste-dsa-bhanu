@@ -246,9 +246,144 @@ var isValid = function (s) {
   }
   return stack.length === 0;
 };
+
+//? rewrite messy code into smaller and simpler code
+
+var isValid = function (s) {
+  let stack = []
+  let map = {
+    "(": ")",
+    "{": "}",
+    "[": "]"
+  }
+
+  for (let i = 0; i < s.length; i++) {
+    if (map[s[i]]) stack.push(s[i]);
+    else {
+      if (stack.length === 0) return false;
+      let top = stack.pop();
+      if (s[i] != map[top]) return false
+    }
+  }
+  return stack.length === 0
+}
 // let s = "()" // true
 // let s = "()[]{}" // true
 // let s = "(]" // false
 // let s = "([])" // true
 let s = "([)]" // false
 console.log(isValid(s))
+
+// ----------------------------------------------------
+//! Leetcode 155. Min Stack
+// ----------------------------------------------------
+
+
+var MinStack = function () {
+  this.stack = [];
+};
+
+/** 
+ * @param {number} val
+ * @return {void}
+ */
+MinStack.prototype.push = function (val) {
+  this.stack.push(val);
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function () {
+  if (this.stack.length != 0) {
+    return this.stack.pop();
+  }
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.top = function () {
+  if (this.stack.length != 0) {
+    return this.stack[this.stack.length - 1]
+  }
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.getMin = function () {
+  let n = this.stack.length - 1;
+  let min = this.stack[this.stack.length - 1];
+  if (n != 0) {
+    for (let i = n; i >= 0; i--) {
+      if (this.stack[i] <= min) { min = this.stack[i]; this.stack.pop() }
+    }
+  }
+  return min;
+};
+
+//! push(): O(1) - simple array push
+//! pop(): O(1) - simple array pop
+//! top(): O(1) - direct array access
+//! getMin(): O(n) - you're iterating through the entire stack to find the minimum
+
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * var obj = new MinStack()
+ * obj.push(val)
+ * obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.getMin()
+ */
+
+//! if i want getMin() O(1) so we have to calculate the min val which should be precalculated ,  when we are pushing then we'll mentain the min value
+
+var MinStack = function () {
+    this.stack = [];
+};
+/** 
+ * @param {number} val
+ * @return {void}
+ */
+MinStack.prototype.push = function (val) {
+    if (this.stack.length === 0) {
+        this.stack.push([val, val])
+    } else {
+        let minVal = Math.min(val, this.stack[this.stack.length - 1][1])
+        this.stack.push([val, minVal])
+        console.log("min value - ", minVal)
+    }
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function () {
+    return this.stack.pop();
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.top = function () {
+    return this.stack[this.stack.length - 1][0];
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.getMin = function () {
+    return this.stack[this.stack.length - 1][1];
+};
+
+/** 
+ * Your MinStack object will be instantiated and called as such:
+ * var obj = new MinStack()
+ * obj.push(val)
+ * obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.getMin()
+ */
+
