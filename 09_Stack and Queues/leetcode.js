@@ -398,7 +398,9 @@ var removeOuterParentheses = function (s) {
     if (s[i] === '(') {
       stack.push(s[i]);
       if (stack.length > 1) ans += s[i]
+      // ans += ((stack.length > 1) ? s[i] : '')
     } else {
+      // ans += ((stack.length > 1) ? s[i] : '')
       if (stack.length > 1) ans += s[i]
       stack.pop()
     }
@@ -406,7 +408,55 @@ var removeOuterParentheses = function (s) {
   return ans;
 };
 
-let s = "(()())(())" //"()()()"
+//! solving without stack
+var removeOuterParentheses = function (s) {
+  let level = 0;
+  let ans = '';
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') {
+      ++level;
+      ans += ((level > 1) ? s[i] : '')
+    } else {
+      ans += ((level > 1) ? s[i] : '')
+      --level;
+    }
+  }
+  return ans;
+};
+
+// let s = "(()())(())" //"()()()"
 // let s = "(()())(())(()(()))" //"()()()()(())"
 // let s = "()()" //  ""
-console.log(removeOuterParentheses(s))
+// console.log(removeOuterParentheses(s))
+
+// ----------------------------------------------------
+//! Leetcode 150. Evaluate Reverse Polish Notation
+// ----------------------------------------------------
+
+var evalRPN = function (tokens) {
+  let stack = []
+  let map = {
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => Math.trunc(a / b)
+  }
+  // console.log(Object.keys(map))
+
+  for (let i = 0; i < tokens.length; i++) {
+    if (map[tokens[i]]) {
+      let b = stack.pop();
+      let a = stack.pop();
+      // console.log("value of a and b:", a, b)
+      stack.push(map[tokens[i]](a, b))
+      console.log(stack)
+    }
+    else stack.push(Number(tokens[i]));
+  }
+  return stack[0];
+};
+
+// let tokens = ["2", "1", "+", "3", "*"] // Output: 9
+// let tokens = ["4", "13", "5", "/", "+"] // Output: 6
+let tokens = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"] // Output: 22
+console.log(evalRPN(tokens))
