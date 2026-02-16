@@ -271,8 +271,8 @@ var isValid = function (s) {
 // let s = "()[]{}" // true
 // let s = "(]" // false
 // let s = "([])" // true
-let s = "([)]" // false
-console.log(isValid(s))
+// let s = "([)]" // false
+// console.log(isValid(s))
 
 // ----------------------------------------------------
 //! Leetcode 155. Min Stack
@@ -317,7 +317,7 @@ MinStack.prototype.getMin = function () {
   let min = this.stack[this.stack.length - 1];
   if (n != 0) {
     for (let i = n; i >= 0; i--) {
-      if (this.stack[i] <= min) { min = this.stack[i]; this.stack.pop() }
+      if (this.stack[i] <= min) min = this.stack[i];
     }
   }
   return min;
@@ -341,41 +341,41 @@ MinStack.prototype.getMin = function () {
 //! if i want getMin() O(1) so we have to calculate the min val which should be precalculated ,  when we are pushing then we'll mentain the min value
 
 var MinStack = function () {
-    this.stack = [];
+  this.stack = [];
 };
 /** 
  * @param {number} val
  * @return {void}
  */
 MinStack.prototype.push = function (val) {
-    if (this.stack.length === 0) {
-        this.stack.push([val, val])
-    } else {
-        let minVal = Math.min(val, this.stack[this.stack.length - 1][1])
-        this.stack.push([val, minVal])
-        console.log("min value - ", minVal)
-    }
+  if (this.stack.length === 0) {
+    this.stack.push([val, val])
+  } else {
+    let minVal = Math.min(val, this.stack[this.stack.length - 1][1])
+    this.stack.push([val, minVal])
+    console.log("min value - ", minVal)
+  }
 };
 
 /**
  * @return {void}
  */
 MinStack.prototype.pop = function () {
-    return this.stack.pop();
+  this.stack.pop();
 };
 
 /**
  * @return {number}
  */
 MinStack.prototype.top = function () {
-    return this.stack[this.stack.length - 1][0];
+  return this.stack[this.stack.length - 1][0];
 };
 
 /**
  * @return {number}
  */
 MinStack.prototype.getMin = function () {
-    return this.stack[this.stack.length - 1][1];
+  return this.stack[this.stack.length - 1][1];
 };
 
 /** 
@@ -387,3 +387,26 @@ MinStack.prototype.getMin = function () {
  * var param_4 = obj.getMin()
  */
 
+// ----------------------------------------------------
+//! Leetcode 1021. Remove OuterMost Parentheses
+// ----------------------------------------------------
+
+var removeOuterParentheses = function (s) {
+  let stack = [];
+  let ans = '';
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') {
+      stack.push(s[i]);
+      if (stack.length > 1) ans += s[i]
+    } else {
+      if (stack.length > 1) ans += s[i]
+      stack.pop()
+    }
+  }
+  return ans;
+};
+
+let s = "(()())(())" //"()()()"
+// let s = "(()())(())(()(()))" //"()()()()(())"
+// let s = "()()" //  ""
+console.log(removeOuterParentheses(s))
