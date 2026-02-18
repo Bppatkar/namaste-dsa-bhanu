@@ -597,12 +597,97 @@ var nextGreaterElements2 = function (nums) {
   }
   return ans.slice(0, n / 2);
 };
+
+//! Interviewer says don't doubled the arr [so we will use % (mode) so it will work like indexing start again]
+var nextGreaterElements2 = function (arr) {
+  let n = arr.length;
+
+  let stack = [];
+  let ans = Array(n).fill(-1);
+
+  stack.push(arr[n - 1])
+
+  for (let i = (2 * n) - 2; i >= 0; i--) {
+    while (stack.length) {
+      let top = stack[stack.length - 1];
+      // 9 because there are 9 values 0-9,
+      if (arr[i % n] < top) { ans[i % n] = top; break; }
+      // i%9 means -> 10%9= 1, 11%9=2, 9%9=0 etc
+      else stack.pop();
+    }
+    stack.push(arr[i % n])
+  }
+  return ans.slice(0, n);
+};
+
+
 // let nums = [1, 2, 1] // Output: [2,-1,2]
 // let nums = [1,2,3,4,3] // Output: [2,3,4,-1,4]
 // console.log(nextGreaterElements2(nums));
 
+// ----------------------------------------------------
+//! Leetcode 994. Rotting Oranges
+// ----------------------------------------------------
+var orangesRotting = function (grid) {
+
+  let m = grid.length; // rows
+  let n = grid[0].length; // column on that rows
+
+  let queue = [];
+  // first add all the rotten oranges in queue
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (grid[i][j] === 2) queue.push([i, j, 0])
+    }
+  }
+
+  let maxMinutes = 0;
+  // mark adj nodes as rotten and push in queue till it's not empty
+  while (queue.length) {
+    // console.log(grid[0]);
+    // console.log(grid[1]);
+    // console.log(grid[2]);
+    // console.log('-----------');
+
+    let [x, y, level] = queue.shift();
+    // handling left
+    if (x > 0 && grid[x - 1][y] === 1) {
+      grid[x - 1][y] = 2;
+      queue.push([x - 1, y, level + 1]);
+    }
+    // handling right
+    if (x < m - 1 && grid[x + 1][y] === 1) {
+      grid[x + 1][y] = 2;
+      queue.push([x + 1, y, level + 1]);
+    }
+    // handling top
+    if (y < n - 1 && grid[x][y + 1] === 1) {
+      grid[x][y + 1] = 2;
+      queue.push([x, y + 1, level + 1]);
+    }
+    // handling bottom
+    if (y > 0 && grid[x][y - 1] === 1) {
+      grid[x][y - 1] = 2;
+      queue.push([x, y - 1, level + 1]);
+    }
+
+    maxMinutes = Math.max(level, maxMinutes);
+  }
 
 
+  // finally run over each element in check if any fresh is remaining so put - 1
 
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (grid[i][j] === 1) return -1
+    }
+  }
+  return maxMinutes;
 
+};
+// let grid = [[2, 1, 1], [1, 1, 0], [0, 1, 1]] // Output: 4
+// let  grid = [[2,1,1],[0,1,1],[1,0,1]] // Output: -1
+// let  grid = [[0,2]] // Output: 0
+
+// console.log(orangesRotting(grid))
 
