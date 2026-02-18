@@ -456,7 +456,153 @@ var evalRPN = function (tokens) {
   return stack[0];
 };
 
+//! Diff way to write a code
+var evalRPN = function (tokens) {
+  let stack = [];
+  for (let i = 0; i < tokens.length; i++) {
+    // if (tokens[i] === '*' || tokens[i] === '+' || tokens[i] === '-' || tokens[i] === '/') {
+    if (['*', '+', '-', '/'].includes(tokens[i])) {
+      let a = stack.pop();
+      let b = stack.pop();
+      let ans = eval(`${b} ${tokens[i]} ${a}`)
+      stack.push(Math.trunc(ans))
+    }
+    else stack.push(tokens[i]);
+  }
+  return Number(stack[0]);
+};
+
 // let tokens = ["2", "1", "+", "3", "*"] // Output: 9
 // let tokens = ["4", "13", "5", "/", "+"] // Output: 6
-let tokens = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"] // Output: 22
-console.log(evalRPN(tokens))
+// let tokens = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"] // Output: 22
+// console.log(evalRPN(tokens))
+
+// ----------------------------------------------------
+//! Leetcode 496. Next Greater Element I
+// ----------------------------------------------------
+var nextGreaterElement = function (nums1, nums2) {
+  let stack = [];
+  let ngE = {};
+
+  let n = nums2.length;
+
+  stack.push(nums2[n - 1]);
+  ngE[nums2[n - 1]] = -1;
+
+  for (let i = n - 2; i >= 0; i--) {
+    let top = stack[stack.length - 1];
+    if (nums2[i] < top) ngE[nums2[i]] = top;
+    else {
+      while (stack.length) {
+        if (stack[stack.length - 1] < nums2[i]) stack.pop();
+        else {
+          ngE[nums2[i]] = stack[stack.length - 1];
+          break;
+        }
+      }
+      if (stack.length === 0) ngE[nums2[i]] = -1;
+    }
+    stack.push(nums2[i]);
+  }
+  let ans = [];
+  for (let i = 0; i < nums1.length; i++) {
+    ans.push(ngE[nums1[i]]);
+  }
+  return ans;
+};
+//! just optimized one  [we are checking same condition two times 1-[if] 2- inside while [if] , so removing some extra code]
+
+var nextGreaterElement = function (nums1, nums2) {
+  let stack = [];
+  let ngE = {};
+  let n = nums2.length;
+
+  stack.push(nums2[n - 1]);
+  ngE[nums2[n - 1]] = -1;
+
+  for (let i = n - 2; i >= 0; i--) {
+    while (stack.length) {
+      if (stack[stack.length - 1] < nums2[i]) stack.pop();
+      else {
+        ngE[nums2[i]] = stack[stack.length - 1];
+        break;
+      }
+      if (stack.length === 0) ngE[nums2[i]] = -1;
+    }
+    stack.push(nums2[i]);
+  }
+
+  return nums1.map(e => ngE[e]);
+}
+//! More Short
+var nextGreaterElement = function (nums1, nums2) {
+  let stack = [];
+  let map = {};
+  for (let i = nums2.length - 1; i >= 0; i--) {
+    while (stack.length && stack[stack.length - 1] < nums2[i]) stack.pop();
+    map[nums2[i]] = stack.length ? stack[stack.length - 1] : -1;
+    stack.push(nums2[i]);
+  }
+  return nums1.map(e => map[e]);
+}
+
+// let nums1 = [2, 4], nums2 = [1, 2, 3, 4] //  [3,-1]
+// let nums1 = [4, 1, 2], nums2 = [1, 3, 4, 2] // [-1,3,-1]
+// console.log(nextGreaterElement(nums1, nums2))
+
+// ----------------------------------------------------
+//! Leetcode 739. Daily Temperatures
+// ----------------------------------------------------
+var dailyTemperatures = function (temp) {
+  let stack = [];
+  let n = temp.length;
+  let ans = Array(n).fill(0);
+
+  stack.push(n - 1);
+  for (let i = n - 2; i >= 0; i--) {
+
+    while (stack.length) {
+      let top = stack[stack.length - 1];
+      if (temp[i] >= temp[top]) stack.pop();
+      else { ans[i] = top - i; break; }
+    }
+    stack.push(i);
+  }
+  return ans;
+};
+// let temperatures = [73, 74, 75, 71, 69, 72, 76, 73] // Output: [1,1,4,2,1,1,0,0]
+// let temperatures = [30,40,50,60] // Output: [1,1,1,0]
+// let temperatures = [30,60,90] // Output: [1,1,0]
+// console.log(dailyTemperatures(temperatures))
+
+// ----------------------------------------------------
+//! Leetcode 503. Next Greater Element II
+// ----------------------------------------------------
+var nextGreaterElements2 = function (nums) {
+  let arr = [...nums, ...nums];
+  let n = arr.length;
+
+  let stack = [];
+  let ans = Array(n).fill(-1);
+
+  stack.push(arr[n - 1])
+
+  for (let i = n - 2; i >= 0; i--) {
+    while (stack.length) {
+      let top = stack[stack.length - 1];
+      if (arr[i] < top) { ans[i] = top; break; }
+      else stack.pop();
+    }
+    stack.push(arr[i])
+  }
+  return ans.slice(0, n / 2);
+};
+// let nums = [1, 2, 1] // Output: [2,-1,2]
+// let nums = [1,2,3,4,3] // Output: [2,3,4,-1,4]
+// console.log(nextGreaterElements2(nums));
+
+
+
+
+
+
