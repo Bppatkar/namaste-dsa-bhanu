@@ -124,8 +124,8 @@ var findPeakElement = function (nums) {
 
   for (let i = 1; i < nums.length - 1; i++) {
     if (nums[i] > nums[i - 1] && nums[i] > nums[i + 1]) return i
-  } 
-  
+  }
+
   if (nums[nums.length - 1] > nums[nums.length - 2]) return nums.length - 1;
 
   return -1;
@@ -141,20 +141,34 @@ var findPeakElement = function (nums) {
   }
   return l // we can return l or r anything because when l == r then our loop should end and that is our ans
 }
-// Test Case 1: Standard case with peak in middle
-console.log("Test Case 1 [1, 2, 3, 1]:", findPeakElement([1, 2, 3, 1])); // Expected: 2
+// console.log("Test Case 1 [1, 2, 3, 1]:", findPeakElement([1, 2, 3, 1])); // Expected: 2
+// console.log("Test Case 2 [1, 2, 1, 3, 5, 6, 4]:", findPeakElement([1, 2, 1, 3, 5, 6, 4])); // Expected: 1 or 5
+// console.log("Test Case 3 [1, 2, 3, 4, 5]:", findPeakElement([1, 2, 3, 4, 5])); // Expected: 4
+// console.log("Test Case 4 [5, 4, 3, 2, 1]:", findPeakElement([5, 4, 3, 2, 1])); // Expected: 0
+// console.log("Test Case 5 [1]:", findPeakElement([1])); // Expected: 0
+// console.log("Test Case 6 [1, 2]:", findPeakElement([1, 2])); // Expected: 1
 
-// Test Case 2: Multiple peaks (return any valid peak)
-console.log("Test Case 2 [1, 2, 1, 3, 5, 6, 4]:", findPeakElement([1, 2, 1, 3, 5, 6, 4])); // Expected: 1 or 5
+// ----------------------------------------------------
+//! Leetcode 153. Find Minimum in Rotated Sorted Array
+// ----------------------------------------------------
 
-// Test Case 3: Ascending array (peak at end)
-console.log("Test Case 3 [1, 2, 3, 4, 5]:", findPeakElement([1, 2, 3, 4, 5])); // Expected: 4
+var findMin = function (nums) {
+  let l = 0, r = nums.length - 1;
+  while (l <= r) {
+    // check arr is already sorted - if sorted return first elem
+    if (nums[l] <= nums[r]) return nums[l];
 
-// Test Case 4: Descending array (peak at start)
-console.log("Test Case 4 [5, 4, 3, 2, 1]:", findPeakElement([5, 4, 3, 2, 1])); // Expected: 0
+    let m = l + Math.floor((r - l) / 2);
+    if (nums[m] < nums[m - 1]) return nums[m];
 
-// Test Case 5: Single element
-console.log("Test Case 5 [1]:", findPeakElement([1])); // Expected: 0
+    // check -- left part is sorted then inflaction point on the right side
+    if (nums[l] > nums[m]) r = m - 1;
+    else l = m + 1
+  }
+  return nums[l];
+};
 
-// Test Case 6: Two elements
-console.log("Test Case 6 [1, 2]:", findPeakElement([1, 2])); // Expected: 1
+// console.log(findMin([3, 4, 5, 1, 2])); // Output: 1
+// console.log(findMin([4, 5, 6, 7, 0, 1, 2])); // Output: 0
+// console.log(findMin([11, 13, 15, 17])); // Output: 11
+// console.log(findMin([2, 3, 4, 5, 1])); // Output 1
