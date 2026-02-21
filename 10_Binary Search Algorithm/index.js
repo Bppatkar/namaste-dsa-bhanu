@@ -247,3 +247,32 @@ var peakIndexInMountainArray = function (arr) {
 // console.log(peakIndexInMountainArray([0, 1, 0])) // Output: 1
 // console.log(peakIndexInMountainArray([0, 2, 1, 0])) // Output: 1
 // console.log(peakIndexInMountainArray([0, 10, 5, 2])) // Output: 1
+
+// ----------------------------------------------------
+//! Leetcode 540. Single Elemenet in a Sorted Array
+// ----------------------------------------------------
+var singleNonDuplicate = function (nums) {
+  l = 0, r = nums.length - 1;
+  while (l <= r) {
+    let m = l + Math.floor((r - l) / 2);
+    // pair exist on the left side
+    if (nums[m] === nums[m - 1]) {
+      leftCount = m - 1 - l;
+      if (leftCount % 2 === 1) r = m - 2;
+      else l = m + 1;
+    }
+    // pair exist on the right side
+    else if (nums[m] === nums[m + 1]) {
+      leftCount = m - l;
+      if (leftCount % 2 === 1) r = m - 1;
+      else l = m + 2;
+    }
+    else { return nums[m] }
+  }
+};
+console.log(singleNonDuplicate([1, 1, 2, 3, 3, 4, 4, 8, 8])) // Output: 2
+console.log(singleNonDuplicate([3, 3, 7, 7, 10, 11, 11])) // Output: 10
+
+
+
+
