@@ -162,8 +162,10 @@ var findMin = function (nums) {
     if (nums[m] < nums[m - 1]) return nums[m];
 
     // check -- left part is sorted then inflaction point on the right side
-    if (nums[l] > nums[m]) r = m - 1;
-    else l = m + 1
+    // if (nums[l] > nums[m]) r = m - 1;
+    // else l = m + 1
+    if (nums[l] <= nums[m]) l = m + 1;
+    else r = m - 1;
   }
   return nums[l];
 };
@@ -172,3 +174,76 @@ var findMin = function (nums) {
 // console.log(findMin([4, 5, 6, 7, 0, 1, 2])); // Output: 0
 // console.log(findMin([11, 13, 15, 17])); // Output: 11
 // console.log(findMin([2, 3, 4, 5, 1])); // Output 1
+
+// ----------------------------------------------------
+//! Leetcode 34. Find First and Last Position of Element in Sorted Array
+// ----------------------------------------------------
+var searchRange = function (nums, target) {
+
+  let l = 0, r = nums.length - 1;
+  let ans = [-1, -1];
+
+  while (l < r) {
+    let m = l + Math.floor((r - l) / 2);
+    if (nums[m] < target) l = m + 1;
+    else r = m;
+  }
+  // our l and r is equal that why above loop end [l===r]
+  // we can also write nums[r] because l and r are same
+  if (nums[l] === target) ans[0] = l;
+
+  //reseting left and right 
+  l = 0, r = nums.length - 1;
+
+  while (l < r) {
+    let m = l + Math.ceil((r - l) / 2);
+    if (nums[m] > target) r = m - 1;
+    else l = m;
+  }
+  // our l and r is equal that why above loop end [l===r]
+  // we can also write nums[r] because l and r are same
+  if (nums[l] === target) ans[1] = l;
+
+  return ans
+};
+
+//! One more method [simple]
+var searchRange = function (nums, target) {
+  let l = 0, r = nums.length - 1, ans = [-1, -1];
+  while (l <= r) {
+    let m = l + Math.floor((r - l) / 2);
+    if (nums[m] === target) { ans[0] = m; r = m - 1; }
+    else if (nums[m] < target) l = m + 1;
+    else r = m - 1;
+  }
+  //reseting left and right 
+  l = 0, r = nums.length - 1;
+  // finding the last point so only change in code is move left pointer to m+1;
+  while (l <= r) {
+    let m = l + Math.floor((r - l) / 2);
+    if (nums[m] === target) { ans[1] = m; l = m + 1; }
+    else if (nums[m] < target) l = m + 1;
+    else r = m - 1;
+  }
+  return ans
+}
+// console.log(searchRange([5, 7, 7, 8, 8, 10], 8)) // Output: [3,4]
+// console.log(searchRange([5, 7, 7, 8, 8, 10], 6)) // Output: [-1,-1]
+// console.log(searchRange([], 0)) // Output: [-1,-1]
+
+
+// ----------------------------------------------------
+//! Leetcode 852. Peak Index in a Mountain Array
+// ----------------------------------------------------
+var peakIndexInMountainArray = function (arr) {
+  l = 0, r = arr.length - 1;
+  while (l < r) {
+    let m = l + Math.floor((r - l) / 2);
+    if (arr[m] < arr[m + 1]) l = m + 1;
+    else r = m;
+  }
+  return l
+};
+// console.log(peakIndexInMountainArray([0, 1, 0])) // Output: 1
+// console.log(peakIndexInMountainArray([0, 2, 1, 0])) // Output: 1
+// console.log(peakIndexInMountainArray([0, 10, 5, 2])) // Output: 1
