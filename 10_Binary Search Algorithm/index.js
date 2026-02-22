@@ -270,9 +270,24 @@ var singleNonDuplicate = function (nums) {
     else { return nums[m] }
   }
 };
-console.log(singleNonDuplicate([1, 1, 2, 3, 3, 4, 4, 8, 8])) // Output: 2
-console.log(singleNonDuplicate([3, 3, 7, 7, 10, 11, 11])) // Output: 10
+// console.log(singleNonDuplicate([1, 1, 2, 3, 3, 4, 4, 8, 8])) // Output: 2
+// console.log(singleNonDuplicate([3, 3, 7, 7, 10, 11, 11])) // Output: 10
 
-
-
-
+// ----------------------------------------------------
+//! Leetcode 658. Find K Closest Elements
+// ----------------------------------------------------
+var findClosestElements = function (arr, k, x) {
+  let l = 0, r = arr.length - 1;
+  while (l < r) {
+    let m = l + Math.floor((r - l) / 2);
+    if ((arr[m + k] - x) < (x - arr[m])) l = k + 1;
+    else r = m;
+  }
+  // return arr.slice(l, l + k)
+  // return arr.slice(r, r + k)
+  let ans = [];
+  for (let i = l; i < l + k; i++) { ans.push(arr[i]) }
+  return ans;
+};
+console.log(findClosestElements(arr = [1, 2, 3, 4, 5], k = 4, x = 3)) // Output: [1,2,3,4]
+console.log(findClosestElements(arr = [1, 1, 2, 3, 4, 5], k = 4, x = -1)) // Output: [1,1,2,3]
