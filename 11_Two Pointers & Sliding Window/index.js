@@ -46,5 +46,38 @@ var twoSum2 = function (nums, target) {
 // console.log(twoSum2(nums = [-1, 0], target = -1)) // Output: [1,2]
 
 // ----------------------------------------------------
-//! Leetcode 167. Two Sum II - Input Array Is Sorted
+//! Leetcode 392. Is Subsequence
 // ----------------------------------------------------
+var isSubsequence = function (s, t) {
+  let i = j = 0;
+  while (i < s.length && j < t.length) {
+    if (s[i] === t[j]) i++;
+    else j++;
+  }
+  return i === s.length;
+};
+// console.log(isSubsequence(s = "abc", t = "ahbgdc")) // Output: true
+// console.log(isSubsequence(s = "axc", t = "ahbgdc")) // Output: false
+// console.log(isSubsequence(s = "acb", t = "ahbgdc")) // Output: false
+
+// ----------------------------------------------------
+//! Leetcode 28. Find the Index of the First Occurrence in a String
+// ----------------------------------------------------
+
+var strStr = function (haystack, needle) {
+  let i, j, hl = haystack.length, nl = needle.length
+  for (i = 0; i < hl - nl; i++) {
+    for (j = 0; j < nl; j++) {
+      if (haystack[i + j] !== needle[j]) break;
+    }
+    if (j === nl) return i;
+  }
+  return -1;
+};
+
+// var strStr = function (haystack, needle) {
+//   return haystack.indexOf(needle)
+// };
+console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
+console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
+console.log(strStr(haystack = "hello", needle = "ll")); // 2
