@@ -63,21 +63,63 @@ var isSubsequence = function (s, t) {
 // ----------------------------------------------------
 //! Leetcode 28. Find the Index of the First Occurrence in a String
 // ----------------------------------------------------
-
-var strStr = function (haystack, needle) {
-  let i, j, hl = haystack.length, nl = needle.length
-  for (i = 0; i < hl - nl; i++) {
-    for (j = 0; j < nl; j++) {
-      if (haystack[i + j] !== needle[j]) break;
-    }
-    if (j === nl) return i;
-  }
-  return -1;
-};
+//* T- O(n*m) S- O(1)
+// var strStr = function (haystack, needle) {
+//   let i, j, hl = haystack.length, nl = needle.length
+//   for (i = 0; i <= hl - nl; i++) {
+//     for (j = 0; j < nl; j++) {
+//       if (haystack[i + j] !== needle[j]) break;
+//     }
+//     if (j === nl) return i;
+//   }
+//   return -1;
+// };
 
 // var strStr = function (haystack, needle) {
 //   return haystack.indexOf(needle)
 // };
+
+//! KMP-[Knuth Morris Pratt Algorithm] Approch for better time and space complexity
+//TODO It is a String search algorithm [search string in big string]
+
+const calculateLPS = function (needle) {
+  let lps = new Array(needle.length).fill(0)
+  let i = 0, j = 1;
+  while (j < needle.length) {
+    if (needle[i] === needle[j]) {
+      lps[j] = i + 1; j++; i++;
+    }
+    else {
+      if (i !== 0) i = lps[i - 1];
+      else j++;
+    }
+  }
+  return lps;
+}
+// console.log(calculateLPS('aabaaac'))
+// console.log(calculateLPS('onions'))
+/*
+i:     0  1  2  3  4  5  6
+char:  a  a  b  a  a  a  c
+LPS:   0  1  0  1  2  2  0
+ */
+var strStr = function (haystack, needle) {
+  let hl = haystack.length, nl = needle.length, lps = calculateLPS(needle);
+  if (nl === 0) return 0;
+  let i = 0, j = 0;
+  while (i < hl) {
+    if (haystack[i] === needle[j]) {
+      i++; j++;
+    }
+    else {
+      if (j !== 0) { j = lps[j - 1] }
+      else i++;
+    }
+    if (j === nl) return i - j;
+  }
+  return -1;
+}
+
 console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
 console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
 console.log(strStr(haystack = "hello", needle = "ll")); // 2
