@@ -128,5 +128,79 @@ var strStr = function (haystack, needle) {
 //! Leetcode 160. Intersection of Two Linked Lists
 // ----------------------------------------------------
 var getIntersectionNode = function (headA, headB) {
-  
+  let n = 0, m = 0;
+  let pA = headA;
+  let pB = headB;
+
+  // calculating length
+  while (pA) {
+    ++n; pA = pA.next;
+  }
+  while (pB) {
+    ++m; pB = pB.next;
+  }
+
+  // diff
+  let diff = Math.abs(n - m);
+
+  // make sure second list is large
+
+  if (n > m) {
+    let temp = headA;
+    headA = headB;
+    headB = temp;
+  }
+
+  // moving second list ahead
+  for (let i = 0; i < diff; i++) {
+    headB = headB.next;
+  }
+
+  // pointer set again because second list is moved ahead
+  pA = headA;
+  pB = headB;
+
+  // check which is intersect and return
+  while (pA != pB) {
+    pA = pA.next;
+    pB = pB.next;
+  }
+  return pA;
 };
+
+//! solve above problem using Two pointer but using single loop 
+var getIntersectionNode = function (headA, headB) {
+  if (!headA || !headB) return null;
+  let pA = headA;
+  let pB = headB;
+
+  while (pA !== pB) {
+    // if (pA === null) pA = headB;
+    // else pA = pA.next;
+
+    // if (pB === null) pB = headA;
+    // else pB = pB.next;
+
+    pA = pA === null ? pA = headB : pA.next;
+    pB = pB === null ? pB = headA : pB.next;
+  }
+  return pA;
+  // return pB;
+}
+
+// ----------------------------------------------------
+//! Leetcode 11. Container With Most Water [two pointer]
+// ----------------------------------------------------
+var maxArea = function (height) {
+  let i = 0, j = height.length - 1, max = 0;
+
+  while (i < j) {
+    let ans = Math.min(height[i], height[j]) * (j - i);
+    if (height[i] < height[j]) i++;
+    else j--;
+    if (max < ans) max = ans;
+  }
+  return max;
+};
+console.log(maxArea(height = [1, 8, 6, 2, 5, 4, 8, 3, 7])) // Output: 49
+
