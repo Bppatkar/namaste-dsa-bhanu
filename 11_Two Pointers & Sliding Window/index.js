@@ -64,20 +64,20 @@ var isSubsequence = function (s, t) {
 //! Leetcode 28. Find the Index of the First Occurrence in a String
 // ----------------------------------------------------
 //* T- O(n*m) S- O(1)
-// var strStr = function (haystack, needle) {
-//   let i, j, hl = haystack.length, nl = needle.length
-//   for (i = 0; i <= hl - nl; i++) {
-//     for (j = 0; j < nl; j++) {
-//       if (haystack[i + j] !== needle[j]) break;
-//     }
-//     if (j === nl) return i;
-//   }
-//   return -1;
-// };
+var strStr = function (haystack, needle) {
+  let i, j, hl = haystack.length, nl = needle.length
+  for (i = 0; i <= hl - nl; i++) {
+    for (j = 0; j < nl; j++) {
+      if (haystack[i + j] !== needle[j]) break;
+    }
+    if (j === nl) return i;
+  }
+  return -1;
+};
 
-// var strStr = function (haystack, needle) {
-//   return haystack.indexOf(needle)
-// };
+var strStr = function (haystack, needle) {
+  return haystack.indexOf(needle)
+};
 
 //! KMP-[Knuth Morris Pratt Algorithm] Approch for better time and space complexity
 //TODO It is a String search algorithm [search string in big string]
@@ -115,11 +115,18 @@ var strStr = function (haystack, needle) {
       if (j !== 0) { j = lps[j - 1] }
       else i++;
     }
-    if (j === nl) return i - j;
+    if (j === nl) return i - nl;
   }
   return -1;
 }
 
-console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
-console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
-console.log(strStr(haystack = "hello", needle = "ll")); // 2
+// console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
+// console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
+// console.log(strStr(haystack = "hello", needle = "ll")); // 2
+
+// ----------------------------------------------------
+//! Leetcode 160. Intersection of Two Linked Lists
+// ----------------------------------------------------
+var getIntersectionNode = function (headA, headB) {
+  
+};
