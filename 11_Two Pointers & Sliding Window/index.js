@@ -202,5 +202,68 @@ var maxArea = function (height) {
   }
   return max;
 };
-console.log(maxArea(height = [1, 8, 6, 2, 5, 4, 8, 3, 7])) // Output: 49
+// console.log(maxArea(height = [1, 8, 6, 2, 5, 4, 8, 3, 7])) // Output: 49
 
+// ----------------------------------------------------
+//! Leetcode 15. 3Sum
+// ----------------------------------------------------
+
+//? we use twoSum solution with our modification ok
+var threeSum = function (nums) {
+  // sort the array
+  nums.sort((a, b) => a - b);
+  let ans = [];
+  for (let i = 0; i < nums.length; i++) {
+    // taking first elem and compare from second and last one and i++,j--
+    // make sure we are not using duplicate
+    if (nums[i] != nums[i - 1]) twoSum(nums, i, ans);
+  }
+  return ans;
+};
+
+var twoSum = function (nums, x, ans) {
+  let i = x + 1, j = nums.length - 1;
+  while (i < j) {
+    let sum = nums[x] + nums[i] + nums[j]
+    if (sum > 0) --j;
+    else if (sum < 0) ++i;
+    else {
+      ans.push([nums[x], nums[i], nums[j]]);
+      ++i; --j;
+      // making sure that duplicate are not using
+      while (i < j && nums[i] === nums[i - 1]) ++i;
+      // no need to worry about --j, i will automatically handle everything
+    }
+  }
+}
+// console.log(threeSum(nums = [-1, 0, 1, 2, -1, -4])) // Output: [[-1, -1, 2], [-1, 0, 1]]
+// console.log(threeSum(nums = [0, 1, 1])) // Output: []
+// console.log(threeSum(nums = [0, 0, 0])) // Output: [0,0,0]
+
+// ----------------------------------------------------
+//! Leetcode 42. Trapping Rain Water
+// ----------------------------------------------------
+var trap = function (height) {
+  let n = height.length;
+  let maxL = [];
+  maxL[0] = height[0];
+
+  for (let i = 1; i < n; i++) {
+    maxL[i] = Math.max(maxL[i - 1], height[i])
+  }
+  let maxR = [];
+  maxR[n - 1] = height[n - 1];
+  for (let i = n - 2; i >= 0; i--) {
+    maxR[i] = Math.max(height[i], maxR[i + 1])
+  }
+  // console.log(maxL)
+  // console.log(maxR)
+  let ans = 0;
+  for (let i = 0; i < n; i++) {
+    let trappedWater = Math.min(maxL[i], maxR[i]) - height[i]
+    ans = ans + (trappedWater < 0 ? 0 : trappedWater);
+  }
+  return ans;
+};
+console.log(trap(height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])) // Output: 6
+console.log(trap(height = [4, 2, 0, 3, 2, 5])) // Output: 9
