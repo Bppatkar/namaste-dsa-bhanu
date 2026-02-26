@@ -1,1221 +1,937 @@
-# 🚀 Complete DSA Guide - All Topics with Pattern Recognition
+# 🚀 DSA Complete Guide — JavaScript Edition
+> Pattern Recognition · When to Use What · LeetCode Problems · Code Templates
 
 ---
 
-## 📚 TABLE OF CONTENTS
+## 🧠 Step 1: Check the Constraints First
 
-1. [Array Problems](#array-problems)
-2. [String Problems](#string-problems)
-3. [Linked List Problems](#linked-list-problems)
-4. [Stack Problems](#stack-problems)
-5. [Queue Problems](#queue-problems)
-6. [Hash Map & Set](#hash-map--set)
-7. [Two Pointers](#two-pointers)
-8. [Sliding Window](#sliding-window)
-9. [Binary Search](#binary-search)
-10. [Dynamic Programming](#dynamic-programming)
-11. [Tree Problems](#tree-problems)
-12. [Graph - BFS/DFS](#graph---bfsdfs)
-13. [Backtracking](#backtracking)
-14. [Heap & Priority Queue](#heap--priority-queue)
-15. [Bit Manipulation](#bit-manipulation)
-16. [Math Problems](#math-problems)
-17. [Greedy Algorithms](#greedy-algorithms)
-18. [Trie](#trie)
-19. [Union-Find (Disjoint Set)](#union-find-disjoint-set)
-20. [Sorting Algorithms](#sorting-algorithms)
+Before writing a single line of code, look at **n**.
+
+| Input Size | What's Allowed | Techniques |
+|---|---|---|
+| **n ≤ 20** | Brute force is fine | Backtracking, recursion, 2^n or n! complexity |
+| **10³ ≤ n ≤ 10⁶** | No brute force | Two pointers, greedy, heap, DP, O(n log n) |
+| **n ≥ 10⁷** | Even O(n) may be too slow | Binary search, math formulas, O(log n) or O(1) |
 
 ---
 
-# 1️⃣ ARRAY PROBLEMS
+## 📥 Step 2: Analyze the Input Format
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Find max/min", "Rotate array", "Duplicate elements", "Missing number", "Move elements", "Merge arrays"</b></summary>
-
-### Questions that Use This:
-
-1. **Remove Duplicates from Sorted Array** - LeetCode #26
-   - Remove duplicates in-place
-   - **Two Pointers:** slow for unique position, fast for scanning
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Remove Element** - LeetCode #27
-   - Remove all instances of value in-place
-   - **Two Pointers:** slow marks position, fast scans
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Move Zeroes** - LeetCode #283
-   - Move all zeros to end (relative order maintained)
-   - **Two Pointers:** Track non-zero position
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Rotate Array** - LeetCode #189
-   - Rotate array k positions to right
-   - **Reverse Trick:** Reverse three times
-   - **Time:** O(n) | **Space:** O(1)
-
-5. **Best Time to Buy and Sell Stock** - LeetCode #121
-   - Max profit from buying and selling once
-   - **Greedy:** Track min price, max profit
-   - **Time:** O(n) | **Space:** O(1)
-
-6. **Best Time to Buy and Sell Stock II** - LeetCode #122
-   - Max profit buying/selling unlimited times
-   - **Greedy:** Capture every increase
-   - **Time:** O(n) | **Space:** O(1)
-
-7. **Best Time to Buy and Sell Stock III** - LeetCode #123
-   - Max profit with at most 2 transactions
-   - **DP:** Track states
-   - **Time:** O(n) | **Space:** O(1)
-
-8. **Best Time to Buy and Sell Stock IV** - LeetCode #188
-   - Max profit with at most k transactions
-   - **DP:** 2D DP or optimized
-   - **Time:** O(n×k) | **Space:** O(k)
-
-9. **Search in Rotated Sorted Array** - LeetCode #33
-   - Search in rotated sorted array
-   - **Binary Search:** Find sorted half
-   - **Time:** O(log n) | **Space:** O(1)
-
-10. **Find Peak Element** - LeetCode #162
-    - Find local maximum in array
-    - **Binary Search:** Compare with neighbors
-    - **Time:** O(log n) | **Space:** O(1)
-
-11. **Maximum Subarray** - LeetCode #53
-    - Find subarray with max sum
-    - **DP/Kadane's:** f(i) = max(arr[i], f(i-1) + arr[i])
-    - **Time:** O(n) | **Space:** O(1)
-
-12. **Missing Number** - LeetCode #268
-    - Find missing number in array 0 to n
-    - **XOR Trick:** XOR all, then XOR with n
-    - **Time:** O(n) | **Space:** O(1)
-
-13. **Contains Duplicate** - LeetCode #217
-    - Check if duplicates exist
-    - **HashSet:** O(1) check
-    - **Time:** O(n) | **Space:** O(n)
-
-14. **Contains Duplicate II** - LeetCode #219
-    - Duplicates within distance k
-    - **Sliding Window:** Keep window of size k
-    - **Time:** O(n) | **Space:** O(min(n,k))
-
-15. **Merge Sorted Array** - LeetCode #88
-    - Merge two sorted arrays in-place
-    - **Two Pointers:** Start from end
-    - **Time:** O(m+n) | **Space:** O(1)
-
-16. **Find Intersection of Arrays** - LeetCode #349
-    - Find common elements
-    - **HashSet:** Store first, check second
-    - **Time:** O(n+m) | **Space:** O(min(n,m))
-
-17. **Majority Element** - LeetCode #169
-    - Element appearing > n/2 times
-    - **HashMap/Boyer-Moore:** Count or election
-    - **Time:** O(n) | **Space:** O(1)
-
-18. **Top K Frequent Elements** - LeetCode #347
-    - Find k most frequent
-    - **HashMap + Bucket Sort:** Count then bucket
-    - **Time:** O(n) | **Space:** O(n)
+| Input Type | Go-To Approach |
+|---|---|
+| Tree / BST | DFS (all paths, recursion) or BFS (level-order, shortest path) |
+| Graph (nodes + edges) | BFS → shortest path · DFS → components · Union-Find → groups · Topo sort → dependencies |
+| 2D Grid / Matrix | DFS/BFS for islands · Union-Find for regions · DP for paths |
+| Sorted Array | Binary search · Two pointers · Greedy |
+| String | Two pointers (palindrome) · Sliding window (substrings) · Trie (prefixes) · Stack (brackets) |
+| Linked List | Fast/slow pointers (cycle) · Dummy node tricks |
 
 ---
 
-### 💡 Code Template:
+## 📤 Step 3: Analyze the Output Format
+
+| Output Type | Technique |
+|---|---|
+| List of lists (subsets, paths, combos) | **Backtracking** — always |
+| Single number (max/min/count) | **DP** for optimization · **Greedy** for local choices · **Math** for counting |
+| Modified array/string (in-place) | **Two Pointers** |
+| Ordered list (sorted tasks, ranked items) | Custom sort · Topological sort · Heap |
+
+---
+
+## 🔑 Step 4: Keyword → Pattern Cheat Sheet
+
+| Keyword in Problem | Pattern |
+|---|---|
+| "Number of ways" / "How many ways" | Dynamic Programming |
+| "Maximum / Minimum" + sum/profit/cost | Dynamic Programming |
+| "Can you reach" / "Can achieve" | Dynamic Programming |
+| "Longest / Shortest subsequence" | Dynamic Programming |
+| "Palindrome" | Two Pointers |
+| "Sorted array" + pairs | Two Pointers |
+| "Target sum" / "Remove duplicates" | Two Pointers |
+| "K largest" / "K smallest" / "Top K" | Heap |
+| "Median" / "Priority" | Heap |
+| "Parentheses" / "Brackets" / "Nested" | Stack |
+| "Next greater / smaller element" | Monotonic Stack |
+| "Count frequency" / "Anagram" / "Duplicates" | HashMap |
+| "Word search" / "Prefix matching" / "Autocomplete" / "Starts with" | Trie |
+| "Minimum operations" / "Activity selection" | Greedy |
+| "Connected components" / "Number of groups" | Union-Find |
+| "Kth element" / "Search in sorted" / "Minimize maximum" | Binary Search |
+| "XOR" / "Single number" / "Power of 2" | Bit Manipulation |
+| "Substring" with conditions / "Maximum window" | Sliding Window |
+| "GCD / LCM" / "Prime" / "Coordinates" | Math / Geometry |
+| "Optimal strategy" / "Win / Lose" / "Minimax" | Game Theory |
+
+---
+
+## 🎯 Quick Decision Trees
+
+```
+Need to find element?
+├── Array is sorted? ──────────────→ Binary Search  O(log n)
+├── Need instant lookup? ───────────→ HashSet/Map   O(1)
+└── Any other case? ────────────────→ Linear Search O(n)
+
+Problem involves pairs/elements?
+├── Array SORTED? ──────────────────→ Two Pointers ✓
+├── Need in-place modification? ────→ Two Pointers (same direction) ✓
+└── Opposite ends comparison? ──────→ Two Pointers ✓
+
+Problem is about subarray/substring?
+├── Continuous elements? ───────────→ Sliding Window ✓
+├── Fixed window size? ─────────────→ Sliding Window ✓
+└── Expanding/contracting? ─────────→ Sliding Window ✓
+
+Problem has multiple choices?
+├── Overlapping subproblems? ───────→ DP ✓
+├── "How many ways"? ───────────────→ DP ✓
+└── "Min/Max solution"? ────────────→ DP ✓
+
+Need extreme values from stream?
+├── Top K elements? ────────────────→ Heap ✓
+├── Median of stream? ──────────────→ Two Heaps ✓
+└── Just sort all? (K ≈ N) ─────────→ arr.sort()
+
+Need to store data?
+├── Just check if exists? ──────────→ Set (less space)
+├── Frequency count? ───────────────→ Map
+└── Group elements? ────────────────→ Map
+```
+
+---
+
+## 📊 Pattern Quick Reference
+
+| Pattern | Use When | Time | Space |
+|---|---|---|---|
+| Two Pointers | Sorted pairs, in-place | O(n) | O(1) |
+| Sliding Window | Subarray/substring | O(n) | O(k) |
+| HashMap/Set | Frequency, mapping, lookup | O(1) lookup | O(n) |
+| Binary Search | Sorted array search | O(log n) | O(1) |
+| Dynamic Programming | Optimal substructure | Varies | Varies |
+| Stack | LIFO, matching, monotonic | O(1) op | O(n) |
+| BFS | Shortest path, level order | O(V+E) | O(V) |
+| DFS | All paths, components | O(V+E) | O(V) |
+| Heap | Top K, median, streaming | O(log n) | O(n) |
+| Backtracking | All permutations/subsets | O(2^n) | O(n) |
+| Union-Find | Components, connectivity | O(α(n)) | O(n) |
+| Trie | Prefix search, word problems | O(m) | O(26n) |
+| Greedy | Scheduling, local optimal | O(n log n) | O(1) |
+| Bit Manipulation | XOR, counting bits | O(1) | O(1) |
+
+---
+
+---
+
+# 🔥 Patterns with Templates + LeetCode Problems
+
+---
+
+## Pattern 1: TWO POINTERS
+
+**Use when:** sorted array, pairs, palindromes, in-place modification
 
 ```javascript
-// Two Pointers - Remove Element
+// ── Opposite Ends (sorted array) ──────────────────────────
+let i = 0, j = arr.length - 1;
+while (i < j) {
+  if (condition_met)        return [i, j];
+  else if (need_bigger)     i++;
+  else                      j--;
+}
+
+// ── Same Direction (in-place) ─────────────────────────────
 let slow = 0;
 for (let fast = 0; fast < arr.length; fast++) {
-  if (condition) {
-    arr[slow++] = arr[fast];
-  }
+  if (keep_element) arr[slow++] = arr[fast];
 }
-return slow;
+return slow; // new length
 
-// Kadane's Algorithm - Max Subarray Sum
-let maxSum = arr[0];
-let currentSum = arr[0];
-for (let i = 1; i < arr.length; i++) {
-  currentSum = Math.max(arr[i], currentSum + arr[i]);
-  maxSum = Math.max(maxSum, currentSum);
+// ── Merge Two Sorted Arrays ───────────────────────────────
+let i = 0, j = 0;
+while (i < a.length && j < b.length) {
+  result.push(a[i] <= b[j] ? a[i++] : b[j++]);
 }
-return maxSum;
-
-// Rotate Array by k
-function rotate(arr, k) {
-  k = k % arr.length;
-  reverse(arr, 0, arr.length - 1);
-  reverse(arr, 0, k - 1);
-  reverse(arr, k, arr.length - 1);
-}
+result.push(...a.slice(i), ...b.slice(j));
 ```
 
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 167 | Two Sum II (Sorted Array) | Opposite ends | O(n) | O(1) |
+| 26 | Remove Duplicates from Sorted Array | Same direction | O(n) | O(1) |
+| 88 | Merge Sorted Array | Start from end | O(m+n) | O(1) |
+| 125 | Valid Palindrome | From both ends | O(n) | O(1) |
+| 11 | Container With Most Water | Move shorter pointer | O(n) | O(1) |
+| 15 | 3Sum | Fix one, two pointers | O(n²) | O(1) |
+| 283 | Move Zeroes | Track non-zero position | O(n) | O(1) |
+| 680 | Valid Palindrome II | Try skipping one char | O(n) | O(1) |
+
+<details>
+<summary><b>▶ Two Sum II — LeetCode #167 (Easy)</b></summary>
+
+**Problem:** Sorted array, find two numbers that add to target. Return 1-indexed positions.
+
+```javascript
+function twoSum(numbers, target) {
+  let left = 0, right = numbers.length - 1;
+  while (left < right) {
+    const sum = numbers[left] + numbers[right];
+    if (sum === target)      return [left + 1, right + 1];
+    else if (sum < target)   left++;
+    else                     right--;
+  }
+  return [];
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Container With Most Water — LeetCode #11 (Medium)</b></summary>
+
+**Problem:** Find two lines forming container with max water.
+
+**Logic:** Start widest. Move pointer with smaller height — it can only get worse staying.
+
+```javascript
+function maxArea(height) {
+  let left = 0, right = height.length - 1, maxWater = 0;
+  while (left < right) {
+    const water = (right - left) * Math.min(height[left], height[right]);
+    maxWater = Math.max(maxWater, water);
+    if (height[left] < height[right]) left++;
+    else right--;
+  }
+  return maxWater;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ 3Sum — LeetCode #15 (Medium)</b></summary>
+
+**Problem:** Find all unique triplets summing to 0.
+
+```javascript
+function threeSum(nums) {
+  nums.sort((a, b) => a - b);
+  const result = [];
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue; // skip duplicates
+    let left = i + 1, right = nums.length - 1;
+    while (left < right) {
+      const sum = nums[i] + nums[left] + nums[right];
+      if (sum === 0) {
+        result.push([nums[i], nums[left], nums[right]]);
+        while (nums[left] === nums[left + 1]) left++;
+        while (nums[right] === nums[right - 1]) right--;
+        left++; right--;
+      } else if (sum < 0) left++;
+      else right--;
+    }
+  }
+  return result;
+}
+```
 </details>
 
 ---
 
-# 2️⃣ STRING PROBLEMS
+## Pattern 2: SLIDING WINDOW
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Palindrome", "Anagram", "Pattern matching", "Reverse", "Character frequency"</b></summary>
-
-### Questions that Use This:
-
-1. **Valid Palindrome** - LeetCode #125
-   - Check if palindrome (ignore spaces/special)
-   - **Two Pointers:** From both ends, skip non-alphanumeric
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Valid Palindrome II** - LeetCode #680
-   - Palindrome after deleting at most 1 char
-   - **Two Pointers:** Try skipping each char
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Valid Anagram** - LeetCode #242
-   - Check if anagrams
-   - **HashMap/Sorting:** Count frequencies or sort
-   - **Time:** O(n) | **Space:** O(1) or O(n)
-
-4. **Group Anagrams** - LeetCode #49
-   - Group anagrams together
-   - **HashMap:** Sort each word as key
-   - **Time:** O(n×k log k) | **Space:** O(n)
-
-5. **Longest Substring Without Repeating** - LeetCode #3
-   - Longest substring no repeating chars
-   - **Sliding Window:** Shrink when duplicate
-   - **Time:** O(n) | **Space:** O(min(n,26))
-
-6. **Longest Repeating Character Replacement** - LeetCode #424
-   - Max length after replacing at most k chars
-   - **Sliding Window:** Track char frequency
-   - **Time:** O(n) | **Space:** O(26)
-
-7. **Minimum Window Substring** - LeetCode #76
-   - Shortest substring containing all chars
-   - **Sliding Window:** Expand right, shrink left
-   - **Time:** O(n) | **Space:** O(1)
-
-8. **Permutation in String** - LeetCode #567
-   - Check if permutation is substring
-   - **Sliding Window:** Fixed size match
-   - **Time:** O(n) | **Space:** O(26)
-
-9. **Find All Anagrams in String** - LeetCode #438
-   - Find all anagram substrings
-   - **Sliding Window:** Fixed window matching
-   - **Time:** O(n) | **Space:** O(26)
-
-10. **First Unique Character in String** - LeetCode #387
-    - Find first non-repeating character
-    - **HashMap:** Count frequencies
-    - **Time:** O(n) | **Space:** O(26)
-
-11. **Isomorphic Strings** - LeetCode #205
-    - Check if pattern mapping exists
-    - **HashMap:** Bidirectional mapping
-    - **Time:** O(n) | **Space:** O(26)
-
-12. **Word Pattern** - LeetCode #290
-    - Check if word pattern matches
-    - **HashMap:** Bidirectional mapping
-    - **Time:** O(n) | **Space:** O(n)
-
-13. **Valid Parentheses** - LeetCode #20
-    - Check if valid parentheses
-    - **Stack:** Push open, pop on close
-    - **Time:** O(n) | **Space:** O(n)
-
-14. **Reverse String** - LeetCode #344
-    - Reverse string in-place
-    - **Two Pointers:** Swap from ends
-    - **Time:** O(n) | **Space:** O(1)
-
-15. **Reverse Words in String** - LeetCode #151
-    - Reverse word order
-    - **Split/Reverse:** Or manual pointer
-    - **Time:** O(n) | **Space:** O(n)
-
-16. **String Compression** - LeetCode #443
-    - Compress string in-place
-    - **Two Pointers:** Write and read pointers
-    - **Time:** O(n) | **Space:** O(1)
-
-17. **Decode String** - LeetCode #394
-    - Decode encoded string (e.g., 2[a] = aa)
-    - **Stack:** Handle nested encoding
-    - **Time:** O(n) | **Space:** O(n)
-
-18. **Word Break** - LeetCode #139
-    - Check if can be segmented by dictionary
-    - **DP:** f(i) = true if f(j) and s[j:i] in dict
-    - **Time:** O(n²) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+**Use when:** continuous subarray/substring, longest/shortest with constraint, no-repeat
 
 ```javascript
-// Two Pointers - Palindrome Check
-let left = 0, right = s.length - 1;
-while (left < right) {
-  if (s[left] !== s[right]) return false;
-  left++;
-  right--;
-}
-return true;
+// ── Variable Window (shrink when constraint violated) ─────
+let left = 0, result = 0;
+const map = new Map();
 
-// Sliding Window - Longest Substring
-let set = new Set();
-let left = 0, maxLen = 0;
 for (let right = 0; right < s.length; right++) {
-  while (set.has(s[right])) {
-    set.delete(s[left++]);
+  // 1. Expand: add s[right] to window
+  map.set(s[right], (map.get(s[right]) || 0) + 1);
+
+  // 2. Shrink: while constraint is violated, remove from left
+  while (constraint_violated) {
+    map.set(s[left], map.get(s[left]) - 1);
+    if (map.get(s[left]) === 0) map.delete(s[left]);
+    left++;
   }
-  set.add(s[right]);
-  maxLen = Math.max(maxLen, right - left + 1);
+
+  // 3. Update result
+  result = Math.max(result, right - left + 1);
 }
 
-// HashMap - Group Anagrams
-let map = new Map();
-for (let str of strs) {
-  let sorted = str.split('').sort().join('');
-  if (!map.has(sorted)) map.set(sorted, []);
-  map.get(sorted).push(str);
+// ── Fixed Window ──────────────────────────────────────────
+for (let i = 0; i < arr.length; i++) {
+  // add arr[i]
+  if (i >= k) { /* remove arr[i-k] */ }
+  if (i >= k - 1) { /* record result */ }
 }
 ```
 
-</details>
-
----
-
-# 3️⃣ LINKED LIST PROBLEMS
+| # | Problem | Key Constraint | Time | Space |
+|---|---|---|---|---|
+| 3 | Longest Substring Without Repeating | No duplicate chars | O(n) | O(26) |
+| 76 | Minimum Window Substring | Contains all of t | O(n) | O(1) |
+| 424 | Longest Repeating Char Replacement | At most k replacements | O(n) | O(26) |
+| 1004 | Max Consecutive Ones III | Flip at most k zeros | O(n) | O(1) |
+| 567 | Permutation in String | Fixed window match | O(n) | O(26) |
+| 438 | Find All Anagrams in String | Fixed window match | O(n) | O(26) |
+| 239 | Sliding Window Maximum | Deque, max per window | O(n) | O(k) |
+| 219 | Contains Duplicate II | Duplicate within distance k | O(n) | O(k) |
 
 <details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Reverse list", "Detect cycle", "Find middle", "Merge lists", "Remove nodes"</b></summary>
-
-### Questions that Use This:
-
-1. **Reverse Linked List** - LeetCode #206
-   - Reverse entire list
-   - **Iteration:** Change pointers one by one
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Reverse Linked List II** - LeetCode #92
-   - Reverse sublist from m to n
-   - **Iteration:** Reverse portion
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Palindrome Linked List** - LeetCode #234
-   - Check if list is palindrome
-   - **Two Pointers:** Find middle, reverse, compare
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Linked List Cycle** - LeetCode #141
-   - Detect if cycle exists
-   - **Fast-Slow Pointers:** Floyd's algorithm
-   - **Time:** O(n) | **Space:** O(1)
-
-5. **Linked List Cycle II** - LeetCode #142
-   - Find cycle start node
-   - **Fast-Slow Pointers:** Find meeting, reset
-   - **Time:** O(n) | **Space:** O(1)
-
-6. **Middle of Linked List** - LeetCode #876
-   - Find middle node
-   - **Fast-Slow Pointers:** Slow moves 1, fast 2
-   - **Time:** O(n) | **Space:** O(1)
-
-7. **Remove Nth Node from End** - LeetCode #19
-   - Remove nth node from end
-   - **Two Pointers:** Distance k apart
-   - **Time:** O(n) | **Space:** O(1)
-
-8. **Merge Two Sorted Lists** - LeetCode #21
-   - Merge two sorted lists
-   - **Two Pointers:** Compare and merge
-   - **Time:** O(m+n) | **Space:** O(1)
-
-9. **Merge K Sorted Lists** - LeetCode #23
-   - Merge k sorted lists
-   - **Heap/Priority Queue:** K pointers
-   - **Time:** O(n log k) | **Space:** O(k)
-
-10. **Remove Duplicates from Sorted List** - LeetCode #83
-    - Remove duplicates in sorted list
-    - **One Pointer:** Skip duplicates
-    - **Time:** O(n) | **Space:** O(1)
-
-11. **Remove Duplicates from Sorted List II** - LeetCode #82
-    - Remove all duplicates (appears > 1)
-    - **One Pointer:** Mark and skip
-    - **Time:** O(n) | **Space:** O(1)
-
-12. **Intersection of Two Lists** - LeetCode #160
-    - Find intersection point
-    - **Two Pointers:** A+B vs B+A approach
-    - **Time:** O(m+n) | **Space:** O(1)
-
-13. **Reorder List** - LeetCode #143
-    - Reorder L1→Ln→L2→Ln-1...
-    - **Two Pointers:** Find middle, reverse, merge
-    - **Time:** O(n) | **Space:** O(1)
-
-14. **Partition List** - LeetCode #86
-    - Partition by value
-    - **Two Pointers:** Separate and merge
-    - **Time:** O(n) | **Space:** O(1)
-
-15. **Sort List** - LeetCode #148
-    - Sort linked list
-   - **Merge Sort:** Divide and merge
-    - **Time:** O(n log n) | **Space:** O(log n)
-
-16. **Copy List with Random Pointer** - LeetCode #138
-    - Deep copy with random pointers
-    - **HashMap:** Map original to copy
-    - **Time:** O(n) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+<summary><b>▶ Longest Substring Without Repeating — LeetCode #3 (Medium)</b></summary>
 
 ```javascript
-// Reverse Linked List
-let prev = null;
-let current = head;
-while (current) {
-  let next = current.next;
-  current.next = prev;
-  prev = current;
-  current = next;
-}
-return prev;
-
-// Fast-Slow Pointers
-let slow = head, fast = head;
-while (fast && fast.next) {
-  slow = slow.next;
-  fast = fast.next.next;
-}
-return slow;
-
-// Two Pointers - Merge
-let dummy = new ListNode(0);
-let curr = dummy;
-while (l1 && l2) {
-  if (l1.val <= l2.val) {
-    curr.next = l1;
-    l1 = l1.next;
-  } else {
-    curr.next = l2;
-    l2 = l2.next;
+function lengthOfLongestSubstring(s) {
+  const seen = new Set();
+  let left = 0, maxLen = 0;
+  for (let right = 0; right < s.length; right++) {
+    while (seen.has(s[right])) seen.delete(s[left++]);
+    seen.add(s[right]);
+    maxLen = Math.max(maxLen, right - left + 1);
   }
-  curr = curr.next;
+  return maxLen;
 }
-curr.next = l1 || l2;
 ```
-
 </details>
 
----
-
-# 4️⃣ STACK PROBLEMS
-
 <details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Next/Previous Greater/Smaller", "Valid parentheses", "Daily temperatures", "Largest rectangle"</b></summary>
+<summary><b>▶ Minimum Window Substring — LeetCode #76 (Hard)</b></summary>
 
-### Questions that Use This:
-
-1. **Valid Parentheses** - LeetCode #20
-   - Check valid brackets
-   - **Stack:** Push open, pop on close
-   - **Time:** O(n) | **Space:** O(n)
-
-2. **Next Greater Element I** - LeetCode #496
-   - Find next greater element
-   - **Monotonic Stack:** Decreasing order
-   - **Time:** O(n) | **Space:** O(n)
-
-3. **Next Greater Element II** - LeetCode #503
-   - Circular array next greater
-   - **Monotonic Stack:** Traverse twice
-   - **Time:** O(n) | **Space:** O(n)
-
-4. **Daily Temperatures** - LeetCode #739
-   - Days until warmer temperature
-   - **Monotonic Stack:** Decreasing indices
-   - **Time:** O(n) | **Space:** O(n)
-
-5. **Largest Rectangle in Histogram** - LeetCode #84
-   - Largest rectangle area
-   - **Monotonic Stack:** Increasing heights
-   - **Time:** O(n) | **Space:** O(n)
-
-6. **Maximal Rectangle** - LeetCode #85
-   - Largest rectangle in matrix
-   - **Histogram + Stack:** Convert rows to histogram
-   - **Time:** O(m×n) | **Space:** O(n)
-
-7. **Trapping Rain Water** - LeetCode #42
-   - Water trapped between bars
-   - **Stack/Two Pointers:** Find left/right max
-   - **Time:** O(n) | **Space:** O(1) or O(n)
-
-8. **Remove K Digits** - LeetCode #402
-   - Remove k digits to make smallest
-   - **Monotonic Stack:** Keep increasing
-   - **Time:** O(n) | **Space:** O(n)
-
-9. **Remove Duplicate Letters** - LeetCode #316
-   - Remove duplicates keeping order
-   - **Monotonic Stack + Frequency:** Greedy
-   - **Time:** O(n) | **Space:** O(26)
-
-10. **Evaluate Reverse Polish Notation** - LeetCode #150
-    - Evaluate postfix expression
-    - **Stack:** Operators pop two operands
-    - **Time:** O(n) | **Space:** O(n)
-
-11. **Basic Calculator** - LeetCode #224
-    - Evaluate expression with +,-,(,)
-    - **Stack:** Handle operators and brackets
-    - **Time:** O(n) | **Space:** O(n)
-
-12. **Basic Calculator II** - LeetCode #227
-    - Evaluate expression with *, /
-    - **Stack:** Handle precedence
-    - **Time:** O(n) | **Space:** O(n)
-
-13. **Decode String** - LeetCode #394
-    - Decode encoded string
-    - **Stack:** Handle nested patterns
-    - **Time:** O(n) | **Space:** O(n)
-
-14. **Simplify Path** - LeetCode #71
-    - Simplify Unix file path
-    - **Stack:** Push directories, pop ".."
-    - **Time:** O(n) | **Space:** O(n)
-
-15. **Min Stack** - LeetCode #155
-    - Stack with getMin in O(1)
-    - **Two Stacks:** Data and min
-    - **Time:** O(1) all | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+**Logic:** Expand right until all chars covered. Shrink left to minimize. Track minimum window.
 
 ```javascript
-// Monotonic Stack - Next Greater
-let stack = [];
-for (let i = arr.length - 1; i >= 0; i--) {
-  while (stack.length && stack[stack.length-1] <= arr[i]) {
-    stack.pop();
-  }
-  result[i] = stack.length ? stack[stack.length-1] : -1;
-  stack.push(arr[i]);
-}
+function minWindow(s, t) {
+  const need = new Map();
+  for (const c of t) need.set(c, (need.get(c) || 0) + 1);
 
-// Valid Parentheses
-let stack = [];
-for (let char of s) {
-  if ('({['.includes(char)) {
-    stack.push(char);
-  } else {
-    if (!stack.length || pairs[char] !== stack.pop()) {
-      return false;
+  let left = 0, formed = 0, required = need.size;
+  const window = new Map();
+  let ans = [Infinity, 0, 0]; // [length, start, end]
+
+  for (let right = 0; right < s.length; right++) {
+    const c = s[right];
+    window.set(c, (window.get(c) || 0) + 1);
+    if (need.has(c) && window.get(c) === need.get(c)) formed++;
+
+    while (formed === required) {
+      if (right - left + 1 < ans[0]) ans = [right - left + 1, left, right];
+      const lc = s[left];
+      window.set(lc, window.get(lc) - 1);
+      if (need.has(lc) && window.get(lc) < need.get(lc)) formed--;
+      left++;
     }
   }
+  return ans[0] === Infinity ? "" : s.slice(ans[1], ans[2] + 1);
 }
-return stack.length === 0;
 ```
-
 </details>
 
----
-
-# 5️⃣ QUEUE PROBLEMS
-
 <details>
-<summary><b>IF YOU GET A QUESTION LIKE: "BFS", "Level order", "Sliding window max", "Task scheduling"</b></summary>
-
-### Questions that Use This:
-
-1. **Number of Islands** - LeetCode #200
-   - Count connected components
-   - **BFS/DFS:** Explore all connected land
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-2. **Walls and Gates** - LeetCode #286
-   - Distance to nearest gate
-   - **BFS:** Multi-source BFS
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-3. **Rotting Oranges** - LeetCode #994
-   - Time until all oranges rotten
-   - **BFS:** Multi-source, level by level
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-4. **Word Ladder** - LeetCode #127
-   - Shortest transformation sequence
-   - **BFS:** Find shortest path
-   - **Time:** O(N×L²) | **Space:** O(N×L)
-
-5. **Course Schedule** - LeetCode #207
-   - Check if can finish courses (detect cycle)
-   - **Topological Sort:** Kahn's algorithm
-   - **Time:** O(V+E) | **Space:** O(V)
-
-6. **Course Schedule II** - LeetCode #210
-   - Order courses with prerequisites
-   - **Topological Sort:** Kahn's algorithm
-   - **Time:** O(V+E) | **Space:** O(V)
-
-7. **Sliding Window Maximum** - LeetCode #239
-   - Max element in each sliding window
-   - **Deque:** Maintain decreasing order
-   - **Time:** O(n) | **Space:** O(k)
-
-8. **Recently Played Songs** - LeetCode #1600
-   - Most recently played songs
-   - **Queue/Order:** Track play order
-   - **Time:** O(n) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+<summary><b>▶ Max Consecutive Ones III — LeetCode #1004 (Medium)</b></summary>
 
 ```javascript
-// BFS - Level Order
-let queue = [start];
-let visited = new Set([start]);
-
-while (queue.length) {
-  let size = queue.length;
-  for (let i = 0; i < size; i++) {
-    let node = queue.shift();
-    // Process node
-    for (let neighbor of getNeighbors(node)) {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        queue.push(neighbor);
-      }
+function longestOnes(nums, k) {
+  let left = 0, zeros = 0, maxLen = 0;
+  for (let right = 0; right < nums.length; right++) {
+    if (nums[right] === 0) zeros++;
+    while (zeros > k) {
+      if (nums[left++] === 0) zeros--;
     }
+    maxLen = Math.max(maxLen, right - left + 1);
   }
-  level++;
-}
-
-// Topological Sort - Kahn's
-let inDegree = new Map();
-let graph = new Map();
-// Build graph...
-let queue = [];
-for (let node of nodes) {
-  if (inDegree[node] === 0) queue.push(node);
-}
-while (queue.length) {
-  let node = queue.shift();
-  result.push(node);
-  for (let neighbor of graph.get(node)) {
-    inDegree[neighbor]--;
-    if (inDegree[neighbor] === 0) queue.push(neighbor);
-  }
+  return maxLen;
 }
 ```
-
 </details>
 
 ---
 
-# 6️⃣ HASH MAP & SET
+## Pattern 3: HASHMAP / HASHSET
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Count frequency", "Find pairs", "Group elements", "Duplicates"</b></summary>
-
-### Questions that Use This:
-
-1. **Two Sum** - LeetCode #1
-   - Find two numbers summing to target
-   - **HashMap:** Store complement
-   - **Time:** O(n) | **Space:** O(n)
-
-2. **Two Sum II** - LeetCode #167
-   - Two sum in sorted array
-   - **Two Pointers:** Opposite ends
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Two Sum III** - LeetCode #170
-   - Add and find with two sum
-   - **HashMap:** Store all numbers
-   - **Time:** O(1) add, O(n) find | **Space:** O(n)
-
-4. **3Sum** - LeetCode #15
-   - Find all triplets summing to target
-   - **Sorting + Two Pointers:** Fix one, two pointers
-   - **Time:** O(n²) | **Space:** O(1)
-
-5. **4Sum** - LeetCode #18
-   - Find all quadruplets summing to target
-   - **Sorting + Two Pointers:** Nested loops
-   - **Time:** O(n³) | **Space:** O(1)
-
-6. **Valid Anagram** - LeetCode #242
-   - Check if anagrams
-   - **HashMap/Sorting:** Count frequencies
-   - **Time:** O(n) | **Space:** O(1)
-
-7. **Group Anagrams** - LeetCode #49
-   - Group anagrams
-   - **HashMap:** Sorted word as key
-   - **Time:** O(n×k log k) | **Space:** O(n)
-
-8. **Contains Duplicate** - LeetCode #217
-   - Check if duplicates
-   - **HashSet:** O(1) check
-   - **Time:** O(n) | **Space:** O(n)
-
-9. **Contains Duplicate II** - LeetCode #219
-   - Duplicates within distance k
-   - **Sliding Window + Set:** Keep window size k
-   - **Time:** O(n) | **Space:** O(min(n,k))
-
-10. **Majority Element** - LeetCode #169
-    - Element appearing > n/2 times
-    - **HashMap/Boyer-Moore:** Count
-    - **Time:** O(n) | **Space:** O(1)
-
-11. **Top K Frequent Elements** - LeetCode #347
-    - k most frequent elements
-    - **HashMap + Bucket Sort:** Count then bucket
-    - **Time:** O(n) | **Space:** O(n)
-
-12. **Isomorphic Strings** - LeetCode #205
-    - Pattern mapping exists
-    - **HashMap:** Bidirectional
-    - **Time:** O(n) | **Space:** O(26)
-
-13. **Word Pattern** - LeetCode #290
-    - Word pattern matches
-    - **HashMap:** Bidirectional
-    - **Time:** O(n) | **Space:** O(n)
-
-14. **Happy Number** - LeetCode #202
-    - Reaches 1 or cycle
-    - **HashSet:** Track seen
-    - **Time:** O(n) | **Space:** O(n)
-
-15. **Intersection of Two Arrays** - LeetCode #349
-    - Common elements
-    - **HashSet:** Store first, check second
-    - **Time:** O(m+n) | **Space:** O(min(m,n))
-
----
-
-### 💡 Code Template:
+**Use when:** frequency counting, key→value mapping, O(1) existence check, grouping
 
 ```javascript
-// Two Sum Pattern
-let seen = new Map();
-for (let i = 0; i < nums.length; i++) {
-  let complement = target - nums[i];
-  if (seen.has(complement)) {
-    return [seen.get(complement), i];
-  }
-  seen.set(nums[i], i);
+// ── Count Frequency ───────────────────────────────────────
+const freq = new Map();
+for (const x of arr) freq.set(x, (freq.get(x) || 0) + 1);
+
+// ── Two Sum Complement Pattern ────────────────────────────
+const seen = new Map();                // val → index
+for (let i = 0; i < arr.length; i++) {
+  const need = target - arr[i];
+  if (seen.has(need)) return [seen.get(need), i];
+  seen.set(arr[i], i);
 }
 
-// Frequency Count
-let freq = new Map();
-for (let num of nums) {
-  freq.set(num, (freq.get(num) || 0) + 1);
-}
-
-// Group by Property
-let groups = new Map();
-for (let item of items) {
-  let key = getKey(item);
+// ── Group by Key ──────────────────────────────────────────
+const groups = new Map();
+for (const item of items) {
+  const key = getKey(item);
   if (!groups.has(key)) groups.set(key, []);
   groups.get(key).push(item);
 }
 ```
 
-</details>
-
----
-
-# 7️⃣ TWO POINTERS
-
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Sorted pairs", "Merge arrays", "In-place modification", "Palindrome"</b></summary>
-
-### Questions that Use This:
-
-1. **Two Sum II** - LeetCode #167
-   - Sorted array two sum
-   - **Two Pointers:** Opposite ends
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Remove Duplicates** - LeetCode #26
-   - Remove duplicates in-place
-   - **Two Pointers:** slow=unique, fast=scan
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Remove Element** - LeetCode #27
-   - Remove all instances in-place
-   - **Two Pointers:** slow=remove, fast=scan
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Move Zeroes** - LeetCode #283
-   - Move zeros to end
-   - **Two Pointers:** slow=non-zero
-   - **Time:** O(n) | **Space:** O(1)
-
-5. **Valid Palindrome** - LeetCode #125
-   - Check palindrome
-   - **Two Pointers:** From both ends
-   - **Time:** O(n) | **Space:** O(1)
-
-6. **Valid Palindrome II** - LeetCode #680
-   - Palindrome after deleting 1 char
-   - **Two Pointers:** Try skipping
-   - **Time:** O(n) | **Space:** O(1)
-
-7. **Container With Most Water** - LeetCode #11
-   - Max area between lines
-   - **Two Pointers:** Move shorter height
-   - **Time:** O(n) | **Space:** O(1)
-
-8. **Merge Sorted Array** - LeetCode #88
-   - Merge two sorted arrays
-   - **Two Pointers:** Start from end
-   - **Time:** O(m+n) | **Space:** O(1)
-
-9. **3Sum** - LeetCode #15
-   - Three numbers summing to target
-   - **Sorting + Two Pointers:** Fix one
-   - **Time:** O(n²) | **Space:** O(1)
-
-10. **4Sum** - LeetCode #18
-    - Four numbers summing to target
-    - **Sorting + Two Pointers:** Nested
-    - **Time:** O(n³) | **Space:** O(1)
-
----
-
-### 💡 Code Template:
-
-```javascript
-// Opposite Ends (Sorted)
-let i = 0, j = arr.length - 1;
-while (i < j) {
-  if (arr[i] + arr[j] === target) {
-    return [i, j];
-  } else if (arr[i] + arr[j] < target) {
-    i++;
-  } else {
-    j--;
-  }
-}
-
-// Same Direction (In-place)
-let slow = 0;
-for (let fast = 0; fast < arr.length; fast++) {
-  if (condition) {
-    arr[slow++] = arr[fast];
-  }
-}
-return slow;
-```
-
-</details>
-
----
-
-# 8️⃣ SLIDING WINDOW
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 1 | Two Sum | Complement map | O(n) | O(n) |
+| 242 | Valid Anagram | Frequency count | O(n) | O(1) |
+| 49 | Group Anagrams | Sorted key → group | O(nk log k) | O(n) |
+| 347 | Top K Frequent Elements | Freq map + bucket sort | O(n) | O(n) |
+| 169 | Majority Element | Count or Boyer-Moore | O(n) | O(1) |
+| 128 | Longest Consecutive Sequence | HashSet, look for starts | O(n) | O(n) |
+| 217 | Contains Duplicate | HashSet | O(n) | O(n) |
+| 205 | Isomorphic Strings | Bidirectional mapping | O(n) | O(26) |
 
 <details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Longest/shortest substring", "Max subarray with constraint", "No repeating chars"</b></summary>
-
-### Questions that Use This:
-
-1. **Longest Substring Without Repeating** - LeetCode #3
-   - No repeating characters
-   - **Sliding Window:** Shrink on duplicate
-   - **Time:** O(n) | **Space:** O(min(n,26))
-
-2. **Longest Character Replacement** - LeetCode #424
-   - Max after replacing k chars
-   - **Sliding Window:** Track frequency
-   - **Time:** O(n) | **Space:** O(26)
-
-3. **Min Window Substring** - LeetCode #76
-   - Shortest containing all chars
-   - **Sliding Window:** Expand, shrink
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Max Consecutive Ones III** - LeetCode #1004
-   - Max ones after flipping k zeros
-   - **Sliding Window:** Count zeros
-   - **Time:** O(n) | **Space:** O(1)
-
-5. **Permutation in String** - LeetCode #567
-   - Check if permutation is substring
-   - **Sliding Window:** Fixed window
-   - **Time:** O(n) | **Space:** O(26)
-
-6. **Find All Anagrams** - LeetCode #438
-   - Find all anagram positions
-   - **Sliding Window:** Fixed window
-   - **Time:** O(n) | **Space:** O(26)
-
-7. **Sliding Window Maximum** - LeetCode #239
-   - Max in each window
-   - **Deque:** Decreasing order
-   - **Time:** O(n) | **Space:** O(k)
-
-8. **Max Subarray with K Distinct** - LeetCode #1248
-   - Longest with at most k distinct
-   - **Sliding Window:** Count distinct
-   - **Time:** O(n) | **Space:** O(k)
-
----
-
-### 💡 Code Template:
+<summary><b>▶ Two Sum — LeetCode #1 (Easy)</b></summary>
 
 ```javascript
-let left = 0, maxLen = 0;
-let map = new Map();
-
-for (let right = 0; right < s.length; right++) {
-  map.set(s[right], (map.get(s[right]) || 0) + 1);
-  
-  // Shrink if constraint violated
-  while (map.size > k) {
-    map.set(s[left], map.get(s[left]) - 1);
-    if (map.get(s[left]) === 0) map.delete(s[left]);
-    left++;
+function twoSum(nums, target) {
+  const seen = new Map(); // value → index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (seen.has(complement)) return [seen.get(complement), i];
+    seen.set(nums[i], i);
   }
-  
-  maxLen = Math.max(maxLen, right - left + 1);
 }
 ```
+</details>
 
+<details>
+<summary><b>▶ Group Anagrams — LeetCode #49 (Medium)</b></summary>
+
+```javascript
+function groupAnagrams(strs) {
+  const map = new Map();
+  for (const str of strs) {
+    const key = str.split('').sort().join('');
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(str);
+  }
+  return [...map.values()];
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Longest Consecutive Sequence — LeetCode #128 (Medium)</b></summary>
+
+**Logic:** Only start counting from the beginning of a sequence (num-1 not in set).
+
+```javascript
+function longestConsecutive(nums) {
+  const set = new Set(nums);
+  let maxLen = 0;
+  for (const num of set) {
+    if (!set.has(num - 1)) { // start of sequence
+      let cur = num, len = 1;
+      while (set.has(cur + 1)) { cur++; len++; }
+      maxLen = Math.max(maxLen, len);
+    }
+  }
+  return maxLen;
+}
+```
 </details>
 
 ---
 
-# 9️⃣ BINARY SEARCH
+## Pattern 4: BINARY SEARCH
 
-<details>
-<summary><b>⚠️ IF YOU GET A QUESTION LIKE: "Find in sorted", "Search position", "Rotated search" - CHECK IF ARRAY IS SORTED FIRST!</b></summary>
-
-### Questions that Use This:
-
-1. **Binary Search** - LeetCode #704
-   - Find target in sorted
-   - **Binary Search:** Standard
-   - **Time:** O(log n) | **Space:** O(1)
-
-2. **First Bad Version** - LeetCode #278
-   - Find first bad (all after bad)
-   - **Binary Search:** Find leftmost
-   - **Time:** O(log n) | **Space:** O(1)
-
-3. **Search in Rotated** - LeetCode #33
-   - Search in rotated sorted
-   - **Binary Search:** Find sorted half
-   - **Time:** O(log n) | **Space:** O(1)
-
-4. **Find First and Last** - LeetCode #34
-   - First and last occurrence
-   - **Binary Search:** Two passes
-   - **Time:** O(log n) | **Space:** O(1)
-
-5. **Search Insert Position** - LeetCode #35
-   - Position to insert
-   - **Binary Search:** Return left
-   - **Time:** O(log n) | **Space:** O(1)
-
-6. **Find Peak Element** - LeetCode #162
-   - Find local maximum
-   - **Binary Search:** Compare neighbors
-   - **Time:** O(log n) | **Space:** O(1)
-
-7. **Min in Rotated** - LeetCode #153
-   - Find minimum in rotated
-   - **Binary Search:** Compare with right
-   - **Time:** O(log n) | **Space:** O(1)
-
-8. **Capacity to Ship** - LeetCode #1011
-   - Min capacity to ship in days
-   - **Binary Search on Answer:** Check feasibility
-   - **Time:** O(n log max) | **Space:** O(1)
-
-9. **Koko Eating Bananas** - LeetCode #875
-   - Min eating speed
-   - **Binary Search on Answer:** Check time
-   - **Time:** O(n log max) | **Space:** O(1)
-
----
-
-### 💡 Code Template:
+**⚠️ CRITICAL: Array MUST be sorted (or have a monotonic property)!**
 
 ```javascript
-// Standard Binary Search
+// ── Find Exact Value ──────────────────────────────────────
 let l = 0, r = arr.length - 1;
 while (l <= r) {
-  let mid = Math.floor((l + r) / 2);
-  if (arr[mid] === target) return mid;
-  else if (arr[mid] < target) l = mid + 1;
-  else r = mid - 1;
+  const mid = (l + r) >> 1;
+  if (arr[mid] === target)      return mid;
+  else if (arr[mid] < target)   l = mid + 1;
+  else                          r = mid - 1;
 }
 return -1;
 
-// Binary Search on Answer
-let l = minValue, r = maxValue;
+// ── Find Leftmost (First Occurrence) ─────────────────────
+let result = -1;
+while (l <= r) {
+  const mid = (l + r) >> 1;
+  if (arr[mid] === target) { result = mid; r = mid - 1; } // keep going left
+  else if (arr[mid] < target) l = mid + 1;
+  else r = mid - 1;
+}
+
+// ── Binary Search on Answer ───────────────────────────────
+let l = minPossible, r = maxPossible;
 while (l < r) {
-  let mid = Math.floor((l + r) / 2);
-  if (canAchieve(mid)) r = mid;
-  else l = mid + 1;
+  const mid = (l + r) >> 1;
+  if (canAchieve(mid)) r = mid;   // feasible, try smaller
+  else l = mid + 1;               // not feasible, need more
 }
 return l;
 ```
 
+| # | Problem | Variant | Time | Space |
+|---|---|---|---|---|
+| 704 | Binary Search | Standard | O(log n) | O(1) |
+| 278 | First Bad Version | Leftmost | O(log n) | O(1) |
+| 33 | Search in Rotated Sorted Array | Find sorted half | O(log n) | O(1) |
+| 34 | First and Last Position | Two binary searches | O(log n) | O(1) |
+| 35 | Search Insert Position | Return left | O(log n) | O(1) |
+| 153 | Min in Rotated Sorted Array | Compare to right | O(log n) | O(1) |
+| 875 | Koko Eating Bananas | Binary search on answer | O(n log max) | O(1) |
+| 1011 | Capacity to Ship in D Days | Binary search on answer | O(n log max) | O(1) |
+
+<details>
+<summary><b>▶ Search in Rotated Sorted Array — LeetCode #33 (Medium)</b></summary>
+
+**Logic:** One half is always sorted. Check if target falls in the sorted half.
+
+```javascript
+function search(nums, target) {
+  let l = 0, r = nums.length - 1;
+  while (l <= r) {
+    const mid = (l + r) >> 1;
+    if (nums[mid] === target) return mid;
+
+    if (nums[l] <= nums[mid]) {            // left half sorted
+      if (nums[l] <= target && target < nums[mid]) r = mid - 1;
+      else l = mid + 1;
+    } else {                               // right half sorted
+      if (nums[mid] < target && target <= nums[r]) l = mid + 1;
+      else r = mid - 1;
+    }
+  }
+  return -1;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Koko Eating Bananas — LeetCode #875 (Medium)</b></summary>
+
+**Logic:** Binary search on the answer (speed k). Check if speed k can finish in h hours.
+
+```javascript
+function minEatingSpeed(piles, h) {
+  let l = 1, r = Math.max(...piles);
+  while (l < r) {
+    const mid = (l + r) >> 1;
+    const hours = piles.reduce((s, p) => s + Math.ceil(p / mid), 0);
+    if (hours <= h) r = mid;
+    else l = mid + 1;
+  }
+  return l;
+}
+```
 </details>
 
 ---
 
-# 🔟 DYNAMIC PROGRAMMING
+## Pattern 5: DYNAMIC PROGRAMMING
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "How many ways", "Minimum/maximum", "Can achieve", "Overlapping decisions"</b></summary>
-
-### Questions that Use This:
-
-1. **Climbing Stairs** - LeetCode #70
-   - Ways to climb n stairs
-   - **1D DP:** f(n)=f(n-1)+f(n-2)
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **House Robber** - LeetCode #198
-   - Max money, can't rob adjacent
-   - **1D DP:** f(i)=max(nums[i]+f(i-2), f(i-1))
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **House Robber II** - LeetCode #213
-   - Houses in circle
-   - **1D DP:** Two cases (skip first or last)
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Coin Change** - LeetCode #322
-   - Min coins for amount
-   - **1D DP:** f(amount)=1+min(f(amount-coin))
-   - **Time:** O(n×m) | **Space:** O(n)
-
-5. **Coin Change II** - LeetCode #518
-   - Ways to make amount
-   - **1D DP:** Ways combination
-   - **Time:** O(n×m) | **Space:** O(n)
-
-6. **Unique Paths** - LeetCode #62
-   - Paths in grid
-   - **2D DP:** dp[i][j]=dp[i-1][j]+dp[i][j-1]
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-7. **Unique Paths II** - LeetCode #63
-   - Paths with obstacles
-   - **2D DP:** Skip obstacle cells
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-8. **Minimum Path Sum** - LeetCode #64
-   - Min sum path in grid
-   - **2D DP:** dp[i][j]=nums[i][j]+min(dp[i-1][j], dp[i][j-1])
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-9. **Word Break** - LeetCode #139
-   - Can segment by dictionary
-   - **1D DP:** f(i)=f(j) && s[j:i] in dict
-   - **Time:** O(n²) | **Space:** O(n)
-
-10. **Longest Increasing Subsequence** - LeetCode #300
-    - Longest increasing
-    - **1D DP:** f(i)=max(f(j)+1) for j<i
-    - **Time:** O(n²) | **Space:** O(n)
-
-11. **Edit Distance** - LeetCode #72
-    - Min edits to transform
-    - **2D DP:** Three operations
-    - **Time:** O(m×n) | **Space:** O(m×n)
-
-12. **Maximum Subarray** - LeetCode #53
-    - Max sum subarray
-    - **Kadane's:** f(i)=max(nums[i], f(i-1)+nums[i])
-    - **Time:** O(n) | **Space:** O(1)
-
-13. **Decode Ways** - LeetCode #91
-    - Ways to decode numeric string
-    - **1D DP:** f(i)=f(i-1)+f(i-2) if valid
-    - **Time:** O(n) | **Space:** O(1)
-
-14. **Partition Equal Subset Sum** - LeetCode #416
-    - Can partition into equal sums
-    - **Knapsack:** 0/1 DP
-    - **Time:** O(n×sum) | **Space:** O(sum)
-
-15. **Longest Common Subsequence** - LeetCode #1143
-    - LCS of two strings
-    - **2D DP:** f[i][j]=f[i-1][j-1]+1 or max
-    - **Time:** O(m×n) | **Space:** O(m×n)
-
----
-
-### 💡 Code Template:
+**Use when:** "number of ways", "min/max cost", "can you reach", "optimal solution", overlapping subproblems
 
 ```javascript
-// 1D DP
-let dp = [base1, base2];
+// ── 1D DP (Fibonacci-style) ───────────────────────────────
+const dp = new Array(n + 1).fill(0);
+dp[0] = base0; dp[1] = base1;
 for (let i = 2; i <= n; i++) {
-  dp[i] = relation(dp[i-1], dp[i-2]);
+  dp[i] = f(dp[i-1], dp[i-2]);
 }
 return dp[n];
 
-// 2D DP
-let dp = Array(m).fill(0).map(() => Array(n).fill(0));
-for (let i = 0; i < m; i++) {
-  for (let j = 0; j < n; j++) {
-    dp[i][j] = relation(dp[i-1][j], dp[i][j-1]);
-  }
-}
+// ── 2D DP (Grid) ──────────────────────────────────────────
+const dp = Array.from({length: m}, () => new Array(n).fill(0));
+for (let i = 0; i < m; i++)
+  for (let j = 0; j < n; j++)
+    dp[i][j] = f(dp[i-1]?.[j], dp[i]?.[j-1]);
 return dp[m-1][n-1];
 
-// Memoization
-let memo = new Map();
-function solve(n) {
+// ── Memoization (Top-Down) ────────────────────────────────
+const memo = new Map();
+function dp(n) {
   if (memo.has(n)) return memo.get(n);
-  let result = relation(solve(n-1), solve(n-2));
+  const result = dp(n - 1) + dp(n - 2);
   memo.set(n, result);
   return result;
 }
 ```
 
+| # | Problem | DP Type | Recurrence | Time | Space |
+|---|---|---|---|---|---|
+| 70 | Climbing Stairs | 1D | f(n) = f(n-1) + f(n-2) | O(n) | O(1) |
+| 198 | House Robber | 1D | f(i) = max(nums[i]+f(i-2), f(i-1)) | O(n) | O(1) |
+| 322 | Coin Change | 1D Knapsack | f(x) = 1 + min(f(x-coin)) | O(n×m) | O(n) |
+| 62 | Unique Paths | 2D Grid | f[i][j] = f[i-1][j] + f[i][j-1] | O(mn) | O(mn) |
+| 1143 | Longest Common Subsequence | 2D | match or skip | O(mn) | O(mn) |
+| 300 | Longest Increasing Subsequence | 1D | f(i) = max(f(j)+1) j<i | O(n²) | O(n) |
+| 91 | Decode Ways | 1D | f(i) = f(i-1) + f(i-2) if valid | O(n) | O(1) |
+| 416 | Partition Equal Subset Sum | 0/1 Knapsack | subset sum boolean | O(n×sum) | O(sum) |
+| 139 | Word Break | 1D | f(i) = f(j) && s[j:i] in dict | O(n²) | O(n) |
+
+<details>
+<summary><b>▶ Climbing Stairs — LeetCode #70 (Easy)</b></summary>
+
+```javascript
+function climbStairs(n) {
+  if (n <= 2) return n;
+  let prev2 = 1, prev1 = 2;
+  for (let i = 3; i <= n; i++) {
+    [prev2, prev1] = [prev1, prev1 + prev2];
+  }
+  return prev1;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ House Robber — LeetCode #198 (Medium)</b></summary>
+
+```javascript
+function rob(nums) {
+  let prev2 = 0, prev1 = 0;
+  for (const num of nums) {
+    [prev2, prev1] = [prev1, Math.max(prev1, prev2 + num)];
+  }
+  return prev1;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Coin Change — LeetCode #322 (Medium)</b></summary>
+
+```javascript
+function coinChange(coins, amount) {
+  const dp = new Array(amount + 1).fill(Infinity);
+  dp[0] = 0;
+  for (let x = 1; x <= amount; x++) {
+    for (const coin of coins) {
+      if (coin <= x) dp[x] = Math.min(dp[x], dp[x - coin] + 1);
+    }
+  }
+  return dp[amount] === Infinity ? -1 : dp[amount];
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Longest Increasing Subsequence — LeetCode #300 (Medium)</b></summary>
+
+```javascript
+function lengthOfLIS(nums) {
+  const dp = new Array(nums.length).fill(1);
+  let max = 1;
+  for (let i = 1; i < nums.length; i++) {
+    for (let j = 0; j < i; j++) {
+      if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1);
+    }
+    max = Math.max(max, dp[i]);
+  }
+  return max;
+}
+```
 </details>
 
 ---
 
-# 1️⃣1️⃣ TREE PROBLEMS
+## Pattern 6: STACK
+
+**Use when:** LIFO operations, matching pairs, next greater/smaller, undo, monotonic problems
+
+```javascript
+// ── Valid Parentheses ─────────────────────────────────────
+const stack = [];
+const pairs = { ')': '(', '}': '{', ']': '[' };
+for (const c of s) {
+  if ('({['.includes(c)) stack.push(c);
+  else if (!stack.length || stack.pop() !== pairs[c]) return false;
+}
+return stack.length === 0;
+
+// ── Monotonic Stack — Next Greater Element ────────────────
+const result = new Array(arr.length).fill(-1);
+const stack = []; // indices
+for (let i = arr.length - 1; i >= 0; i--) {
+  while (stack.length && arr[stack.at(-1)] <= arr[i]) stack.pop();
+  result[i] = stack.length ? arr[stack.at(-1)] : -1;
+  stack.push(i);
+}
+```
+
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 20 | Valid Parentheses | Push/pop matching | O(n) | O(n) |
+| 496 | Next Greater Element I | Monotonic decreasing | O(n) | O(n) |
+| 739 | Daily Temperatures | Monotonic, store indices | O(n) | O(n) |
+| 84 | Largest Rectangle in Histogram | Monotonic increasing | O(n) | O(n) |
+| 42 | Trapping Rain Water | Stack or two pointers | O(n) | O(1) |
+| 155 | Min Stack | Parallel min stack | O(1) all | O(n) |
+| 394 | Decode String | Handle nested | O(n) | O(n) |
+| 150 | Evaluate Reverse Polish Notation | Operators pop two | O(n) | O(n) |
 
 <details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Tree traversal", "Lowest common ancestor", "Serialize tree", "Tree reconstruction"</b></summary>
+<summary><b>▶ Daily Temperatures — LeetCode #739 (Medium)</b></summary>
 
-### Questions that Use This:
+```javascript
+function dailyTemperatures(temperatures) {
+  const result = new Array(temperatures.length).fill(0);
+  const stack = []; // indices
+  for (let i = 0; i < temperatures.length; i++) {
+    while (stack.length && temperatures[i] > temperatures[stack.at(-1)]) {
+      const idx = stack.pop();
+      result[idx] = i - idx;
+    }
+    stack.push(i);
+  }
+  return result;
+}
+```
+</details>
 
-1. **Inorder Traversal** - LeetCode #94
-   - Left-Node-Right
-   - **Recursion/Stack:** Process in order
-   - **Time:** O(n) | **Space:** O(h)
+<details>
+<summary><b>▶ Largest Rectangle in Histogram — LeetCode #84 (Hard)</b></summary>
 
-2. **Preorder Traversal** - LeetCode #144
-   - Node-Left-Right
-   - **Recursion/Stack:** Process first
-   - **Time:** O(n) | **Space:** O(h)
+**Logic:** Monotonic increasing stack. When current bar is shorter, pop and calculate area.
 
-3. **Postorder Traversal** - LeetCode #145
-   - Left-Right-Node
-   - **Recursion/Stack:** Process last
-   - **Time:** O(n) | **Space:** O(h)
-
-4. **Level Order Traversal** - LeetCode #102
-   - BFS level by level
-   - **Queue:** Process each level
-   - **Time:** O(n) | **Space:** O(w)
-
-5. **Maximum Depth** - LeetCode #104
-   - Tree height
-   - **Recursion:** max(left, right) + 1
-   - **Time:** O(n) | **Space:** O(h)
-
-6. **Minimum Depth** - LeetCode #111
-   - Shortest to leaf
-   - **Recursion:** min(left, right) + 1
-   - **Time:** O(n) | **Space:** O(h)
-
-7. **Balanced Binary Tree** - LeetCode #110
-   - Check if balanced
-   - **Recursion:** |left-right| <= 1
-   - **Time:** O(n) | **Space:** O(h)
-
-8. **Lowest Common Ancestor** - LeetCode #236
-   - Find LCA of two nodes
-   - **Recursion:** Search left and right
-   - **Time:** O(n) | **Space:** O(h)
-
-9. **Serialize and Deserialize** - LeetCode #297
-   - Convert to/from string
-   - **BFS/DFS:** Level-order or preorder
-   - **Time:** O(n) | **Space:** O(n)
-
-10. **Construct from Inorder and Postorder** - LeetCode #106
-    - Reconstruct tree
-    - **Recursion:** Identify root, split
-    - **Time:** O(n) | **Space:** O(n)
-
-11. **Path Sum** - LeetCode #112
-    - Check if path sums to target
-    - **Recursion:** DFS with sum
-    - **Time:** O(n) | **Space:** O(h)
-
-12. **Path Sum II** - LeetCode #113
-    - Find all paths with sum
-    - **Backtracking:** DFS with backtrack
-    - **Time:** O(n) | **Space:** O(h)
-
-13. **Binary Tree Maximum Path** - LeetCode #124
-    - Max path sum (any nodes)
-    - **Recursion:** Track global max
-    - **Time:** O(n) | **Space:** O(h)
-
-14. **Right View** - LeetCode #199
-    - Rightmost nodes
-    - **BFS:** Last of each level
-    - **Time:** O(n) | **Space:** O(w)
-
-15. **Diameter of Tree** - LeetCode #543
-    - Longest path between nodes
-    - **Recursion:** Max path through root
-    - **Time:** O(n) | **Space:** O(h)
+```javascript
+function largestRectangleArea(heights) {
+  const stack = [];
+  let maxArea = 0;
+  heights = [...heights, 0]; // sentinel to flush stack at end
+  for (let i = 0; i < heights.length; i++) {
+    while (stack.length && heights[i] < heights[stack.at(-1)]) {
+      const h = heights[stack.pop()];
+      const w = stack.length ? i - stack.at(-1) - 1 : i;
+      maxArea = Math.max(maxArea, h * w);
+    }
+    stack.push(i);
+  }
+  return maxArea;
+}
+```
+</details>
 
 ---
 
-### 💡 Code Template:
+## Pattern 7: GRAPH — BFS / DFS
+
+**BFS:** shortest path, level-order, multi-source spreading
+**DFS:** all paths, connected components, topological sort, cycle detection
 
 ```javascript
-// Inorder Traversal
-function inorder(root, result = []) {
-  if (!root) return result;
-  inorder(root.left, result);
-  result.push(root.val);
-  inorder(root.right, result);
+// ── BFS ───────────────────────────────────────────────────
+function bfs(start, graph) {
+  const visited = new Set([start]);
+  const queue = [start];
+  let level = 0;
+  while (queue.length) {
+    const size = queue.length;
+    for (let i = 0; i < size; i++) {
+      const node = queue.shift();
+      for (const neighbor of graph[node] || []) {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          queue.push(neighbor);
+        }
+      }
+    }
+    level++;
+  }
+}
+
+// ── DFS (iterative) ───────────────────────────────────────
+function dfs(start, graph) {
+  const visited = new Set();
+  const stack = [start];
+  while (stack.length) {
+    const node = stack.pop();
+    if (visited.has(node)) continue;
+    visited.add(node);
+    for (const neighbor of graph[node] || []) stack.push(neighbor);
+  }
+}
+
+// ── Topological Sort — Kahn's (BFS) ──────────────────────
+function topoSort(n, edges) {
+  const inDegree = new Array(n).fill(0);
+  const graph = Array.from({length: n}, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); inDegree[v]++; }
+  const queue = [];
+  for (let i = 0; i < n; i++) if (inDegree[i] === 0) queue.push(i);
+  const order = [];
+  while (queue.length) {
+    const node = queue.shift();
+    order.push(node);
+    for (const nei of graph[node]) if (--inDegree[nei] === 0) queue.push(nei);
+  }
+  return order.length === n ? order : []; // empty = cycle
+}
+```
+
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 200 | Number of Islands | DFS/BFS, mark visited | O(mn) | O(mn) |
+| 207 | Course Schedule | Topological sort (detect cycle) | O(V+E) | O(V) |
+| 210 | Course Schedule II | Topological sort order | O(V+E) | O(V) |
+| 994 | Rotting Oranges | Multi-source BFS | O(mn) | O(mn) |
+| 127 | Word Ladder | BFS shortest path | O(N·L²) | O(NL) |
+| 133 | Clone Graph | BFS/DFS + map | O(V+E) | O(V) |
+| 130 | Surrounded Regions | DFS from borders | O(mn) | O(mn) |
+| 417 | Pacific Atlantic Water Flow | Multi-source BFS/DFS | O(mn) | O(mn) |
+
+<details>
+<summary><b>▶ Number of Islands — LeetCode #200 (Medium)</b></summary>
+
+```javascript
+function numIslands(grid) {
+  let count = 0;
+  const dfs = (i, j) => {
+    if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] !== '1') return;
+    grid[i][j] = '0'; // mark visited
+    dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1);
+  };
+  for (let i = 0; i < grid.length; i++)
+    for (let j = 0; j < grid[0].length; j++)
+      if (grid[i][j] === '1') { dfs(i, j); count++; }
+  return count;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Course Schedule — LeetCode #207 (Medium)</b></summary>
+
+```javascript
+function canFinish(numCourses, prerequisites) {
+  const graph = Array.from({length: numCourses}, () => []);
+  const inDegree = new Array(numCourses).fill(0);
+  for (const [a, b] of prerequisites) { graph[b].push(a); inDegree[a]++; }
+  const queue = [];
+  for (let i = 0; i < numCourses; i++) if (inDegree[i] === 0) queue.push(i);
+  let completed = 0;
+  while (queue.length) {
+    const course = queue.shift(); completed++;
+    for (const next of graph[course]) if (--inDegree[next] === 0) queue.push(next);
+  }
+  return completed === numCourses;
+}
+```
+</details>
+
+---
+
+## Pattern 8: BACKTRACKING
+
+**Use when:** generate all permutations, combinations, subsets, paths — output is list of lists
+
+```javascript
+// ── Universal Template ────────────────────────────────────
+function backtrack(path, options) {
+  if (done(path)) { result.push([...path]); return; }
+  for (let i = 0; i < options.length; i++) {
+    if (skip(options[i])) continue;     // pruning
+    path.push(options[i]);              // choose
+    backtrack(path, next_options);      // explore
+    path.pop();                         // unchoose
+  }
+}
+
+// ── Subsets ───────────────────────────────────────────────
+function subsets(nums) {
+  const result = [];
+  function bt(start, path) {
+    result.push([...path]);
+    for (let i = start; i < nums.length; i++) {
+      path.push(nums[i]); bt(i + 1, path); path.pop();
+    }
+  }
+  bt(0, []);
   return result;
 }
 
-// Level Order (BFS)
+// ── Permutations ──────────────────────────────────────────
+function permute(nums) {
+  const result = [];
+  function bt(path, used) {
+    if (path.length === nums.length) { result.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      used[i] = true; path.push(nums[i]);
+      bt(path, used);
+      used[i] = false; path.pop();
+    }
+  }
+  bt([], new Array(nums.length).fill(false));
+  return result;
+}
+```
+
+| # | Problem | Key Insight | Time |
+|---|---|---|---|
+| 78 | Subsets | Include/exclude at each position | O(2^n · n) |
+| 46 | Permutations | Track used elements | O(n! · n) |
+| 47 | Permutations II | Sort + skip duplicates | O(n! · n) |
+| 39 | Combination Sum | Reuse allowed, move forward | O(N^T/M · T) |
+| 40 | Combination Sum II | No reuse, skip same sibling | O(2^n) |
+| 17 | Letter Combinations of Phone | Multi-choice DFS | O(4^n · n) |
+| 79 | Word Search | DFS on grid, backtrack | O(mn · 4^L) |
+| 51 | N-Queens | Column + diagonal tracking | O(n!) |
+
+<details>
+<summary><b>▶ Combination Sum — LeetCode #39 (Medium)</b></summary>
+
+```javascript
+function combinationSum(candidates, target) {
+  const result = [];
+  function bt(start, path, remaining) {
+    if (remaining === 0) { result.push([...path]); return; }
+    for (let i = start; i < candidates.length; i++) {
+      if (candidates[i] > remaining) break; // prune (sort first)
+      path.push(candidates[i]);
+      bt(i, path, remaining - candidates[i]); // reuse allowed (i, not i+1)
+      path.pop();
+    }
+  }
+  candidates.sort((a, b) => a - b);
+  bt(0, [], target);
+  return result;
+}
+```
+</details>
+
+---
+
+## Pattern 9: TREE PROBLEMS
+
+**DFS:** use recursion, depth-first traversal, path problems
+**BFS:** use queue, level order, shortest path in tree
+
+```javascript
+// ── Inorder (Left → Node → Right) ────────────────────────
+function inorder(root, res = []) {
+  if (!root) return res;
+  inorder(root.left, res);
+  res.push(root.val);
+  inorder(root.right, res);
+  return res;
+}
+
+// ── Level Order (BFS) ─────────────────────────────────────
 function levelOrder(root) {
-  let result = [];
-  let queue = [root];
+  if (!root) return [];
+  const result = [], queue = [root];
   while (queue.length) {
-    let size = queue.length;
-    let level = [];
+    const level = [], size = queue.length;
     for (let i = 0; i < size; i++) {
-      let node = queue.shift();
+      const node = queue.shift();
       level.push(node.val);
-      if (node.left) queue.push(node.left);
+      if (node.left)  queue.push(node.left);
       if (node.right) queue.push(node.right);
     }
     result.push(level);
@@ -1223,545 +939,356 @@ function levelOrder(root) {
   return result;
 }
 
-// Maximum Depth
-function maxDepth(root) {
-  if (!root) return 0;
-  return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
-}
+// ── Max Depth ─────────────────────────────────────────────
+const maxDepth = root =>
+  !root ? 0 : 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
 ```
 
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 104 | Maximum Depth of Binary Tree | Recursion | O(n) | O(h) |
+| 226 | Invert Binary Tree | Recursion | O(n) | O(h) |
+| 110 | Balanced Binary Tree | Height + check | O(n) | O(h) |
+| 543 | Diameter of Binary Tree | Track global max | O(n) | O(h) |
+| 236 | Lowest Common Ancestor | Search left + right | O(n) | O(h) |
+| 102 | Binary Tree Level Order | BFS | O(n) | O(w) |
+| 124 | Binary Tree Maximum Path Sum | Track global max | O(n) | O(h) |
+| 297 | Serialize/Deserialize Binary Tree | BFS or preorder | O(n) | O(n) |
+
+<details>
+<summary><b>▶ Lowest Common Ancestor — LeetCode #236 (Medium)</b></summary>
+
+```javascript
+function lowestCommonAncestor(root, p, q) {
+  if (!root || root === p || root === q) return root;
+  const left  = lowestCommonAncestor(root.left,  p, q);
+  const right = lowestCommonAncestor(root.right, p, q);
+  return left && right ? root : left || right;
+}
+```
+</details>
+
+<details>
+<summary><b>▶ Binary Tree Maximum Path Sum — LeetCode #124 (Hard)</b></summary>
+
+```javascript
+function maxPathSum(root) {
+  let globalMax = -Infinity;
+  function dfs(node) {
+    if (!node) return 0;
+    const left  = Math.max(0, dfs(node.left));
+    const right = Math.max(0, dfs(node.right));
+    globalMax = Math.max(globalMax, node.val + left + right);
+    return node.val + Math.max(left, right);
+  }
+  dfs(root);
+  return globalMax;
+}
+```
 </details>
 
 ---
 
-# 1️⃣2️⃣ GRAPH - BFS/DFS
+## Pattern 10: HEAP / PRIORITY QUEUE
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Connected components", "Shortest path", "Cycle detection", "Topological sort"</b></summary>
+**Use when:** Top K elements, Kth largest/smallest, median of stream, scheduling
 
-### Questions that Use This:
-
-1. **Number of Islands** - LeetCode #200
-   - Connected land components
-   - **DFS/BFS:** Mark visited
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-2. **Walls and Gates** - LeetCode #286
-   - Distance to nearest gate
-   - **BFS:** Multi-source
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-3. **Rotting Oranges** - LeetCode #994
-   - Time to rot all
-   - **BFS:** Multi-source, level
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-4. **Word Ladder** - LeetCode #127
-   - Shortest transformation
-   - **BFS:** Find path
-   - **Time:** O(N×L²) | **Space:** O(N×L)
-
-5. **Course Schedule** - LeetCode #207
-   - Detect cycle
-   - **Topological Sort:** DFS or Kahn
-   - **Time:** O(V+E) | **Space:** O(V)
-
-6. **Course Schedule II** - LeetCode #210
-   - Topological order
-   - **Topological Sort:** Kahn's algorithm
-   - **Time:** O(V+E) | **Space:** O(V)
-
-7. **Clone Graph** - LeetCode #133
-   - Deep copy graph
-   - **BFS/DFS:** Map old to new
-   - **Time:** O(V+E) | **Space:** O(V)
-
-8. **Most Stones Removed** - LeetCode #947
-   - Connected stones
-   - **Union-Find:** Component size
-   - **Time:** O(n) | **Space:** O(n)
-
-9. **Surrounded Regions** - LeetCode #130
-   - Find surrounded regions
-   - **DFS:** Mark non-surrounded
-   - **Time:** O(m×n) | **Space:** O(m×n)
-
-10. **Graph Valid Tree** - LeetCode #261
-    - Check if valid tree
-    - **DFS/Union-Find:** n-1 edges, connected
-    - **Time:** O(n) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+> **Note:** JavaScript has no built-in heap. Use a min-heap library or implement one.
 
 ```javascript
-// DFS - Recursive
-function dfs(node, graph, visited = new Set()) {
-  visited.add(node);
-  for (let neighbor of graph[node]) {
-    if (!visited.has(neighbor)) {
-      dfs(neighbor, graph, visited);
+// ── Min-Heap (simplified — use for interviews) ────────────
+class MinHeap {
+  constructor() { this.h = []; }
+  push(val) {
+    this.h.push(val);
+    let i = this.h.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.h[p] <= this.h[i]) break;
+      [this.h[p], this.h[i]] = [this.h[i], this.h[p]];
+      i = p;
     }
   }
-  return visited;
-}
-
-// BFS - Iterative
-function bfs(start, graph) {
-  let visited = new Set([start]);
-  let queue = [start];
-  
-  while (queue.length) {
-    let node = queue.shift();
-    for (let neighbor of graph[node]) {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        queue.push(neighbor);
+  pop() {
+    const top = this.h[0];
+    const last = this.h.pop();
+    if (this.h.length) {
+      this.h[0] = last;
+      let i = 0;
+      while (true) {
+        let min = i;
+        const l = 2*i+1, r = 2*i+2;
+        if (l < this.h.length && this.h[l] < this.h[min]) min = l;
+        if (r < this.h.length && this.h[r] < this.h[min]) min = r;
+        if (min === i) break;
+        [this.h[min], this.h[i]] = [this.h[i], this.h[min]];
+        i = min;
       }
     }
+    return top;
   }
-  return visited;
+  peek() { return this.h[0]; }
+  size() { return this.h.length; }
 }
 
-// Topological Sort - Kahn's
-function topologicalSort(n, edges) {
-  let inDegree = new Map(), graph = new Map();
-  // Build graph...
-  let queue = [];
-  for (let i = 0; i < n; i++) {
-    if (inDegree[i] === 0) queue.push(i);
-  }
-  let result = [];
-  while (queue.length) {
-    let node = queue.shift();
-    result.push(node);
-    for (let neighbor of graph.get(node) || []) {
-      if (--inDegree[neighbor] === 0) queue.push(neighbor);
-    }
-  }
-  return result.length === n ? result : [];
+// ── Top K Pattern ─────────────────────────────────────────
+// Keep min-heap of size K → heap[0] is the Kth largest
+const heap = new MinHeap();
+for (const x of nums) {
+  heap.push(x);
+  if (heap.size() > k) heap.pop();
 }
+return heap.peek(); // Kth largest
 ```
 
+| # | Problem | Approach | Time | Space |
+|---|---|---|---|---|
+| 215 | Kth Largest Element | Min-heap size k | O(n log k) | O(k) |
+| 347 | Top K Frequent Elements | Freq map + heap | O(n log k) | O(n) |
+| 295 | Find Median from Data Stream | Two heaps (max+min) | O(log n) add | O(n) |
+| 23 | Merge K Sorted Lists | Min-heap of k nodes | O(n log k) | O(k) |
+| 973 | K Closest Points to Origin | Min-heap by distance | O(n log k) | O(k) |
+| 239 | Sliding Window Maximum | Deque (monotonic) | O(n) | O(k) |
+
+<details>
+<summary><b>▶ Find Median from Data Stream — LeetCode #295 (Hard)</b></summary>
+
+**Logic:** Two heaps: max-heap for lower half, min-heap for upper half. Balance so sizes differ by at most 1.
+
+```javascript
+class MedianFinder {
+  constructor() {
+    this.maxHeap = new MaxHeap(); // lower half
+    this.minHeap = new MinHeap(); // upper half
+  }
+  addNum(num) {
+    this.maxHeap.push(num);
+    this.minHeap.push(this.maxHeap.pop()); // ensure order
+    if (this.minHeap.size() > this.maxHeap.size())
+      this.maxHeap.push(this.minHeap.pop());
+  }
+  findMedian() {
+    if (this.maxHeap.size() > this.minHeap.size()) return this.maxHeap.peek();
+    return (this.maxHeap.peek() + this.minHeap.peek()) / 2;
+  }
+}
+```
 </details>
 
 ---
 
-# 1️⃣3️⃣ BACKTRACKING
+## Pattern 11: UNION-FIND (Disjoint Set)
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "All permutations", "All combinations", "All subsets", "All paths"</b></summary>
-
-### Questions that Use This:
-
-1. **Permutations** - LeetCode #46
-   - All permutations
-   - **Backtracking:** Choose, explore, unchoose
-   - **Time:** O(n! × n) | **Space:** O(n)
-
-2. **Permutations II** - LeetCode #47
-   - Permutations with duplicates
-   - **Backtracking:** Sort, skip duplicates
-   - **Time:** O(n! × n) | **Space:** O(n)
-
-3. **Combinations** - LeetCode #77
-   - All k-combinations
-   - **Backtracking:** Choose next onwards
-   - **Time:** O(C(n,k) × k) | **Space:** O(k)
-
-4. **Combination Sum** - LeetCode #39
-   - Combinations summing to target
-   - **Backtracking:** Reuse elements
-   - **Time:** O(N^T/M) | **Space:** O(T/M)
-
-5. **Combination Sum II** - LeetCode #40
-   - Combinations (use each once)
-   - **Backtracking:** Sort, skip duplicates
-   - **Time:** O(2^n) | **Space:** O(n)
-
-6. **Subsets** - LeetCode #78
-   - All subsets
-   - **Backtracking:** Include/exclude
-   - **Time:** O(2^n) | **Space:** O(n)
-
-7. **Subsets II** - LeetCode #90
-   - Subsets with duplicates
-   - **Backtracking:** Sort, skip
-   - **Time:** O(2^n) | **Space:** O(n)
-
-8. **Letter Combinations** - LeetCode #17
-   - Phone number combinations
-   - **Backtracking:** Explore digits
-   - **Time:** O(4^n × n) | **Space:** O(4^n)
-
-9. **Restore IP Addresses** - LeetCode #93
-   - Valid IP addresses
-   - **Backtracking:** Check validity
-   - **Time:** O(3^4) | **Space:** O(4)
-
-10. **Path Decompositions** - Various
-    - All valid paths
-    - **Backtracking:** DFS with constraints
-    - **Time:** O(2^n) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
+**Use when:** connected components, cycle detection, network connectivity, "number of groups"
 
 ```javascript
-// Permutations
-function permute(nums) {
-  let result = [];
-  function backtrack(path, remaining) {
-    if (remaining.length === 0) {
-      result.push([...path]);
-      return;
-    }
-    for (let i = 0; i < remaining.length; i++) {
-      path.push(remaining[i]);
-      backtrack(path, remaining.slice(0, i).concat(remaining.slice(i + 1)));
-      path.pop();
-    }
+class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({length: n}, (_, i) => i);
+    this.rank   = new Array(n).fill(0);
+    this.count  = n; // number of components
   }
-  backtrack([], nums);
-  return result;
-}
-
-// Combinations
-function combine(n, k) {
-  let result = [];
-  function backtrack(start, path) {
-    if (path.length === k) {
-      result.push([...path]);
-      return;
-    }
-    for (let i = start; i <= n; i++) {
-      path.push(i);
-      backtrack(i + 1, path);
-      path.pop();
-    }
+  find(x) {
+    if (this.parent[x] !== x) this.parent[x] = this.find(this.parent[x]); // path compression
+    return this.parent[x];
   }
-  backtrack(1, []);
-  return result;
-}
-
-// Subsets
-function subsets(nums) {
-  let result = [[]];
-  for (let num of nums) {
-    let newSubsets = result.map(subset => [...subset, num]);
-    result.push(...newSubsets);
+  union(x, y) {
+    const px = this.find(x), py = this.find(y);
+    if (px === py) return false; // already connected
+    if (this.rank[px] < this.rank[py]) this.parent[px] = py;
+    else if (this.rank[px] > this.rank[py]) this.parent[py] = px;
+    else { this.parent[py] = px; this.rank[px]++; }
+    this.count--;
+    return true;
   }
-  return result;
 }
 ```
 
-</details>
+| # | Problem | Key Use | Time |
+|---|---|---|---|
+| 684 | Redundant Connection | Union returns false = cycle | O(n·α(n)) |
+| 323 | Number of Connected Components | Count components | O(n·α(n)) |
+| 261 | Graph Valid Tree | n-1 edges + all connected | O(n·α(n)) |
+| 721 | Accounts Merge | Union by shared email | O(n log n) |
+| 947 | Most Stones Removed | Component size - 1 | O(n) |
 
 ---
 
-# 1️⃣4️⃣ HEAP & PRIORITY QUEUE
+## Pattern 12: TRIE (Prefix Tree)
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Top K", "Kth element", "Median", "Scheduling", "Merge K lists"</b></summary>
+**Use when:** word search, autocomplete, prefix matching, dictionary lookups, "starts with"
 
-### Questions that Use This:
-
-1. **Kth Largest Element** - LeetCode #215
-   - Kth largest
-   - **MinHeap/QuickSelect:** Size k heap
-   - **Time:** O(n) avg | **Space:** O(k)
-
-2. **Top K Frequent Elements** - LeetCode #347
-   - k most frequent
-   - **HashMap + Heap:** Count then heap
-   - **Time:** O(n log k) | **Space:** O(n)
-
-3. **K Closest Points** - LeetCode #973
-   - k closest points to origin
-   - **Heap:** Min heap by distance
-   - **Time:** O(n log k) | **Space:** O(k)
-
-4. **Merge K Sorted Lists** - LeetCode #23
-   - Merge k sorted lists
-   - **Heap:** k pointers
-   - **Time:** O(n log k) | **Space:** O(k)
-
-5. **Find Median from Data Stream** - LeetCode #295
-   - Median of stream
-   - **Two Heaps:** Max and min heaps
-   - **Time:** O(log n) add | **Space:** O(n)
-
-6. **Rearrange String K Distance** - LeetCode #621
-   - Rearrange with k distance
-   - **Heap:** Greedy pick
-   - **Time:** O(n log 26) | **Space:** O(26)
-
-7. **IPO** - LeetCode #502
-   - Max profit from k projects
-   - **Heap:** Pick maximum capital
-   - **Time:** O(n log n) | **Space:** O(n)
-
-8. **Sliding Window Maximum** - LeetCode #239
-   - Max in each window
-   - **Deque:** Maintain max
-   - **Time:** O(n) | **Space:** O(k)
-
----
-
-### 💡 Code Template:
+**Keywords:** "prefix", "autocomplete", "dictionary", "starts with", "suggest words", "spell checker"
 
 ```javascript
-// Min Heap - Top K
-let minHeap = [];
-for (let x of nums) {
-  minHeap.push(x);
-  if (minHeap.length > k) {
-    minHeap.pop();  // Remove smallest
+class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEnd = false;
   }
 }
-return minHeap[0];
 
-// Two Heaps - Median
-let maxHeap = [], minHeap = [];  // Use libraries
-function addNum(num) {
-  if (maxHeap.length === 0 || num <= maxHeap[0]) {
-    maxHeap.push(num);
-  } else {
-    minHeap.push(num);
+class Trie {
+  constructor() { this.root = new TrieNode(); }
+
+  insert(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node.children[c]) node.children[c] = new TrieNode();
+      node = node.children[c];
+    }
+    node.isEnd = true;
   }
-  // Balance heaps...
+
+  search(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node.children[c]) return false;
+      node = node.children[c];
+    }
+    return node.isEnd;
+  }
+
+  startsWith(prefix) {
+    let node = this.root;
+    for (const c of prefix) {
+      if (!node.children[c]) return false;
+      node = node.children[c];
+    }
+    return true;
+  }
+
+  // Get all words with given prefix (DFS)
+  getWordsWithPrefix(prefix) {
+    let node = this.root;
+    for (const c of prefix) {
+      if (!node.children[c]) return [];
+      node = node.children[c];
+    }
+    const results = [];
+    const dfs = (n, path) => {
+      if (n.isEnd) results.push(path);
+      for (const [c, child] of Object.entries(n.children)) dfs(child, path + c);
+    };
+    dfs(node, prefix);
+    return results;
+  }
 }
 ```
 
-</details>
+**Time Complexity:**
+
+| Method | Worst Case |
+|---|---|
+| insert(word) | O(L) where L = word length |
+| search(word) | O(L) |
+| startsWith(prefix) | O(L) |
+| getWordsWithPrefix(prefix) | O(L + total chars in subtree) |
+
+| # | Problem | Key Insight |
+|---|---|---|
+| 208 | Implement Trie | Foundation — start here |
+| 211 | Design Add and Search Words | Wildcard '.' needs DFS |
+| 212 | Word Search II | Trie + DFS on grid |
+| 648 | Replace Words | Find shortest root prefix |
+| 1268 | Search Suggestions System | Autocomplete sorted |
+| 472 | Concatenated Words | Trie + recursion |
+| 336 | Palindrome Pairs | Trie + palindrome check |
 
 ---
 
-# 1️⃣5️⃣ BIT MANIPULATION
+## Pattern 13: LINKED LIST
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Binary operations", "Bit counting", "XOR problems", "Single number"</b></summary>
-
-### Questions that Use This:
-
-1. **Single Number** - LeetCode #136
-   - Find number appearing once (others twice)
-   - **XOR:** a ^ a = 0, a ^ 0 = a
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Single Number II** - LeetCode #137
-   - Number appearing once (others thrice)
-   - **Bit Counting:** Track bit positions
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Single Number III** - LeetCode #260
-   - Two numbers appearing once
-   - **XOR:** Partition and XOR
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Power of Two** - LeetCode #231
-   - Check if power of two
-   - **Bit:** n & (n-1) == 0
-   - **Time:** O(1) | **Space:** O(1)
-
-5. **Number of 1 Bits** - LeetCode #191
-   - Count 1s in binary
-   - **Bit Manipulation:** Count bits
-   - **Time:** O(log n) | **Space:** O(1)
-
-6. **Reverse Bits** - LeetCode #190
-   - Reverse bits in integer
-   - **Bit Manipulation:** Build new number
-   - **Time:** O(32) | **Space:** O(1)
-
-7. **Missing Number** - LeetCode #268
-   - Find missing in 0 to n
-   - **XOR/Math:** XOR all
-   - **Time:** O(n) | **Space:** O(1)
-
-8. **Hamming Distance** - LeetCode #461
-   - Different bits
-   - **XOR:** Count 1s in XOR result
-   - **Time:** O(1) | **Space:** O(1)
-
----
-
-### 💡 Code Template:
+**Use when:** reverse list, detect cycle, find middle, merge lists, remove nodes
 
 ```javascript
-// XOR Properties
-// a ^ a = 0
-// a ^ 0 = a
-// a ^ b = b ^ a (commutative)
-
-// Single Number
-function singleNumber(nums) {
-  let result = 0;
-  for (let num of nums) {
-    result ^= num;
+// ── Reverse Linked List ───────────────────────────────────
+function reverse(head) {
+  let prev = null, cur = head;
+  while (cur) {
+    const next = cur.next;
+    cur.next = prev;
+    prev = cur;
+    cur = next;
   }
-  return result;
+  return prev;
 }
 
-// Count 1 Bits
-function hammingWeight(n) {
+// ── Fast / Slow Pointers ──────────────────────────────────
+let slow = head, fast = head;
+while (fast && fast.next) {
+  slow = slow.next;
+  fast = fast.next.next;
+}
+// slow is now at the middle
+
+// ── Dummy Node (avoid edge cases) ────────────────────────
+const dummy = new ListNode(0);
+dummy.next = head;
+let curr = dummy;
+// ... manipulate list ...
+return dummy.next;
+```
+
+| # | Problem | Technique | Time | Space |
+|---|---|---|---|---|
+| 206 | Reverse Linked List | Iterative pointer swap | O(n) | O(1) |
+| 141 | Linked List Cycle | Fast/slow pointers | O(n) | O(1) |
+| 142 | Linked List Cycle II | Fast/slow + reset | O(n) | O(1) |
+| 876 | Middle of Linked List | Fast/slow | O(n) | O(1) |
+| 19 | Remove Nth from End | Two pointers, n apart | O(n) | O(1) |
+| 21 | Merge Two Sorted Lists | Dummy node + merge | O(m+n) | O(1) |
+| 23 | Merge K Sorted Lists | Heap or divide & conquer | O(n log k) | O(k) |
+| 143 | Reorder List | Find mid + reverse + merge | O(n) | O(1) |
+
+---
+
+## Pattern 14: BIT MANIPULATION
+
+**Use when:** XOR problems, counting bits, power of 2, single number, missing number
+
+```javascript
+// Key XOR Properties:
+//   a ^ a = 0       (cancel duplicates)
+//   a ^ 0 = a       (identity)
+//   commutative and associative
+
+// ── Single Number ─────────────────────────────────────────
+const singleNumber = nums => nums.reduce((acc, x) => acc ^ x, 0);
+
+// ── Count Set Bits ────────────────────────────────────────
+function countBits(n) {
   let count = 0;
-  while (n) {
-    count += n & 1;
-    n >>= 1;
-  }
+  while (n) { count += n & 1; n >>= 1; }
   return count;
 }
 
-// Power of Two
-function isPowerOfTwo(n) {
-  return n > 0 && (n & (n - 1)) === 0;
-}
+// ── Is Power of Two ───────────────────────────────────────
+const isPowerOfTwo = n => n > 0 && (n & (n - 1)) === 0;
+
+// ── Get / Set / Clear Bit ─────────────────────────────────
+const getBit   = (n, i) => (n >> i) & 1;
+const setBit   = (n, i) => n | (1 << i);
+const clearBit = (n, i) => n & ~(1 << i);
 ```
 
-</details>
+| # | Problem | Key Trick | Time |
+|---|---|---|---|
+| 136 | Single Number | XOR all | O(n) |
+| 268 | Missing Number | XOR all + XOR 0..n | O(n) |
+| 231 | Power of Two | n & (n-1) === 0 | O(1) |
+| 191 | Number of 1 Bits | Count set bits | O(log n) |
+| 190 | Reverse Bits | Build reversed | O(32) |
+| 461 | Hamming Distance | Count 1s in XOR | O(1) |
 
 ---
 
-# 1️⃣6️⃣ MATH PROBLEMS
+## Pattern 15: GREEDY
 
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Prime numbers", "GCD/LCM", "Factors", "Fibonacci"</b></summary>
-
-### Questions that Use This:
-
-1. **Happy Number** - LeetCode #202
-   - Reaches 1 or cycle
-   - **Math:** Sum of squares
-   - **Time:** O(log n) | **Space:** O(1)
-
-2. **Ugly Number** - LeetCode #263
-   - Numbers with only 2,3,5 factors
-   - **Math:** Divide by 2,3,5
-   - **Time:** O(log n) | **Space:** O(1)
-
-3. **Ugly Number II** - LeetCode #264
-   - Nth ugly number
-   - **DP:** Generate ugly numbers
-   - **Time:** O(n) | **Space:** O(n)
-
-4. **Excel Sheet Column** - LeetCode #168
-   - Convert number to Excel
-   - **Math:** Base 26 conversion
-   - **Time:** O(log n) | **Space:** O(1)
-
-5. **Factorial Trailing Zeros** - LeetCode #172
-   - Trailing zeros in n!
-   - **Math:** Count factors of 5
-   - **Time:** O(log n) | **Space:** O(1)
-
-6. **Perfect Squares** - LeetCode #279
-   - Min squares summing to n
-   - **DP/BFS:** f(n) = 1 + min(f(n-i²))
-   - **Time:** O(n√n) | **Space:** O(n)
-
-7. **Sum of Two Integers** - LeetCode #371
-   - Add without + operator
-   - **Bit:** XOR and shift
-   - **Time:** O(1) | **Space:** O(1)
-
-8. **Sqrt(x)** - LeetCode #69
-   - Integer square root
-   - **Binary Search:** Find mid² ≈ x
-   - **Time:** O(log n) | **Space:** O(1)
-
----
-
-### 💡 Code Template:
+**Use when:** activity selection, scheduling, jump games, gas station, interval problems
 
 ```javascript
-// GCD - Euclidean Algorithm
-function gcd(a, b) {
-  while (b) {
-    [a, b] = [b, a % b];
-  }
-  return a;
-}
-
-// Prime Check
-function isPrime(n) {
-  if (n <= 1) return false;
-  if (n <= 3) return true;
-  if (n % 2 === 0 || n % 3 === 0) return false;
-  for (let i = 5; i * i <= n; i += 6) {
-    if (n % i === 0 || n % (i + 2) === 0) return false;
-  }
-  return true;
-}
-
-// Sieve of Eratosthenes
-function sievePrimes(n) {
-  let isPrime = Array(n + 1).fill(true);
-  for (let i = 2; i * i <= n; i++) {
-    if (isPrime[i]) {
-      for (let j = i * i; j <= n; j += i) {
-        isPrime[j] = false;
-      }
-    }
-  }
-  return isPrime;
-}
-```
-
-</details>
-
----
-
-# 1️⃣7️⃣ GREEDY ALGORITHMS
-
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Activity selection", "Scheduling", "Gas station", "Interval problems"</b></summary>
-
-### Questions that Use This:
-
-1. **Best Time to Buy and Sell Stock II** - LeetCode #122
-   - Max profit unlimited transactions
-   - **Greedy:** Capture every increase
-   - **Time:** O(n) | **Space:** O(1)
-
-2. **Jump Game** - LeetCode #55
-   - Can reach last index
-   - **Greedy:** Track max reachable
-   - **Time:** O(n) | **Space:** O(1)
-
-3. **Jump Game II** - LeetCode #45
-   - Min jumps to reach end
-   - **Greedy:** Track max and jumps
-   - **Time:** O(n) | **Space:** O(1)
-
-4. **Gas Station** - LeetCode #134
-   - Start station to complete circuit
-   - **Greedy:** Check feasibility
-   - **Time:** O(n) | **Space:** O(1)
-
-5. **Container With Most Water** - LeetCode #11
-   - Max water area
-   - **Greedy:** Move shorter pointer
-   - **Time:** O(n) | **Space:** O(1)
-
-6. **Candy** - LeetCode #135
-   - Distribute candy with constraints
-   - **Greedy:** Two passes
-   - **Time:** O(n) | **Space:** O(n)
-
-7. **Interval Scheduling** - Merge intervals
-   - Sort and merge
-   - **Greedy:** Sort by start
-   - **Time:** O(n log n) | **Space:** O(1)
-
----
-
-### 💡 Code Template:
-
-```javascript
-// Jump Game
+// ── Jump Game ─────────────────────────────────────────────
 function canJump(nums) {
   let maxReach = 0;
   for (let i = 0; i < nums.length; i++) {
@@ -1771,302 +1298,70 @@ function canJump(nums) {
   return true;
 }
 
-// Gas Station
-function canCompleteCircuit(gas, cost) {
-  let total = 0, tank = 0, start = 0;
-  for (let i = 0; i < gas.length; i++) {
-    total += gas[i] - cost[i];
-    tank += gas[i] - cost[i];
-    if (tank < 0) {
-      start = i + 1;
-      tank = 0;
-    }
-  }
-  return total >= 0 ? start : -1;
-}
-```
-
-</details>
-
----
-
-# 1️⃣8️⃣ TRIE
-
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Word search", "Autocomplete", "Prefix matching", "Dictionary"</b></summary>
-
-### Questions that Use This:
-
-1. **Implement Trie** - LeetCode #208
-   - Build trie data structure
-   - **Trie:** Tree of characters
-   - **Time:** O(m) per operation | **Space:** O(26×n)
-
-2. **Search Word in Trie** - LeetCode #208
-   - Search exact word
-   - **Trie:** Follow path
-   - **Time:** O(m) | **Space:** O(1)
-
-3. **Word Search II** - LeetCode #212
-   - Find all words in grid
-   - **Trie + DFS:** Prefix pruning
-   - **Time:** O(m×n×4^L) | **Space:** O(26^L)
-
-4. **Longest Word** - LeetCode #720
-   - Longest word built from other words
-   - **Trie:** DFS with built words
-   - **Time:** O(n×m) | **Space:** O(26×n)
-
-5. **Prefix and Suffix Search** - LeetCode #745
-   - Words with prefix and suffix
-   - **Trie:** Two tries
-   - **Time:** O(m²) search | **Space:** O(26²×n)
-
----
-
-### 💡 Code Template:
-
-```javascript
-// Trie Node
-class TrieNode {
-  constructor() {
-    this.children = {};
-    this.isEnd = false;
-  }
-}
-
-// Implement Trie
-class Trie {
-  constructor() {
-    this.root = new TrieNode();
-  }
-  
-  insert(word) {
-    let node = this.root;
-    for (let char of word) {
-      if (!node.children[char]) {
-        node.children[char] = new TrieNode();
-      }
-      node = node.children[char];
-    }
-    node.isEnd = true;
-  }
-  
-  search(word) {
-    let node = this.root;
-    for (let char of word) {
-      if (!node.children[char]) return false;
-      node = node.children[char];
-    }
-    return node.isEnd;
-  }
-}
-```
-
-</details>
-
----
-
-# 1️⃣9️⃣ UNION-FIND (Disjoint Set)
-
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Connected components", "Cycle detection", "Merged groups", "Network connectivity"</b></summary>
-
-### Questions that Use This:
-
-1. **Number of Connected Components** - LeetCode #323
-   - Count components
-   - **Union-Find:** Union and count
-   - **Time:** O(n×α(n)) | **Space:** O(n)
-
-2. **Graph Valid Tree** - LeetCode #261
-   - Check if valid tree
-   - **Union-Find:** n-1 edges, all connected
-   - **Time:** O(n×α(n)) | **Space:** O(n)
-
-3. **Redundant Connection** - LeetCode #684
-   - Find redundant edge
-   - **Union-Find:** Extra edge creates cycle
-   - **Time:** O(n×α(n)) | **Space:** O(n)
-
-4. **Most Stones Removed** - LeetCode #947
-   - Connected stones removal
-   - **Union-Find:** Component size - 1
-   - **Time:** O(n) | **Space:** O(n)
-
-5. **Accounts Merge** - LeetCode #721
-   - Merge accounts with same email
-   - **Union-Find:** Union by email
-   - **Time:** O(n log n) | **Space:** O(n)
-
----
-
-### 💡 Code Template:
-
-```javascript
-// Union-Find
-class UnionFind {
-  constructor(n) {
-    this.parent = Array(n).fill(0).map((_, i) => i);
-    this.rank = Array(n).fill(0);
-  }
-  
-  find(x) {
-    if (this.parent[x] !== x) {
-      this.parent[x] = this.find(this.parent[x]);  // Path compression
-    }
-    return this.parent[x];
-  }
-  
-  union(x, y) {
-    let px = this.find(x), py = this.find(y);
-    if (px === py) return false;
-    
-    // Union by rank
-    if (this.rank[px] < this.rank[py]) {
-      this.parent[px] = py;
-    } else if (this.rank[px] > this.rank[py]) {
-      this.parent[py] = px;
-    } else {
-      this.parent[py] = px;
-      this.rank[px]++;
-    }
-    return true;
-  }
-}
-```
-
-</details>
-
----
-
-# 2️⃣0️⃣ SORTING ALGORITHMS
-
-<details>
-<summary><b>IF YOU GET A QUESTION LIKE: "Need elements in order", "Merge intervals", "Sort by property"</b></summary>
-
-### Sorting Types:
-
-1. **Quick Sort** - General purpose
-   - Time: O(n log n) avg, O(n²) worst
-   - Space: O(log n)
-   - Code: `arr.sort((a,b) => a - b)`
-
-2. **Merge Sort** - Stable sort
-   - Time: O(n log n) always
-   - Space: O(n)
-   - Use: Linked lists, stability needed
-
-3. **Counting Sort** - Small range
-   - Time: O(n + k)
-   - Space: O(k)
-   - Use: Range 0-100
-
-4. **Bucket Sort** - Distribution
-   - Time: O(n + k)
-   - Space: O(n + k)
-   - Use: Frequency-based
-
-### Questions that Use This:
-
-1. **Merge Intervals** - LeetCode #56
-   - Merge overlapping intervals
-   - **Sort by start:** O(n log n)
-
-2. **Meeting Rooms** - LeetCode #252
-   - Check if can attend all
-   - **Sort by time:** Check overlaps
-
-3. **Top K Frequent** - LeetCode #347
-   - k most frequent
-   - **Bucket Sort:** O(n)
-
-4. **Largest Number** - LeetCode #179
-   - Arrange to form largest
-   - **Custom Sort:** Comparator
-
-5. **Sort Colors** - LeetCode #75
-   - Sort 0, 1, 2 (counting)
-   - **Counting Sort:** O(n)
-
----
-
-### 💡 Code Template:
-
-```javascript
-// Quick Sort
-function quickSort(arr) {
-  if (arr.length <= 1) return arr;
-  let pivot = arr[0];
-  let left = arr.slice(1).filter(x => x <= pivot);
-  let right = arr.slice(1).filter(x => x > pivot);
-  return [...quickSort(left), pivot, ...quickSort(right)];
-}
-
-// Counting Sort
-function countingSort(arr, max) {
-  let count = new Array(max + 1).fill(0);
-  for (let x of arr) count[x]++;
-  let result = [];
-  for (let i = 0; i <= max; i++) {
-    for (let j = 0; j < count[i]; j++) {
-      result.push(i);
-    }
+// ── Merge Intervals ───────────────────────────────────────
+function merge(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  const result = [intervals[0]];
+  for (const [s, e] of intervals) {
+    if (s <= result.at(-1)[1]) result.at(-1)[1] = Math.max(result.at(-1)[1], e);
+    else result.push([s, e]);
   }
   return result;
 }
-
-// Custom Sort
-arr.sort((a, b) => {
-  // Custom logic
-  return comparison;
-});
 ```
 
-</details>
+| # | Problem | Key Insight | Time |
+|---|---|---|---|
+| 55 | Jump Game | Track max reachable | O(n) |
+| 45 | Jump Game II | Min jumps | O(n) |
+| 122 | Best Time to Buy Stock II | Capture every gain | O(n) |
+| 134 | Gas Station | Try each start | O(n) |
+| 56 | Merge Intervals | Sort by start | O(n log n) |
+| 435 | Non-overlapping Intervals | Sort by end | O(n log n) |
+| 11 | Container With Most Water | Move shorter line | O(n) |
 
 ---
 
-## 📊 COMPLETE QUICK REFERENCE
+---
 
-| Topic | Pattern | Key Points | Time | LeetCode Count |
-|---|---|---|---|---|
-| **Array** | Remove/modify in-place | Two pointers | O(n) | 18+ |
-| **String** | Palindrome/Anagram | Two pointers/HashMap | O(n) | 18+ |
-| **LinkedList** | Reverse/Cycle | Fast-slow pointers | O(n) | 16+ |
-| **Stack** | Next/Prev Greater | Monotonic stack | O(n) | 15+ |
-| **Queue** | BFS/Topological | Level order | O(V+E) | 10+ |
-| **HashMap** | Count/Pairs/Group | Frequency/Complement | O(n) | 15+ |
-| **Two Pointers** | Sorted operations | Opposite/Same direction | O(n) | 10+ |
-| **Sliding Window** | Substring/Subarray | Expand/Shrink | O(n) | 8+ |
-| **Binary Search** | Sorted search | Find position | O(log n) | 9+ |
-| **DP** | Optimal/Combinations | Build up solutions | O(n²) var | 15+ |
-| **Tree** | Traversal | DFS/BFS/Recursion | O(n) | 15+ |
-| **Graph** | Components/Paths | DFS/BFS/Union-Find | O(V+E) | 10+ |
-| **Backtracking** | Permutations/Subsets | Choose/Explore/Unchoose | O(2^n) | 10+ |
-| **Heap** | Top K/Median | Priority queue | O(log n) | 8+ |
-| **Bit** | XOR/Counting | Bit operations | O(1) | 8+ |
-| **Math** | Prime/Factors | Algorithms | O(√n) | 8+ |
-| **Greedy** | Activity/Scheduling | Optimal choice | O(n) | 7+ |
-| **Trie** | Word search | Prefix tree | O(m) | 5+ |
-| **Union-Find** | Components/Cycle | Path compression | O(α(n)) | 5+ |
-| **Sorting** | Order elements | Compare/Distribute | O(n log n) | 5+ |
+## 📋 Interview Preparation Checklist
+
+**Before the Interview:**
+- [ ] Master all 15 patterns above
+- [ ] Practice identifying the pattern within 60 seconds
+- [ ] Memorize time/space complexity for each
+- [ ] Know at least 3 problems per pattern cold
+
+**During the Interview:**
+1. **Check constraints** → determines which approaches are viable
+2. **Identify input format** → suggests data structures
+3. **Identify output format** → suggests algorithm family
+4. **Spot keywords** → confirms pattern choice
+5. **State approach** → brute force first, then optimize
+6. **Code and trace** → walk through an example
+7. **Test edge cases** → empty input, single element, duplicates
+
+**Edge Cases to Always Check:**
+- Empty array / null input
+- Single element
+- All same elements
+- Negative numbers
+- Integer overflow (use `BigInt` if needed)
+- Sorted vs reverse-sorted
 
 ---
 
-## ✅ INTERVIEW PREPARATION CHECKLIST
+## 🏆 LeetCode Problem Roadmap by Pattern
 
-- [ ] Master all 20 topic areas
-- [ ] Identify pattern in <1 minute
-- [ ] Code solution in <5 minutes
-- [ ] Know time/space complexity
-- [ ] Practice 5+ problems per topic
-- [ ] Handle all edge cases
-- [ ] Explain solution clearly
-- [ ] Code without looking at solutions
+```
+Week 1  → Two Pointers + Sliding Window (#26, #167, #3, #76, #424)
+Week 2  → HashMap + Binary Search (#1, #49, #347, #704, #33)
+Week 3  → Stack + DP Basics (#20, #739, #70, #198, #322)
+Week 4  → Trees + Graph BFS/DFS (#104, #236, #200, #207, #994)
+Week 5  → Backtracking + Heap (#39, #46, #78, #215, #295)
+Week 6  → Trie + Union-Find + Bit (#208, #212, #684, #136, #268)
+```
 
 ---
 
-**Complete DSA mastery = 90%+ interview success!** 🚀
-
-This guide covers 150+ LeetCode problems across all major DSA topics!
+*Bitflip's *

@@ -80,7 +80,7 @@ var strStr = function (haystack, needle) {
 };
 
 //! KMP-[Knuth Morris Pratt Algorithm] Approch for better time and space complexity
-//TODO It is a String search algorithm [search string in big string]
+//TODO It is a String search algorithm [search substring in string]
 
 const calculateLPS = function (needle) {
   let lps = new Array(needle.length).fill(0)
@@ -243,29 +243,29 @@ var twoSum = function (nums, x, ans) {
 // ----------------------------------------------------
 //! Leetcode 42. Trapping Rain Water
 // ----------------------------------------------------
-// var trap = function (height) {
-//   let n = height.length;
-//   let maxL = [];
-//   maxL[0] = height[0];
+var trap = function (height) {
+  let n = height.length;
+  let maxL = [];
+  maxL[0] = height[0];
 
-//   for (let i = 1; i < n; i++) {
-//     maxL[i] = Math.max(maxL[i - 1], height[i])
-//   }
-//   let maxR = [];
-//   maxR[n - 1] = height[n - 1];
-//   for (let i = n - 2; i >= 0; i--) {
-//     maxR[i] = Math.max(height[i], maxR[i + 1])
-//   }
-//   // console.log(maxL)
-//   // console.log(maxR)
-//   let ans = 0;
-//   for (let i = 0; i < n; i++) {
-//     let trappedWater = Math.min(maxL[i], maxR[i]) - height[i]
-//     // ans = ans + (trappedWater < 0 ? 0 : trappedWater);
-//     ans = ans + Math.max(trappedWater, 0)
-//   }
-//   return ans;
-// };
+  for (let i = 1; i < n; i++) {
+    maxL[i] = Math.max(maxL[i - 1], height[i])
+  }
+  let maxR = [];
+  maxR[n - 1] = height[n - 1];
+  for (let i = n - 2; i >= 0; i--) {
+    maxR[i] = Math.max(height[i], maxR[i + 1])
+  }
+  // console.log(maxL)
+  // console.log(maxR)
+  let ans = 0;
+  for (let i = 0; i < n; i++) {
+    let trappedWater = Math.min(maxL[i], maxR[i]) - height[i]
+    // ans = ans + (trappedWater < 0 ? 0 : trappedWater);
+    ans = ans + Math.max(trappedWater, 0)
+  }
+  return ans;
+};
 
 //! we are using two diff loops for finding maxL and maxR
 //* now we find maxL and maxR using a single pass with two pointers
@@ -289,3 +289,28 @@ var trap = function (height) {
 
 // console.log(trap(height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])) // Output: 6
 // console.log(trap(height = [4, 2, 0, 3, 2, 5])) // Output: 9
+
+// ----------------------------------------------------
+//! Leetcode 3. Longest Substring Without Repeating Characters 
+// ----------------------------------------------------
+//! We use Sliding window concept for 
+//* subarray/substring?
+//*   ├─ Continuous elements
+
+var lengthOfLongestSubstring = function (s) {
+  let map = {};
+  let i = 0, max = 0, j = 0;
+  while (j < s.length) {
+    // If char is seen and inside current window, move i pointer
+    if (map[s[j]] >= i) {
+      i = map[s[j]] + 1;
+    }
+    map[s[j]] = j; // Update index of current char
+    max = Math.max(max, j - i + 1);
+    j++;
+  }
+  return max;
+};
+console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3

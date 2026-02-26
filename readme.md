@@ -75,15 +75,6 @@ Solutions will be implemented in:
 - **Interview-Ready**: Focus on patterns asked in FAANG+ interviews.
 - **Lifetime Updates**: Continuous content additions and community support.
 
-## 🗂 Repository Structure
-
-Each module will have:
-
-- Theory explanations
-- Code implementations
-- Problem solutions
-- Complexity analysis
-- Practice questions
 
 ## 🎖 Goal
 
