@@ -243,27 +243,49 @@ var twoSum = function (nums, x, ans) {
 // ----------------------------------------------------
 //! Leetcode 42. Trapping Rain Water
 // ----------------------------------------------------
+// var trap = function (height) {
+//   let n = height.length;
+//   let maxL = [];
+//   maxL[0] = height[0];
+
+//   for (let i = 1; i < n; i++) {
+//     maxL[i] = Math.max(maxL[i - 1], height[i])
+//   }
+//   let maxR = [];
+//   maxR[n - 1] = height[n - 1];
+//   for (let i = n - 2; i >= 0; i--) {
+//     maxR[i] = Math.max(height[i], maxR[i + 1])
+//   }
+//   // console.log(maxL)
+//   // console.log(maxR)
+//   let ans = 0;
+//   for (let i = 0; i < n; i++) {
+//     let trappedWater = Math.min(maxL[i], maxR[i]) - height[i]
+//     // ans = ans + (trappedWater < 0 ? 0 : trappedWater);
+//     ans = ans + Math.max(trappedWater, 0)
+//   }
+//   return ans;
+// };
+
+//! we are using two diff loops for finding maxL and maxR
+//* now we find maxL and maxR using a single pass with two pointers
 var trap = function (height) {
-  let n = height.length;
-  let maxL = [];
+  if (n === 0) return 0;
+
+  let n = height.length, maxL = [], maxR = [], ans = 0;
   maxL[0] = height[0];
+  maxR[n - 1] = height[n - 1];
 
   for (let i = 1; i < n; i++) {
-    maxL[i] = Math.max(maxL[i - 1], height[i])
+    maxL[i] = Math.max(maxL[i - 1], height[i]);
+    maxR[n - 1 - i] = Math.max(maxR[n - 1 - i + 1], height[n - 1 - i]);
   }
-  let maxR = [];
-  maxR[n - 1] = height[n - 1];
-  for (let i = n - 2; i >= 0; i--) {
-    maxR[i] = Math.max(height[i], maxR[i + 1])
-  }
-  // console.log(maxL)
-  // console.log(maxR)
-  let ans = 0;
-  for (let i = 0; i < n; i++) {
-    let trappedWater = Math.min(maxL[i], maxR[i]) - height[i]
-    ans = ans + (trappedWater < 0 ? 0 : trappedWater);
+
+  for (let k = 0; k < n; k++) {
+    ans += Math.max(0, Math.min(maxL[k], maxR[k]) - height[k]);
   }
   return ans;
-};
-console.log(trap(height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])) // Output: 6
-console.log(trap(height = [4, 2, 0, 3, 2, 5])) // Output: 9
+}
+
+// console.log(trap(height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])) // Output: 6
+// console.log(trap(height = [4, 2, 0, 3, 2, 5])) // Output: 9
