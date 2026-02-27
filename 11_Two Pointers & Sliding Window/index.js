@@ -354,8 +354,35 @@ var iswindowValid = function (map, k) {
   }
   return (totalCount - maxCount <= k);
 }
+//! We can do same thing using array without using map
+var characterReplacement = function (s, k) {
+  let i = 0, j = 0, maxWin = 0;
+  let map = new Array(26).fill(0);
+  map[s.charCodeAt(0) - 65] = 1;
+  console.log(map);
+  while (j < s.length) {
+    if (isValidWin(map, k)) {
+      maxWin = Math.max(maxWin, j - i + 1)
+      j++;
+      ++map[s.charCodeAt(j) - 65];
+    }
+    else {
+      --map[s.charCodeAt(i) - 65];
+      i++;
+    }
+  }
+  return maxWin;
+};
+var isValidWin = function (map, k) {
+  let maxCount = 0, totalCount = 0;
+  for (let i = 0; i < 26; i++) {
+    totalCount += map[i];
+    maxCount = Math.max(maxCount, map[i]);
+  }
+  return (totalCount - maxCount <= k)
+}
 
 
-
-console.log(characterReplacement(s = "ABAB", k = 2)) //Output: 4
-console.log(characterReplacement(s = "AABABBA", k = 1)) //Output: 4
+// console.log(characterReplacement(s = "ABAB", k = 2)) //Output: 4
+// console.log(characterReplacement(s = "AABABBA", k = 1)) //Output: 4
+// console.log(characterReplacement(s = "AABEAFAABEAFA", k = 2)) //Output: 5
