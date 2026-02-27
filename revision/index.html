@@ -1,652 +1,281 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DSA Master Guide — JS Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=Clash+Display:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              display: ['Syne', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-              body: ['Syne', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      :root {
-        --sidebar: 272px;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        background: #030305;
-        color: #e2e8f0;
-        font-family: 'Syne', sans-serif;
-        overflow-x: hidden;
-      }
-      ::-webkit-scrollbar {
-        width: 3px;
-        height: 3px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #030305;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.12);
-        border-radius: 2px;
-      }
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DSA Master — Pattern-Based Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+<link rel="stylesheet" href="complexity.css"/>
+</head>
+<body>
 
-      /* Sidebar */
-      #sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: var(--sidebar);
-        background: rgba(3, 3, 5, 0.97);
-        backdrop-filter: blur(24px);
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
-        overflow-y: auto;
-        z-index: 100;
-      }
-      .sidebar-item {
-        transition: all 0.2s;
-      }
-      .sidebar-item:hover {
-        background: rgba(255, 255, 255, 0.04);
-      }
-      .sidebar-item.active {
-        border-left-color: currentColor !important;
-        background: rgba(255, 255, 255, 0.04);
-        color: #fff !important;
-      }
+<div id="prog"></div>
 
-      /* Main */
-      #main {
-        margin-left: var(--sidebar);
-      }
-
-      /* Pattern sections */
-      .pattern-section {
-        scroll-margin-top: 0px;
-      }
-
-      /* Code blocks */
-      .code-block {
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-      }
-      pre {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.72rem;
-        line-height: 1.75;
-        overflow-x: auto;
-      }
-      .kw {
-        color: #ff79c6;
-      }
-      .fn {
-        color: #50fa7b;
-      }
-      .str {
-        color: #f1fa8c;
-      }
-      .cm {
-        color: #6272a4;
-        font-style: italic;
-      }
-      .cn {
-        color: #bd93f9;
-      }
-      .op {
-        color: #ff5555;
-      }
-      .ty {
-        color: #8be9fd;
-      }
-
-      /* Cards */
-      .q-card {
-        transition:
-          transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-          box-shadow 0.25s;
-        cursor: pointer;
-      }
-      .q-card:hover {
-        transform: translateY(-4px);
-      }
-
-      /* Glow effects */
-      .glow {
-        box-shadow: 0 0 40px rgba(var(--glow-rgb), 0.12);
-      }
-
-      /* Tag pills */
-      .diff-easy {
-        background: rgba(74, 222, 128, 0.12);
-        color: #4ade80;
-        border-color: rgba(74, 222, 128, 0.2);
-      }
-      .diff-medium {
-        background: rgba(251, 146, 60, 0.12);
-        color: #fb923c;
-        border-color: rgba(251, 146, 60, 0.2);
-      }
-      .diff-hard {
-        background: rgba(248, 113, 113, 0.12);
-        color: #f87171;
-        border-color: rgba(248, 113, 113, 0.2);
-      }
-
-      /* Solution modal */
-      #modal {
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      #modal.open {
-        display: flex;
-      }
-      #modal-bg {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(8px);
-      }
-      #modal-box {
-        position: relative;
-        z-index: 1;
-        background: #0d0d14;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        width: min(720px, 94vw);
-        max-height: 88vh;
-        overflow-y: auto;
-        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8);
-      }
-
-      /* Hero grid */
-      .grid-bg {
-        background-image:
-          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        background-size: 44px 44px;
-      }
-
-      /* Gradient text */
-      .grad-text {
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      /* Animated border */
-      @keyframes borderPulse {
-        0%,
-        100% {
-          opacity: 0.5;
-        }
-        50% {
-          opacity: 1;
-        }
-      }
-      .pulse-border {
-        animation: borderPulse 3s ease-in-out infinite;
-      }
-
-      /* Floating orbs */
-      .orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        pointer-events: none;
-      }
-
-      /* Progress bar */
-      #progress-bar {
-        position: fixed;
-        top: 0;
-        left: var(--sidebar);
-        right: 0;
-        height: 2px;
-        z-index: 99;
-        background: rgba(255, 255, 255, 0.05);
-      }
-      #progress-fill {
-        height: 100%;
-        width: 0%;
-        transition: width 0.1s;
-      }
-
-      /* Compact view toggle */
-      .compact pre {
-        max-height: 120px;
-      }
-
-      /* Search highlight */
-      .highlight {
-        background: rgba(251, 191, 36, 0.2);
-        border-radius: 2px;
-      }
-
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .fade-up {
-        animation: fadeUp 0.5s ease forwards;
-        opacity: 0;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      .spin {
-        animation: spin 8s linear infinite;
-      }
-
-      /* Section tag styles */
-      .lang-tag {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.08em;
-      }
-
-      /* Copy button */
-      .copy-btn {
-        transition: all 0.2s;
-      }
-      .copy-btn:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-      }
-      .copy-btn.copied {
-        background: rgba(74, 222, 128, 0.2) !important;
-        color: #4ade80 !important;
-      }
-
-      /* Sidebar scrollbar */
-      #sidebar::-webkit-scrollbar {
-        width: 2px;
-      }
-      #sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.08);
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Progress Bar -->
-    <div id="progress-bar"><div id="progress-fill"></div></div>
-
-    <!-- Sidebar -->
-    <nav id="sidebar" class="flex flex-col">
-      <!-- Logo -->
-      <div
-        class="p-5 border-b border-white/5 sticky top-0 bg-[#030305]/98 backdrop-blur-xl z-10"
-      >
-        <div class="flex items-center gap-2 mb-1">
-          <div
-            class="w-6 h-6 rounded-md flex items-center justify-center text-xs"
-            style="background: linear-gradient(135deg, #00f5ff, #bf00ff)"
-          >
-            ⚡
-          </div>
-          <span
-            class="font-display font-bold text-xs tracking-widest uppercase text-white/90"
-            >DSA</span
-          >
-          <span class="text-white/30 text-xs">Master</span>
-        </div>
-        <p class="text-[10px] text-white/30 tracking-wider">
-          JS Interview Guide · 20 Patterns
-        </p>
+<!-- ═══ SIDEBAR ═══ -->
+<aside id="sidebar">
+  <div id="sidebar-top">
+    <div class="logo-row">
+      <div class="logo-sq">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D4900F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
       </div>
-
-      <!-- Search -->
-      <div class="p-3 border-b border-white/5">
-        <input
-          id="sidebar-search"
-          placeholder="⌕  Search patterns..."
-          class="w-full bg-white/4 border border-white/8 rounded-lg px-3 py-2 text-xs text-white/70 placeholder-white/25 outline-none focus:border-white/20 transition-colors"
-        />
+      <div>
+        <div class="logo-text-main">DSA Master</div>
+        <div class="logo-text-sub">Pattern-Based Prep</div>
       </div>
+    </div>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="srch" type="text" placeholder="Search patterns or questions..." oninput="filterNav(this.value)"/>
+    </div>
+  </div>
 
-      <!-- Revision Mode -->
-      <div class="px-3 py-2 border-b border-white/5">
-        <button
-          id="revision-btn"
-          class="w-full text-xs py-1.5 px-3 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all flex items-center justify-center gap-2"
-        >
-          <span>📚</span><span>Quick Revision Mode</span>
-        </button>
+  <div class="sb-tabs">
+    <button class="sb-tab active" onclick="setSbTab('patterns',this)">Patterns</button>
+    <button class="sb-tab" onclick="setSbTab('guide',this)">Guide</button>
+    <button class="sb-tab" onclick="setSbTab('ds',this)">DS</button>
+  </div>
+
+  <nav id="nav-list"></nav>
+
+  <div id="sidebar-footer">
+    <div class="coverage-bar-label">
+      <span>Interview Coverage</span><span class="coverage-pct">91%</span>
+    </div>
+    <div class="coverage-bar-track"><div class="coverage-bar-fill"></div></div>
+    <div style="font-size:11px;color:var(--i4);margin-top:8px">Google, Meta, Amazon data</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow hero-anim">Interview ka 90% sirf 10 patterns se aata hai</div>
+      <h1 class="hero-anim">Crack Every<br/><em>Coding Interview</em></h1>
+      <p class="hero-subtitle hero-anim">Pattern Recognition + Time Complexity + Sorting &amp; Searching</p>
+      <p class="hero-desc hero-anim">Patterns, constraints analysis, DS decision guide — sab ek jagah. Har question pe constraints se pattern automatically identify hota hai.</p>
+      <div class="hero-stats hero-anim">
+        <div class="stat-item"><div class="stat-num">10<span>x</span></div><div class="stat-label">Core Patterns</div></div>
+        <div class="stat-item"><div class="stat-num">80<span>+</span></div><div class="stat-label">Best Problems</div></div>
+        <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Steps to Identify</div></div>
+        <div class="stat-item"><div class="stat-num">91<span>%</span></div><div class="stat-label">Coverage</div></div>
       </div>
-
-      <!-- Nav items -->
-      <div id="sidebar-nav" class="flex-1 py-2 overflow-y-auto">
-        <div
-          class="px-4 py-1.5 text-[9px] text-white/25 uppercase tracking-widest"
-        >
-          Patterns
-        </div>
+      <div class="hero-cta hero-anim">
+        <button class="btn-primary" onclick="document.getElementById('recognition-guide').scrollIntoView({behavior:'smooth'})">Pattern Recognition Guide</button>
+        <button class="btn-secondary" onclick="document.getElementById('complexity-section').scrollIntoView({behavior:'smooth'})">Time Complexity</button>
+        <button class="btn-secondary" onclick="document.getElementById('sorting-section').scrollIntoView({behavior:'smooth'})">Sorting &amp; Searching</button>
+        <button class="btn-outline" onclick="document.getElementById('block-0').scrollIntoView({behavior:'smooth'})">Start Problems →</button>
       </div>
-
-      <!-- Stats -->
-      <div
-        class="p-3 border-t border-white/5 grid grid-cols-3 gap-1 text-center"
-      >
-        <div>
-          <div class="text-base font-bold font-mono" style="color: #00f5ff">
-            20
-          </div>
-          <div class="text-[9px] text-white/30">Patterns</div>
-        </div>
-        <div>
-          <div
-            class="text-base font-bold font-mono"
-            style="color: #bf00ff"
-            id="total-q"
-          >
-            —
-          </div>
-          <div class="text-[9px] text-white/30">Problems</div>
-        </div>
-        <div>
-          <div class="text-base font-bold font-mono" style="color: #ff006e">
-            1
-          </div>
-          <div class="text-[9px] text-white/30">Day Prep</div>
-        </div>
+    </div>
+    <div class="hero-deco">
+      <div class="deco-card">
+        <div class="deco-card-tag">PATTERN IDENTIFIED</div>
+        <div class="deco-card-name">Sliding Window</div>
+        <div class="deco-card-why">Keyword: "longest substring", "no repeating" + n≤10⁵ = O(n)</div>
+        <div class="deco-card-cplx">T: O(n) &nbsp;·&nbsp; S: O(k)</div>
       </div>
-    </nav>
+    </div>
+  </section>
 
-    <!-- Main Content -->
-    <main id="main">
-      <!-- Hero -->
-      <section
-        id="home"
-        class="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg px-6"
-      >
-        <!-- Orbs -->
-        <div
-          class="orb w-96 h-96 top-20 left-1/4"
-          style="
-            background: radial-gradient(
-              circle,
-              rgba(120, 0, 255, 0.18),
-              transparent 70%
-            );
-          "
-        ></div>
-        <div
-          class="orb w-72 h-72 bottom-32 right-1/4"
-          style="
-            background: radial-gradient(
-              circle,
-              rgba(0, 245, 255, 0.12),
-              transparent 70%
-            );
-          "
-        ></div>
-        <div
-          class="orb w-64 h-64 top-1/3 right-1/3"
-          style="
-            background: radial-gradient(
-              circle,
-              rgba(255, 0, 110, 0.1),
-              transparent 70%
-            );
-          "
-        ></div>
+  <!-- PATTERN RECOGNITION GUIDE -->
+  <section id="recognition-guide">
+    <div class="section-header">
+      <div class="section-eyebrow">The Secret Weapon</div>
+      <h2 class="section-title">Problem Pattern Recognition Guide</h2>
+      <p class="section-sub">4 steps mein koi bhi problem ka pattern identify karo. Ye guide dimag mein store karo — interview mein yahi kaam aata hai. Har question ke modal mein ye guide highlighted milegi.</p>
+    </div>
 
-        <div class="relative text-center max-w-3xl fade-up">
-          <!-- Badge -->
-          <div
-            class="inline-flex items-center gap-2 text-[10px] tracking-widest uppercase text-white/40 border border-white/10 rounded-full px-4 py-1.5 bg-white/3 mb-8"
-          >
-            <span
-              class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-border inline-block"
-            ></span>
-            Complete Interview Preparation · All 20 Patterns
+    <div class="guide-step" id="step-constraints">
+      <div class="step-badge green-badge">Step 1</div>
+      <h3 class="step-title">Start with the Constraints</h3>
+      <p class="step-desc">Input size dekho — yeh batata hai kaunsa approach allowed hai aur kaunsa TLE dega.</p>
+      <div class="constraint-cards">
+        <div class="constraint-card small">
+          <div class="c-card-header">
+            <span class="c-size">n &le; 20</span>
+            <span class="c-label">Small Input</span>
+            <span class="c-badge ok">Brute Force OK</span>
           </div>
-
-          <!-- Title -->
-          <h1
-            class="font-display font-extrabold leading-none mb-4"
-            style="font-size: clamp(2.5rem, 7vw, 5.5rem)"
-          >
-            <span class="block text-white/95 mb-1">Master</span>
-            <span
-              class="block grad-text"
-              style="
-                background-image: linear-gradient(
-                  135deg,
-                  #00f5ff 0%,
-                  #bf00ff 45%,
-                  #ff006e 100%
-                );
-              "
-              >DSA Patterns</span
-            >
-          </h1>
-          <p
-            class="text-white/45 text-base mb-10 leading-relaxed max-w-xl mx-auto"
-          >
-            Every important algorithm, data structure, and LeetCode pattern you
-            need — organized for one-day interview revision in JavaScript.
-          </p>
-
-          <!-- Stats row -->
-          <div class="flex justify-center gap-8 mb-10 flex-wrap">
-            <div class="text-center">
-              <div
-                class="font-mono font-bold text-2xl grad-text"
-                style="
-                  background-image: linear-gradient(135deg, #00f5ff, #bf00ff);
-                "
-              >
-                20
-              </div>
-              <div
-                class="text-[10px] text-white/30 uppercase tracking-wider mt-0.5"
-              >
-                Patterns
-              </div>
-            </div>
-            <div class="w-px bg-white/10"></div>
-            <div class="text-center">
-              <div
-                class="font-mono font-bold text-2xl grad-text"
-                id="hero-q-count"
-                style="
-                  background-image: linear-gradient(135deg, #bf00ff, #ff006e);
-                "
-              >
-                200+
-              </div>
-              <div
-                class="text-[10px] text-white/30 uppercase tracking-wider mt-0.5"
-              >
-                Questions
-              </div>
-            </div>
-            <div class="w-px bg-white/10"></div>
-            <div class="text-center">
-              <div
-                class="font-mono font-bold text-2xl grad-text"
-                style="
-                  background-image: linear-gradient(135deg, #ff006e, #ff9900);
-                "
-              >
-                1 Day
-              </div>
-              <div
-                class="text-[10px] text-white/30 uppercase tracking-wider mt-0.5"
-              >
-                Revision
-              </div>
-            </div>
-            <div class="w-px bg-white/10"></div>
-            <div class="text-center">
-              <div
-                class="font-mono font-bold text-2xl grad-text"
-                style="
-                  background-image: linear-gradient(135deg, #50fa7b, #00f5ff);
-                "
-              >
-                O(∞)
-              </div>
-              <div
-                class="text-[10px] text-white/30 uppercase tracking-wider mt-0.5"
-              >
-                Hireability
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA buttons -->
-          <div class="flex gap-3 justify-center flex-wrap">
-            <a
-              href="#two-pointers"
-              class="px-6 py-2.5 rounded-xl text-sm font-semibold text-black transition-all hover:scale-105"
-              style="background: linear-gradient(135deg, #00f5ff, #bf00ff)"
-              >Start Learning →</a
-            >
-            <button
-              id="quick-nav-btn"
-              class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 hover:text-white transition-all"
-            >
-              Pattern Map
-            </button>
-          </div>
+          <ul class="c-list">
+            <li>Brute force acceptable hai</li>
+            <li>Backtracking + recursive enumeration</li>
+            <li>O(2<sup>n</sup>) ya O(n!) OK hai</li>
+            <li>Saare combinations explore karo</li>
+          </ul>
+          <div class="c-patterns">Use: Backtracking, DFS, Recursion</div>
         </div>
-
-        <!-- Scroll hint -->
-        <div
-          class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/20 text-xs flex flex-col items-center gap-2"
-        >
-          <div
-            class="w-4 h-7 rounded-full border border-white/15 flex items-start justify-center pt-1.5"
-          >
-            <div class="w-0.5 h-1.5 bg-white/30 rounded-full"></div>
+        <div class="constraint-card moderate">
+          <div class="c-card-header">
+            <span class="c-size">10<sup>3</sup> &le; n &le; 10<sup>6</sup></span>
+            <span class="c-label">Moderate Input</span>
+            <span class="c-badge warn">Brute Force TLE</span>
           </div>
-          Scroll
+          <ul class="c-list">
+            <li>Brute force bahut slow hoga</li>
+            <li>O(n) ya O(n log n) chahiye</li>
+            <li>Two Pointers, Sliding Window, DP</li>
+            <li>HashMap, Heap, Binary Search</li>
+          </ul>
+          <div class="c-patterns">Use: 2P, SW, DP, HashMap, Heap, BS</div>
         </div>
-      </section>
-
-      <!-- Quick Revision Panel (hidden by default) -->
-      <div
-        id="revision-panel"
-        class="hidden py-8 px-6 border-b border-white/5"
-        style="background: linear-gradient(180deg, #050509, #030305)"
-      >
-        <div class="max-w-5xl mx-auto">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="font-display text-lg font-bold text-white/90">
-              ⚡ Quick Revision — All 20 Patterns
-            </h2>
-            <button
-              id="close-revision"
-              class="text-white/30 hover:text-white/70 text-sm transition-colors"
-            >
-              ✕ Close
-            </button>
+        <div class="constraint-card large">
+          <div class="c-card-header">
+            <span class="c-size">n &ge; 10<sup>7</sup></span>
+            <span class="c-label">Very Large Input</span>
+            <span class="c-badge danger">Even O(n) slow</span>
           </div>
-          <div
-            id="revision-grid"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"
-          ></div>
-        </div>
-      </div>
-
-      <!-- Patterns Container -->
-      <div id="patterns-container"></div>
-    </main>
-
-    <!-- Solution Modal -->
-    <div id="modal">
-      <div id="modal-bg" onclick="closeModal()"></div>
-      <div id="modal-box" class="p-0">
-        <div
-          id="modal-header"
-          class="px-6 py-4 border-b border-white/8 flex items-start justify-between sticky top-0 backdrop-blur-xl rounded-t-2xl"
-          style="background: rgba(13, 13, 20, 0.97)"
-        >
-          <div>
-            <div
-              id="modal-meta"
-              class="text-[10px] text-white/40 font-mono mb-0.5"
-            ></div>
-            <div
-              id="modal-title"
-              class="font-display font-bold text-base text-white"
-            ></div>
-            <div id="modal-tags" class="flex gap-1 flex-wrap mt-2"></div>
-          </div>
-          <button
-            onclick="closeModal()"
-            class="text-white/30 hover:text-white/70 transition-colors text-lg ml-4 mt-1"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="px-6 py-4">
-          <div
-            id="modal-desc"
-            class="text-sm text-white/55 mb-4 leading-relaxed"
-          ></div>
-          <div class="flex items-center justify-between mb-2">
-            <span
-              class="text-[10px] uppercase tracking-widest text-white/30 font-mono"
-              >Solution</span
-            >
-            <button
-              id="modal-copy"
-              class="text-[10px] px-2.5 py-1 rounded bg-white/6 border border-white/8 text-white/40 copy-btn hover:text-white/70 transition-all"
-              onclick="copyModalCode()"
-            >
-              copy
-            </button>
-          </div>
-          <div class="code-block">
-            <pre id="modal-code" class="p-5 text-white/85"></pre>
-          </div>
-          <div
-            id="modal-tip"
-            class="mt-4 p-3 rounded-lg border border-white/6 bg-white/2 text-xs text-white/45 leading-relaxed hidden"
-          ></div>
+          <ul class="c-list">
+            <li>O(n) bhi bahut slow hoga</li>
+            <li>O(log n) ya O(1) chahiye</li>
+            <li>Binary Search, Math tricks</li>
+            <li>Precomputed formulas</li>
+          </ul>
+          <div class="c-patterns">Use: Binary Search, Math, Prefix Sum</div>
         </div>
       </div>
     </div>
 
-    <script src="dsa-data.js"></script>
-    <script src="app.js"></script>
-  </body>
+    <div class="guide-step" id="step-input">
+      <div class="step-badge blue-badge">Step 2</div>
+      <h3 class="step-title">Decode the Input Format</h3>
+      <p class="step-desc">Input ka structure dekho — yeh seedha pattern suggest karta hai.</p>
+      <div class="input-grid">
+        <div class="input-card"><div class="ic-icon">Tree</div><div class="ic-title">Trees (Binary / BST)</div><div class="ic-tips"><div class="ic-tip">DFS: all paths, preorder/inorder</div><div class="ic-tip">BFS: level-order, shortest path</div><div class="ic-tip">BST property: O(log n) search</div></div></div>
+        <div class="input-card"><div class="ic-icon">Graph</div><div class="ic-title">Graphs (Nodes+Edges)</div><div class="ic-tips"><div class="ic-tip">BFS: shortest path</div><div class="ic-tip">DFS: connected components</div><div class="ic-tip">Union-Find: connectivity</div></div></div>
+        <div class="input-card"><div class="ic-icon">Grid</div><div class="ic-title">2D Grids / Matrices</div><div class="ic-tips"><div class="ic-tip">DFS/BFS: "islands" problems</div><div class="ic-tip">Union-Find: connected regions</div><div class="ic-tip">DP: pathfinding, counting</div></div></div>
+        <div class="input-card"><div class="ic-icon">Sort</div><div class="ic-title">Sorted Arrays</div><div class="ic-tips"><div class="ic-tip">Binary Search: O(log n) lookup</div><div class="ic-tip">Two Pointers: pairs/triplets</div><div class="ic-tip">Greedy: optimal selection</div></div></div>
+        <div class="input-card"><div class="ic-icon">Str</div><div class="ic-title">Strings</div><div class="ic-tips"><div class="ic-tip">Two Pointers: palindrome</div><div class="ic-tip">Sliding Window: substring</div><div class="ic-tip">Trie: prefix/word problems</div></div></div>
+        <div class="input-card"><div class="ic-icon">List</div><div class="ic-title">Linked Lists</div><div class="ic-tips"><div class="ic-tip">Fast/Slow: cycle detection</div><div class="ic-tip">Dummy node: cleaner code</div><div class="ic-tip">Reverse: in-place modification</div></div></div>
+      </div>
+    </div>
+
+    <div class="guide-step" id="step-output">
+      <div class="step-badge purple-badge">Step 3</div>
+      <h3 class="step-title">Understand the Output Type</h3>
+      <p class="step-desc">Answer kaisa chahiye — yeh bhi pattern narrow karta hai.</p>
+      <div class="output-row">
+        <div class="output-card"><div class="out-icon">List</div><div class="out-type">List of Lists</div><div class="out-eg">(paths, subsets, combos)</div><div class="out-use">Backtracking / DFS<br/>Recursion: Take, Not Take</div></div>
+        <div class="output-card"><div class="out-icon">Val</div><div class="out-type">Single Value</div><div class="out-eg">(max profit, min cost, #ways)</div><div class="out-use">Dynamic Programming<br/>Greedy for quick optimal</div></div>
+        <div class="output-card"><div class="out-icon">Mod</div><div class="out-type">Modified Structure</div><div class="out-eg">(in-place edits)</div><div class="out-use">Two Pointers<br/>Space-efficient O(1)</div></div>
+        <div class="output-card"><div class="out-icon">Ord</div><div class="out-type">Ordered Output</div><div class="out-eg">(sorted tasks, ranked)</div><div class="out-use">Heap / Topological Sort<br/>Custom sorting</div></div>
+      </div>
+    </div>
+
+    <div class="guide-step" id="step-keywords">
+      <div class="step-badge amber-badge">Step 4</div>
+      <h3 class="step-title">Keyword Triggers — Sunke Pattern Pehchano</h3>
+      <p class="step-desc">Ye keywords sunna — seedha pattern yaad aana chahiye. Ratto inhe.</p>
+      <div id="keyword-grid"></div>
+    </div>
+  </section>
+
+  <!-- DS DECISION GUIDE -->
+  <section id="ds-picker">
+    <div class="section-header">
+      <div class="section-eyebrow">Data Structure Selector</div>
+      <h2 class="section-title">When to Use What</h2>
+      <p class="section-sub">Array, HashMap, Set, Stack, Queue, Heap — kab kaunsa use karo, kab avoid karo. Ye chart yaad rakhna.</p>
+    </div>
+    <div id="ds-grid"></div>
+    <div class="roi-section">
+      <h3 class="roi-title">Pattern ROI Table — Sabse Pehle Kya Seekho?</h3>
+      <div class="roi-table-wrap">
+        <table class="roi-table">
+          <thead><tr><th>Pattern / Topic</th><th>Difficulty</th><th>Return</th><th>Priority</th></tr></thead>
+          <tbody id="roi-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIME & SPACE COMPLEXITY (from your notes) -->
+  <section id="complexity-section">
+    <div class="section-header">
+      <div class="section-eyebrow">Interview Must-Know</div>
+      <h2 class="section-title">Time &amp; Space Complexity</h2>
+      <p class="section-sub">Big O notation — ye samajh gaye toh constraint dekh ke seedha algorithm decide hoga. Teri notes se banaya hai.</p>
+    </div>
+    <div id="complexity-content"></div>
+  </section>
+
+  <!-- SORTING & SEARCHING (from your notes) -->
+  <section id="sorting-section">
+    <div class="section-header">
+      <div class="section-eyebrow">Foundation</div>
+      <h2 class="section-title">Sorting &amp; Searching</h2>
+      <p class="section-sub">Linear Search vs Binary Search. Bubble, Selection, Insertion, Merge, Quick Sort — kab kaunsa use karo, real examples ke saath.</p>
+    </div>
+    <div id="sorting-content"></div>
+  </section>
+
+  <!-- PATTERNS -->
+  <div id="patterns"></div>
+
+</main>
+
+<!-- ═══ MODAL (3-panel: left info | middle code | right pattern guide) ═══ -->
+<div id="overlay" class="hidden" onclick="tryClose(event)">
+  <div id="modal">
+
+    <!-- Modal Header -->
+    <div id="modal-hdr">
+      <div style="flex:1;min-width:0">
+        <div id="modal-meta"></div>
+        <div id="modal-title"></div>
+        <div id="modal-tags"></div>
+      </div>
+      <button class="close-btn" onclick="closeModal()" title="Close (Esc)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Analysis Bar -->
+    <div id="modal-analysis"></div>
+
+    <!-- Modal Body: 3 columns -->
+    <div id="modal-body">
+
+      <!-- LEFT: description + constraints + steps -->
+      <div id="modal-left">
+        <div id="modal-desc-box"></div>
+        <div id="modal-constraints-box"></div>
+        <div>
+          <div class="steps-label">Aise Solve Karo — Step by Step</div>
+          <ol id="modal-steps"></ol>
+        </div>
+      </div>
+
+      <!-- MIDDLE: code panel -->
+      <div id="modal-right">
+        <div id="code-hdr">
+          <div id="code-hdr-left">
+            <div class="win-dot dot-r"></div>
+            <div class="win-dot dot-y"></div>
+            <div class="win-dot dot-g"></div>
+            <span id="code-lang-label">JavaScript Solution</span>
+          </div>
+          <button id="copy-btn" onclick="doCopy()">Copy</button>
+        </div>
+        <div id="code-wrap"><code id="code-el"></code></div>
+      </div>
+
+      <!-- RIGHT: pattern recognition guide panel -->
+      <div id="modal-guide-panel"></div>
+
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="guide.js"></script>
+<script src="complexity-data.js"></script>
+<script src="app.js"></script>
+</body>
 </html>

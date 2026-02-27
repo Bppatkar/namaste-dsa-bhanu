@@ -1,457 +1,443 @@
-// ═══════════════════════════════════════════════════════════════════
-// DSA MASTER GUIDE — app.js
-// All rendering, utility functions, and UI interaction logic
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// APP.JS — FIXED Highlighter + Pattern Guide in Modal
+// THE BUG: function-name regex was matching PH tokens as function names
+// FIX: Highlight function names BEFORE keywords, using null-byte delimiters
+// ═══════════════════════════════════════════════════════════
 
-// ── Gradient Palettes ──────────────────────────────────────────────
-const GRADIENTS = [
-  { from: '#00f5ff', to: '#bf00ff', rgb: '0,245,255' },
-  { from: '#bf00ff', to: '#ff006e', rgb: '191,0,255' },
-  { from: '#ff006e', to: '#ff9900', rgb: '255,0,110' },
-  { from: '#00f5ff', to: '#50fa7b', rgb: '0,245,255' },
-  { from: '#ff9900', to: '#ff006e', rgb: '255,153,0' },
-  { from: '#50fa7b', to: '#00f5ff', rgb: '80,250,123' },
-  { from: '#f97316', to: '#ec4899', rgb: '249,115,22' },
-  { from: '#6366f1', to: '#06b6d4', rgb: '99,102,241' },
-  { from: '#14b8a6', to: '#6366f1', rgb: '20,184,166' },
-  { from: '#ec4899', to: '#8b5cf6', rgb: '236,72,153' },
-  { from: '#0ea5e9', to: '#6366f1', rgb: '14,165,233' },
-  { from: '#84cc16', to: '#06b6d4', rgb: '132,204,22' },
-  { from: '#f59e0b', to: '#84cc16', rgb: '245,158,11' },
-  { from: '#ef4444', to: '#f97316', rgb: '239,68,68' },
-  { from: '#8b5cf6', to: '#ec4899', rgb: '139,92,246' },
-  { from: '#06b6d4', to: '#10b981', rgb: '6,182,212' },
-  { from: '#10b981', to: '#84cc16', rgb: '16,185,129' },
-  { from: '#d946ef', to: '#6366f1', rgb: '217,70,239' },
-  { from: '#f43f5e', to: '#6366f1', rgb: '244,63,94' },
-  { from: '#2dd4bf', to: '#818cf8', rgb: '45,212,191' }
-];
+const KW_SET = new Set([
+  'if','else','while','for','switch','return','function','new',
+  'typeof','instanceof','class','catch','try','case','default',
+  'of','in','do','delete','void','throw','import','export','from',
+  'extends','super','yield','async','await','static'
+]);
 
-// Get gradient for a pattern index
-function getGradient(index) {
-  return GRADIENTS[index % GRADIENTS.length];
+// ══ FIXED SYNTAX HIGHLIGHTER ══
+// Uses NULL-BYTE delimiters \x00N\x00 — these can NEVER be matched by word-boundary regexes
+// And function names are processed BEFORE keywords so placeholder tokens don't get wrapped
+function highlight(raw) {
+  if (!raw) return '';
+  let s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const parts = [];
+  const protect = html => {
+    const id = '\x00' + parts.length + '\x00';
+    parts.push(html);
+    return id;
+  };
+
+  // 1. Block comments
+  s = s.replace(/(\/\*[\s\S]*?\*\/)/g,  m => protect(`<span class="cc">${m}</span>`));
+  // 2. Line comments
+  s = s.replace(/(\/\/[^\n]*)/g,         m => protect(`<span class="cc">${m}</span>`));
+  // 3. Template literals
+  s = s.replace(/(`[^`]*`)/g,            m => protect(`<span class="cs">${m}</span>`));
+  // 4. Single-quoted strings
+  s = s.replace(/('(?:[^'\\]|\\.)*')/g,  m => protect(`<span class="cs">${m}</span>`));
+  // 5. Double-quoted strings
+  s = s.replace(/("(?:[^"\\]|\\.)*")/g,  m => protect(`<span class="cs">${m}</span>`));
+
+  // 6. Function names FIRST — skip keywords, skip already-protected tokens
+  s = s.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g, m =>
+    KW_SET.has(m) ? m : protect(`<span class="cfn">${m}</span>`)
+  );
+
+  // 7. Keywords
+  s = s.replace(
+    /\b(const|let|var|function|return|if|else|while|for|of|in|do|new|class|this|null|undefined|true|false|break|continue|typeof|instanceof|async|await|throw|try|catch|switch|case|default|import|export|from|extends|static|super|yield|delete|void)\b/g,
+    m => protect(`<span class="ck">${m}</span>`)
+  );
+
+  // 8. Built-ins
+  s = s.replace(
+    /\b(Math|Map|Set|Array|Object|String|Number|Boolean|Promise|JSON|console|parseInt|parseFloat|Infinity|NaN|Symbol|BigInt|Error|RegExp|Date|setTimeout|clearTimeout|setInterval|clearInterval)\b/g,
+    m => protect(`<span class="ct">${m}</span>`)
+  );
+
+  // 9. Numbers — \x00 is not a word char so \b won't span into placeholders
+  s = s.replace(/\b(\d+(?:\.\d+)?)\b/g,  m => protect(`<span class="cn">${m}</span>`));
+
+  // 10. Restore
+  return s.replace(/\x00(\d+)\x00/g, (_, i) => parts[+i]);
 }
 
-// Get semi-transparent background for a gradient
-function getGradientBg(index, opacity = 0.08) {
-  const g = getGradient(index);
-  return `linear-gradient(135deg, ${hexToRgba(g.from, opacity)}, ${hexToRgba(g.to, opacity)})`;
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let activeQ     = null;
+let activePatId = null;
+let activeSbTab = 'patterns';
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function buildNav() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = PATTERNS.map((p, i) => {
+    const count = (QUESTIONS[p.id] || []).length;
+    return `<a class="nav-item" href="#block-${i}" id="nav-${i}" onclick="setActive(${i});return true;" title="${p.title}">
+      <span class="nav-icon">${p.icon}</span>
+      <span class="nav-label">${p.title}</span>
+      <span class="nav-count">${count}</span>
+    </a>`;
+  }).join('');
 }
 
-// Hex to rgba helper
-function hexToRgba(hex, alpha) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
+function buildSbGuide() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = `<div style="padding:4px 2px">
+    <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 10px 10px">4-Step Pattern Recognition</p>
+    ${[
+      {n:'1',t:'Check n Size',   s:'n≤20→Backtrack | n≤10⁶→O(n) | n≥10⁷→O(log n)', c:'#256B40'},
+      {n:'2',t:'Input Format',   s:'Tree→DFS/BFS · Graph→BFS/DFS · String→Slide',   c:'#1A4A80'},
+      {n:'3',t:'Output Type',    s:'List→BT · Single→DP · Ordered→Heap · Inplace→2P',c:'#7B2D8C'},
+      {n:'4',t:'Keyword Triggers',s:'Palindrome→2P · K elem→Heap · Ways→DP · Long→SW',c:'#9E6208'},
+    ].map(r=>`<div class="sb-guide-item" onclick="document.getElementById('recognition-guide').scrollIntoView({behavior:'smooth'})">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+        <span style="width:20px;height:20px;background:${r.c};color:#fff;border-radius:6px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${r.n}</span>
+        <strong style="font-size:13px;color:var(--i0)">${r.t}</strong>
+      </div>
+      <div style="font-size:11px;color:var(--i3);padding-left:28px;line-height:1.6">${r.s}</div>
+    </div>`).join('')}
+    <div style="margin:14px 8px 6px;padding-top:12px;border-top:1px solid var(--p3)">
+      <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);margin-bottom:8px">Keyword ↦ Pattern</p>
+      ${KEYWORD_TRIGGERS.slice(0,10).map(k=>`<div class="sb-guide-item" style="padding:7px 8px;margin-bottom:2px">
+        <span style="font-size:11px;font-weight:700;color:var(--a1)">${k.pattern}</span>
+        <span style="font-size:11px;color:var(--i3);display:block;margin-top:2px;line-height:1.5">${k.triggers.slice(0,2).join(' · ')}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
 }
 
-// Gradient CSS string
-function gradientCSS(index) {
-  const g = getGradient(index);
-  return `linear-gradient(135deg, ${g.from}, ${g.to})`;
+function buildSbDsPicker() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = `<div style="padding:4px">
+    ${DS_GUIDE.map(ds=>`<div class="sb-guide-item" style="padding:10px 8px;margin-bottom:3px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:15px">${ds.icon}</span>
+        <strong style="font-size:13px;color:var(--i0)">${ds.name}</strong>
+      </div>
+      <div style="font-size:11px;color:var(--a1);font-family:'JetBrains Mono',monospace;margin-bottom:5px;padding-left:24px">${ds.when}</div>
+      ${ds.uses.slice(0,2).map(u=>`<div style="font-size:11px;color:var(--i2);padding:3px 6px 3px 24px;background:var(--p0);border-radius:4px;margin-bottom:2px"><strong>${u.bold}</strong>${u.desc}</div>`).join('')}
+    </div>`).join('')}
+  </div>`;
 }
 
-// ── Tag colors by category ──────────────────────────────────────────
-const TAG_COLORS = {
-  'Array': { bg: 'rgba(99,102,241,0.15)', color: '#818cf8', border: 'rgba(99,102,241,0.3)' },
-  'String': { bg: 'rgba(244,63,94,0.15)', color: '#fb7185', border: 'rgba(244,63,94,0.3)' },
-  'Hash Table': { bg: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: 'rgba(245,158,11,0.3)' },
-  'Dynamic Programming': { bg: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: 'rgba(139,92,246,0.3)' },
-  'DP': { bg: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: 'rgba(139,92,246,0.3)' },
-  'Tree': { bg: 'rgba(16,185,129,0.15)', color: '#34d399', border: 'rgba(16,185,129,0.3)' },
-  'Graph': { bg: 'rgba(6,182,212,0.15)', color: '#22d3ee', border: 'rgba(6,182,212,0.3)' },
-  'BFS': { bg: 'rgba(14,165,233,0.15)', color: '#38bdf8', border: 'rgba(14,165,233,0.3)' },
-  'DFS': { bg: 'rgba(20,184,166,0.15)', color: '#2dd4bf', border: 'rgba(20,184,166,0.3)' },
-  'Two Pointers': { bg: 'rgba(251,146,60,0.15)', color: '#fb923c', border: 'rgba(251,146,60,0.3)' },
-  'Sliding Window': { bg: 'rgba(132,204,22,0.15)', color: '#a3e635', border: 'rgba(132,204,22,0.3)' },
-  'Binary Search': { bg: 'rgba(0,245,255,0.12)', color: '#67e8f9', border: 'rgba(0,245,255,0.25)' },
-  'Backtracking': { bg: 'rgba(217,70,239,0.15)', color: '#e879f9', border: 'rgba(217,70,239,0.3)' },
-  'Heap': { bg: 'rgba(249,115,22,0.15)', color: '#fb923c', border: 'rgba(249,115,22,0.3)' },
-  'Stack': { bg: 'rgba(239,68,68,0.15)', color: '#f87171', border: 'rgba(239,68,68,0.3)' },
-  'Sorting': { bg: 'rgba(236,72,153,0.15)', color: '#f472b6', border: 'rgba(236,72,153,0.3)' },
-  'Union Find': { bg: 'rgba(167,139,250,0.15)', color: '#c4b5fd', border: 'rgba(167,139,250,0.3)' },
-  'Trie': { bg: 'rgba(52,211,153,0.15)', color: '#6ee7b7', border: 'rgba(52,211,153,0.3)' },
-  'Greedy': { bg: 'rgba(251,191,36,0.15)', color: '#fde68a', border: 'rgba(251,191,36,0.3)' },
-  'Bit Manipulation': { bg: 'rgba(45,212,191,0.15)', color: '#5eead4', border: 'rgba(45,212,191,0.3)' },
-  'Linked List': { bg: 'rgba(129,140,248,0.15)', color: '#a5b4fc', border: 'rgba(129,140,248,0.3)' },
-  'Prefix Sum': { bg: 'rgba(110,231,183,0.15)', color: '#6ee7b7', border: 'rgba(110,231,183,0.3)' },
-  'Math': { bg: 'rgba(253,224,71,0.15)', color: '#fef08a', border: 'rgba(253,224,71,0.3)' },
-  'Monotonic Stack': { bg: 'rgba(252,165,165,0.15)', color: '#fca5a5', border: 'rgba(252,165,165,0.3)' },
-  'Monotonic Queue': { bg: 'rgba(196,181,253,0.15)', color: '#c4b5fd', border: 'rgba(196,181,253,0.3)' },
-  'Design': { bg: 'rgba(156,163,175,0.15)', color: '#9ca3af', border: 'rgba(156,163,175,0.3)' },
-  'Matrix': { bg: 'rgba(6,182,212,0.12)', color: '#67e8f9', border: 'rgba(6,182,212,0.25)' },
-  'default': { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', border: 'rgba(255,255,255,0.12)' }
-};
-
-function getTagStyle(tag) {
-  const style = TAG_COLORS[tag] || TAG_COLORS.default;
-  return `background:${style.bg};color:${style.color};border-color:${style.border}`;
+function setSbTab(tab, btn) {
+  activeSbTab = tab;
+  document.querySelectorAll('.sb-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='patterns') buildNav();
+  else if (tab==='guide') buildSbGuide();
+  else if (tab==='ds') buildSbDsPicker();
 }
 
-// ── Code Syntax Highlighter ─────────────────────────────────────────
-function highlight(code) {
-  return code
-    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/(\/\/[^\n]*)/g, '<span class="cm">$1</span>')
-    .replace(/\b(const|let|var|function|return|if|else|while|for|of|in|new|this|class|constructor|null|undefined|true|false|break|continue|import|export|default)\b/g, '<span class="kw">$1</span>')
-    .replace(/\b(Math|Map|Set|Array|Object|Number|String|console|window|document|Promise)\b/g, '<span class="ty">$1</span>')
-    .replace(/'([^']*)'/g, "<span class='str'>'$1'</span>")
-    .replace(/"([^"]*)"/g, '<span class="str">"$1"</span>')
-    .replace(/`([^`]*)`/g, '<span class="str">`$1`</span>')
-    .replace(/\b(\d+)\b/g, '<span class="cn">$1</span>')
-    .replace(/\b([a-z][a-zA-Z0-9]*)\s*\(/g, '<span class="fn">$1</span>(');
+// ═══════════════════════════════════════════════════════════
+// BUILD PATTERN BLOCKS
+// ═══════════════════════════════════════════════════════════
+function buildPatterns() {
+  document.getElementById('patterns').innerHTML = PATTERNS.map((p, i) => {
+    const qs = QUESTIONS[p.id] || [];
+    return `<div class="pattern-block" id="block-${i}">
+      <div class="pat-eyebrow">Pattern ${p.num}</div>
+      <div class="pat-title-row">
+        <div class="pat-icon-box">${p.icon}</div>
+        <h2 class="pat-title">${p.title}</h2>
+      </div>
+      <div class="pat-meta">
+        <span class="meta-chip">Time: ${p.time}</span>
+        <span class="meta-chip">Space: ${p.space}</span>
+        <span class="meta-chip">${qs.length} Problems</span>
+      </div>
+      <div class="theory-row">
+        <div class="theory-card">
+          <div class="theory-card-tag">Theory — Kya Hai?</div>
+          <p class="theory-card-text">${p.theory}</p>
+        </div>
+        <div class="theory-card">
+          <div class="theory-card-tag">Kab Use Karo</div>
+          <p class="theory-card-text">${p.when}</p>
+          <div class="keyword-row">${p.keywords.map(k=>`<span class="kw-pill">${k}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="qs-header">
+        <span>LeetCode Problems</span><span>${qs.length} problems</span>
+      </div>
+      <div class="qs-grid">
+        ${qs.map(q=>`<div class="q-card" onclick="openModal('${q.id}','${p.id}')">
+          <div class="q-top">
+            <span class="q-num">#${q.id}</span>
+            <span class="diff diff-${q.diff}">${q.diff}</span>
+          </div>
+          <div class="q-title">${q.title}</div>
+          <div class="q-desc">${q.desc}</div>
+          <div class="q-tags">${(q.tags||[]).slice(0,3).map(t=>`<span class="q-tag">${t}</span>`).join('')}</div>
+          <div class="q-bottom-row">
+            <span class="q-complexity">T: ${q.time||p.time} &nbsp;|&nbsp; S: ${q.space||p.space}</span>
+            <span class="q-arrow">View solution →</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// ── Copy to Clipboard ───────────────────────────────────────────────
-function copyCode(btn, code) {
-  navigator.clipboard.writeText(code).then(() => {
-    const prev = btn.textContent;
-    btn.textContent = '✓ copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = prev; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {
-    btn.textContent = 'failed';
-    setTimeout(() => { btn.textContent = prev; }, 1500);
-  });
-}
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function openModal(qId, patId) {
+  const p = PATTERNS.find(x => x.id === patId);
+  const q = (QUESTIONS[patId]||[]).find(x => String(x.id)===String(qId));
+  if (!q || !p) return;
+  activeQ = q; activePatId = patId;
 
-// ── Modal State ─────────────────────────────────────────────────────
-let currentModalCode = '';
-
-function openModal(q, patternIndex) {
-  const modal = document.getElementById('modal');
-  const g = getGradient(patternIndex);
-  document.getElementById('modal-meta').textContent = `LeetCode #${q.id}`;
+  document.getElementById('modal-meta').textContent = `#${q.id}  ·  ${p.title}`;
   document.getElementById('modal-title').textContent = q.title;
-  document.getElementById('modal-title').style.cssText = `background:linear-gradient(135deg,${g.from},${g.to});-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text`;
+  document.getElementById('modal-tags').innerHTML =
+    `<span class="m-diff diff-${q.diff}">${q.diff}</span>` +
+    `<span class="m-tag-cmplx">T: ${q.time||p.time} | S: ${q.space||p.space}</span>` +
+    (q.tags||[]).map(t=>`<span class="m-tag">${t}</span>`).join('');
 
-  // Tags
-  const tagsEl = document.getElementById('modal-tags');
-  tagsEl.innerHTML = `<span class="text-[9px] px-2 py-0.5 rounded border ${q.diff === 'Easy' ? 'diff-easy' : q.diff === 'Medium' ? 'diff-medium' : 'diff-hard'}">${q.diff}</span>` +
-    q.tags.map(t => `<span class="text-[9px] px-2 py-0.5 rounded border font-mono" style="${getTagStyle(t)}">${t}</span>`).join('');
+  buildModalAnalysis(q, p);
 
-  document.getElementById('modal-desc').textContent = q.desc;
-  currentModalCode = q.solution;
-  document.getElementById('modal-code').innerHTML = highlight(q.solution);
-  modal.classList.add('open');
+  // Highlight keywords in description
+  let desc = q.desc||'';
+  [...(p.keywords||[])].forEach(kw => {
+    const rx = new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    desc = desc.replace(rx, `<mark class="kw-hl">$1</mark>`);
+  });
+  document.getElementById('modal-desc-box').innerHTML = desc;
+
+  buildConstraintsPanel(q);
+
+  document.getElementById('modal-steps').innerHTML = (q.steps||[]).map((s,i)=>
+    `<li><span class="step-n">${i+1}</span><span>${s}</span></li>`
+  ).join('');
+
+  // FIXED: code highlight with null-byte placeholders
+  document.getElementById('code-el').innerHTML = highlight(q.solution||'// No solution');
+
+  buildPatternGuidePanel(q, p);
+
+  const cb = document.getElementById('copy-btn');
+  cb.textContent='Copy'; cb.className='';
+
+  document.getElementById('overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function copyModalCode() {
-  const btn = document.getElementById('modal-copy');
-  navigator.clipboard.writeText(currentModalCode).then(() => {
-    btn.textContent = '✓ copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+  ['modal-left','code-wrap','modal-guide-panel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.scrollTop = 0;
   });
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ── Build Sidebar ────────────────────────────────────────────────────
-function buildSidebar() {
-  const nav = document.getElementById('sidebar-nav');
-  DSA_DATA.forEach((p, i) => {
-    const g = getGradient(i);
-    const item = document.createElement('a');
-    item.href = `#${p.id}`;
-    item.className = 'sidebar-item flex items-center gap-2.5 px-4 py-2 text-white/40 border-l-2 border-transparent no-underline';
-    item.dataset.id = p.id;
-    item.style.color = 'rgba(255,255,255,0.4)';
-    item.innerHTML = `
-      <span class="text-sm" style="min-width:20px;text-align:center">${p.icon}</span>
-      <span class="text-[11px] font-medium flex-1 truncate">${p.title}</span>
-      <span class="text-[9px] font-mono opacity-40">${String(p.questions.length).padStart(2, '0')}</span>
-    `;
-    item.addEventListener('click', () => { item.style.color = g.from; });
-    nav.appendChild(item);
-  });
+function buildModalAnalysis(q, p) {
+  const el = document.getElementById('modal-analysis');
+  const hints = getConstraintHint(q.constraints||[]);
+  const kws   = (p.keywords||[]).filter(kw => (q.desc||'').toLowerCase().includes(kw.toLowerCase()));
+  let html = `<span class="analysis-label">Pattern</span>
+    <div class="analysis-chip pat-chip">${p.icon} ${p.title}</div>`;
+  if (kws.length) html += kws.slice(0,2).map(kw=>`<div class="analysis-chip kw-chip">Keyword: <strong>${kw}</strong></div>`).join('');
+  if (hints&&hints.length) html += hints.slice(0,1).map(h=>`<div class="analysis-chip hint-chip">${h.icon} Constraint matched</div>`).join('');
+  el.innerHTML = html; el.style.display='flex';
 }
 
-// ── Build Revision Panel ─────────────────────────────────────────────
-function buildRevisionPanel() {
-  const grid = document.getElementById('revision-grid');
-  DSA_DATA.forEach((p, i) => {
-    const g = getGradient(i);
-    const card = document.createElement('div');
-    card.className = 'rounded-xl p-4 border border-white/6 cursor-pointer hover:border-white/15 transition-all';
-    card.style.background = getGradientBg(i, 0.06);
-    card.innerHTML = `
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-lg">${p.icon}</span>
-        <div>
-          <div class="text-[9px] font-mono text-white/30">${p.number}</div>
-          <div class="font-display font-bold text-xs text-white/85">${p.title}</div>
-        </div>
-      </div>
-      <div class="text-[10px] text-white/35 leading-relaxed mb-3 line-clamp-2">${p.theory.slice(0, 90)}...</div>
-      <div class="flex items-center justify-between">
-        <div class="flex flex-wrap gap-1">
-          ${p.keywords.slice(0, 2).map(k => `<span class="text-[9px] px-1.5 py-0.5 rounded" style="background:${hexToRgba(g.from, 0.12)};color:${g.from}">${k}</span>`).join('')}
-        </div>
-        <a href="#${p.id}" class="text-[10px] font-mono text-white/30 hover:text-white/70 transition-colors">Study →</a>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+function buildConstraintsPanel(q) {
+  const box = document.getElementById('modal-constraints-box');
+  if (!q.constraints||!q.constraints.length) { box.style.display='none'; return; }
+  const hints = getConstraintHint(q.constraints);
+  box.innerHTML = `
+    <div class="constraints-title">Problem Constraints</div>
+    <ul class="constraint-list">
+      ${q.constraints.map(c=>`<li class="constraint-item">${c}</li>`).join('')}
+    </ul>
+    ${hints&&hints.length?`<div class="constraints-hints">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--a1);margin-bottom:8px">Pattern Recognition from Constraints</div>
+      ${hints.map(h=>`<div class="constraint-hint">${h.icon} ${h.text}</div>`).join('')}
+    </div>`:''}`;
+  box.style.display='block';
 }
 
-// ── Build Pattern Section ────────────────────────────────────────────
-function buildPatternSection(p, index) {
-  const g = getGradient(index);
-  const section = document.createElement('section');
-  section.id = p.id;
-  section.className = 'pattern-section border-b border-white/5';
-  section.style.background = `linear-gradient(180deg, ${hexToRgba(g.from, 0.025)}, transparent 40%)`;
+function buildPatternGuidePanel(q, p) {
+  const panel = document.getElementById('modal-guide-panel');
+  if (!panel) return;
+  const pid = p.id;
+  const cs  = q.constraints||[];
 
-  section.innerHTML = `
-    <!-- Pattern Header -->
-    <div class="px-8 pt-12 pb-6 relative overflow-hidden">
-      <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 100% at 80% 50%, ${hexToRgba(g.to, 0.06)}, transparent)"></div>
-      <div class="relative">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="font-mono text-[10px] text-white/25 tracking-widest">PATTERN ${p.number}</span>
-          <div class="h-px flex-1 max-w-[60px]" style="background:${gradientCSS(index)};opacity:0.4"></div>
-        </div>
-        <div class="flex items-start gap-4 flex-wrap mb-4">
-          <div class="text-4xl">${p.icon}</div>
-          <div>
-            <h2 class="font-display font-extrabold text-2xl md:text-3xl mb-1" style="-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-image:${gradientCSS(index)}">${p.title}</h2>
-            <div class="flex items-center gap-3 text-[10px] font-mono text-white/35">
-              <span>⏱ ${p.complexity.time}</span>
-              <span>📦 ${p.complexity.space}</span>
-              <span>📋 ${p.questions.length} Problems</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Theory + When to Use -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-          <div class="lg:col-span-2 rounded-xl p-4 border border-white/6" style="background:rgba(0,0,0,0.3)">
-            <div class="text-[9px] uppercase tracking-widest font-mono mb-2" style="color:${g.from}">Theory</div>
-            <p class="text-white/60 text-xs leading-relaxed">${p.theory}</p>
-          </div>
-          <div class="rounded-xl p-4 border border-white/6" style="background:rgba(0,0,0,0.3)">
-            <div class="text-[9px] uppercase tracking-widest font-mono mb-2" style="color:${g.to}">When To Use</div>
-            <p class="text-white/55 text-xs leading-relaxed mb-3">${p.when}</p>
-            <div class="flex flex-wrap gap-1">
-              ${p.keywords.map(k => `<span class="text-[9px] px-2 py-0.5 rounded-full border" style="background:${hexToRgba(g.from, 0.1)};color:${g.from};border-color:${hexToRgba(g.from, 0.2)}">${k}</span>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <!-- Template Code -->
-        <div class="code-block">
-          <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/6" style="background:rgba(255,255,255,0.025)">
-            <div class="flex items-center gap-3">
-              <div class="flex gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500/60"></span><span class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></span><span class="w-2.5 h-2.5 rounded-full bg-green-500/60"></span></div>
-              <span class="text-[9px] font-mono text-white/25 uppercase tracking-widest">Template Pattern</span>
-            </div>
-            <button class="text-[9px] px-2.5 py-1 rounded border border-white/8 bg-white/4 text-white/35 copy-btn hover:text-white/70 transition-all" onclick="copyCode(this, ${JSON.stringify(p.template)})">copy</button>
-          </div>
-          <pre class="p-5 text-white/80">${highlight(p.template)}</pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- Questions Grid -->
-    <div class="px-8 pb-10">
-      <div class="flex items-center gap-3 mb-5">
-        <h3 class="font-display font-bold text-sm text-white/60 uppercase tracking-widest">LeetCode Problems</h3>
-        <div class="h-px flex-1" style="background:linear-gradient(90deg,${hexToRgba(g.from, 0.3)},transparent)"></div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        ${p.questions.map((q, qi) => buildQuestionCard(q, index, qi)).join('')}
-      </div>
-    </div>
-  `;
-
-  // Attach click handlers after insertion
-  section.querySelectorAll('.q-card').forEach((card, qi) => {
-    card.addEventListener('click', () => openModal(p.questions[qi], index));
-  });
-
-  return section;
-}
-
-// ── Build Question Card ──────────────────────────────────────────────
-function buildQuestionCard(q, patternIndex, cardIndex) {
-  const g = getGradient(patternIndex);
-  // Vary card accent colors subtly
-  const accentG = GRADIENTS[(patternIndex * 3 + cardIndex) % GRADIENTS.length];
-
-  const diffClass = q.diff === 'Easy' ? 'diff-easy' : q.diff === 'Medium' ? 'diff-medium' : 'diff-hard';
-
-  return `
-    <div class="q-card rounded-xl border border-white/6 overflow-hidden relative" style="background:rgba(0,0,0,0.25);--glow-rgb:${g.rgb}">
-      <!-- Top accent bar -->
-      <div class="h-[2px]" style="background:linear-gradient(90deg,${accentG.from},${accentG.to})"></div>
-      <div class="p-4">
-        <!-- Header -->
-        <div class="flex items-start justify-between gap-2 mb-2">
-          <div class="font-mono text-[9px] text-white/25">#${q.id}</div>
-          <span class="text-[9px] px-2 py-0.5 rounded border font-semibold ${diffClass}">${q.diff}</span>
-        </div>
-        <!-- Title -->
-        <h4 class="font-display font-bold text-sm text-white/85 mb-2 leading-snug hover:text-white transition-colors">${q.title}</h4>
-        <!-- Description -->
-        <p class="text-white/40 text-[11px] leading-relaxed mb-3 line-clamp-2">${q.desc}</p>
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-1 mb-3">
-          ${q.tags.slice(0, 3).map(t => `<span class="text-[9px] px-1.5 py-0.5 rounded border font-mono" style="${getTagStyle(t)}">${t}</span>`).join('')}
-          ${q.tags.length > 3 ? `<span class="text-[9px] px-1.5 py-0.5 rounded border font-mono bg-white/4 border-white/10 text-white/30">+${q.tags.length - 3}</span>` : ''}
-        </div>
-        <!-- Footer -->
-        <div class="flex items-center justify-between pt-2 border-t border-white/5">
-          <div class="text-[9px] font-mono text-white/20">Click to view solution</div>
-          <div class="text-[10px] font-semibold" style="color:${accentG.from}">→</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ── Build All Patterns ────────────────────────────────────────────────
-function buildAllPatterns() {
-  const container = document.getElementById('patterns-container');
-  let total = 0;
-  DSA_DATA.forEach((p, i) => {
-    total += p.questions.length;
-    container.appendChild(buildPatternSection(p, i));
-  });
-  document.getElementById('total-q').textContent = total;
-  document.getElementById('hero-q-count').textContent = total + '+';
-}
-
-// ── Scroll Progress Bar ───────────────────────────────────────────────
-function updateProgress() {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-  document.getElementById('progress-fill').style.width = pct + '%';
-  // Dynamic color
-  const idx = Math.floor(pct / 5) % GRADIENTS.length;
-  const g = getGradient(idx);
-  document.getElementById('progress-fill').style.background = gradientCSS(idx);
-}
-
-// ── Active Sidebar Item Tracking ──────────────────────────────────────
-function setupIntersectionObserver() {
-  const sections = document.querySelectorAll('.pattern-section');
-  const sidebarItems = document.querySelectorAll('.sidebar-item[data-id]');
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        const idx = DSA_DATA.findIndex(p => p.id === id);
-        sidebarItems.forEach(item => {
-          const isActive = item.dataset.id === id;
-          item.classList.toggle('active', isActive);
-          if (isActive && idx >= 0) {
-            const g = getGradient(idx);
-            item.style.color = g.from;
-            item.style.borderLeftColor = g.from;
-          } else {
-            item.style.color = 'rgba(255,255,255,0.35)';
-            item.style.borderLeftColor = 'transparent';
-          }
-        });
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '-10% 0px -70% 0px' });
-
-  sections.forEach(s => obs.observe(s));
-}
-
-// ── Sidebar Search ────────────────────────────────────────────────────
-function setupSearch() {
-  const input = document.getElementById('sidebar-search');
-  input.addEventListener('input', () => {
-    const q = input.value.toLowerCase().trim();
-    document.querySelectorAll('.sidebar-item[data-id]').forEach(item => {
-      const text = item.textContent.toLowerCase();
-      item.style.display = (!q || text.includes(q)) ? '' : 'none';
-    });
-  });
-}
-
-// ── Revision Mode ─────────────────────────────────────────────────────
-function setupRevisionMode() {
-  const btn = document.getElementById('revision-btn');
-  const panel = document.getElementById('revision-panel');
-  const close = document.getElementById('close-revision');
-
-  btn.addEventListener('click', () => {
-    panel.classList.toggle('hidden');
-    if (!panel.classList.contains('hidden')) {
-      panel.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-  close.addEventListener('click', () => panel.classList.add('hidden'));
-}
-
-// ── Quick Nav Button ──────────────────────────────────────────────────
-function setupQuickNav() {
-  document.getElementById('quick-nav-btn').addEventListener('click', () => {
-    const panel = document.getElementById('revision-panel');
-    panel.classList.remove('hidden');
-    panel.scrollIntoView({ behavior: 'smooth' });
-  });
-}
-
-// ── Fade Up Animations ────────────────────────────────────────────────
-function setupFadeAnimations() {
-  const cards = document.querySelectorAll('.q-card');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-          entry.target.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        }, Math.min(i * 40, 300));
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  cards.forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(16px)';
-    obs.observe(card);
-  });
-}
-
-// ── Smooth sidebar scroll to active item ──────────────────────────────
-function scrollSidebarToActive(id) {
-  const item = document.querySelector(`.sidebar-item[data-id="${id}"]`);
-  if (item) {
-    item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // Detect constraint tier
+  let tier = null;
+  for (const c of cs) {
+    const lo = c.toLowerCase();
+    if (lo.includes('≤ 20')||lo.includes('<= 20'))                      { tier='small';    break; }
+    if (lo.match(/10[³3]/)||lo.includes('10^6')||lo.includes('10⁶'))   { tier='moderate'; break; }
+    if (lo.includes('10^7')||lo.includes('10⁷')||lo.includes('10^9'))  { tier='large';    break; }
   }
+
+  // Detect input type
+  const inputMap = {
+    'trees':'Trees (Binary / BST)', 'graphs':'Graphs (Nodes + Edges)',
+    'backtracking':'2D Grids / Matrices', 'binary-search':'Sorted Arrays',
+    'two-pointers':'Sorted Arrays', 'sliding-window':'Strings',
+    'hashmap':'Strings', 'heap':'Array (Unsorted)', 'intervals':'Array (Intervals)',
+    'dynamic-programming':'Array / String'
+  };
+  const step2 = inputMap[pid]||'';
+
+  const outputMap = {
+    'backtracking':'List of Lists', 'dynamic-programming':'Single Value',
+    'two-pointers':'Modified Structure', 'heap':'Ordered Output',
+    'intervals':'Ordered Output', 'graphs':'Single Value'
+  };
+  const step3 = outputMap[pid]||'';
+
+  const matchingKws = KEYWORD_TRIGGERS.filter(kt => {
+    const qText = ((q.desc||'')+(q.title||'')).toLowerCase();
+    return kt.pattern===p.title || kt.triggers.some(t=>qText.includes(t.replace(/"/g,'').toLowerCase()));
+  }).slice(0,3);
+
+  const tierData = {
+    small:    {label:'n ≤ 20 — Backtracking OK',          cls:'gpb-green',  tip:'O(2ⁿ) or O(n!) acceptable here'},
+    moderate: {label:'10³≤n≤10⁶ — O(n log n) needed',    cls:'gpb-amber',  tip:'Two Pointers, Sliding Window, DP, Heap'},
+    large:    {label:'n ≥ 10⁷ — O(log n) or O(1) only',  cls:'gpb-red',    tip:'Binary Search, Math tricks only'},
+  };
+
+  panel.innerHTML = `
+    <div class="guide-panel-header">
+      <div class="guide-panel-title">Pattern Recognition</div>
+      <div class="guide-panel-sub">Is question mein ye steps apply hue</div>
+    </div>
+
+    <div class="guide-panel-step">
+      <div class="step-pill green-pill">Step 1 — Constraints</div>
+      <div class="guide-panel-step-title">Input Size Check</div>
+      ${tier ? `<div class="gpb gpb-active ${tierData[tier].cls}">
+        <span class="gpb-label">${tierData[tier].label}</span>
+        <div style="font-size:11px;color:var(--i2);margin-top:4px">${tierData[tier].tip}</div>
+        <div class="gpb-arrow">↑ This question ka constraint</div>
+      </div>` : `<div class="gpb"><span class="gpb-label">Check constraint values in constraints panel</span></div>`}
+      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
+        <strong style="color:var(--i0)">Rule:</strong> n≤20→BT · n≤10⁶→O(n) · n≥10⁷→O(log n)
+      </div>
+    </div>
+
+    <div class="guide-panel-step">
+      <div class="step-pill blue-pill">Step 2 — Input Format</div>
+      <div class="guide-panel-step-title">Data Structure Type</div>
+      ${step2 ? `<div class="gpb gpb-active gpb-blue">
+        <span class="gpb-label">${step2}</span>
+        <div class="gpb-arrow">↑ This question ka input format</div>
+      </div>` : ''}
+      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
+        Sorted→BS/2P · String→SW · Graph→BFS/DFS · Tree→DFS
+      </div>
+    </div>
+
+    <div class="guide-panel-step">
+      <div class="step-pill purple-pill">Step 3 — Output Type</div>
+      <div class="guide-panel-step-title">Answer Format</div>
+      ${step3 ? `<div class="gpb gpb-active gpb-purple">
+        <span class="gpb-label">${step3}</span>
+        <div class="gpb-arrow">↑ This question ka output type</div>
+      </div>` : ''}
+      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
+        List→BT · Single→DP/Greedy · Modified→2P · Sorted→Heap
+      </div>
+    </div>
+
+    <div class="guide-panel-step">
+      <div class="step-pill amber-pill">Step 4 — Keywords</div>
+      <div class="guide-panel-step-title">Pattern Trigger Words</div>
+      ${matchingKws.map(kt=>`<div class="gpb gpb-active gpb-amber" style="margin-bottom:6px">
+        <span class="gpb-label" style="font-weight:700">${kt.pattern}</span>
+        <div style="font-size:11px;color:var(--i2);margin-top:4px;font-family:'JetBrains Mono',monospace">${kt.triggers.slice(0,3).join(' · ')}</div>
+        <div class="gpb-arrow">↑ Pattern matched!</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="guide-panel-why">
+      <div class="guide-panel-why-title">Why ${p.title}?</div>
+      <p style="font-size:12px;color:var(--i2);line-height:1.75;margin:8px 0">${p.when}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+        ${p.keywords.map(k=>`<span class="why-pill">${k}</span>`).join('')}
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--ab);font-size:12px;color:var(--i2)">
+        <strong style="color:var(--a1)">Complexity:</strong> Time ${p.time} · Space ${p.space}
+      </div>
+    </div>
+  `;
 }
 
-// ── Init ─────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  buildSidebar();
-  buildRevisionPanel();
-  buildAllPatterns();
-  setupSearch();
-  setupRevisionMode();
-  setupQuickNav();
+function tryClose(evt) {
+  if (evt.target===document.getElementById('overlay')) closeModal();
+}
+function closeModal() {
+  document.getElementById('overlay').classList.add('hidden');
+  document.body.style.overflow='';
+  activeQ=null; activePatId=null;
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 
-  // After DOM updates
-  requestAnimationFrame(() => {
-    setupIntersectionObserver();
-    setupFadeAnimations();
+async function doCopy() {
+  if (!activeQ) return;
+  const btn = document.getElementById('copy-btn');
+  const text = activeQ.solution;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value=text; ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  btn.textContent='Copied!'; btn.className='done';
+  setTimeout(()=>{ btn.textContent='Copy'; btn.className=''; }, 2000);
+}
+
+function setActive(i) {
+  document.querySelectorAll('.nav-item').forEach((el,j) => el.classList.toggle('active',i===j));
+}
+
+function filterNav(q) {
+  if (activeSbTab!=='patterns') return;
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('.nav-item').forEach((el,i)=>{
+    const p = PATTERNS[i];
+    const ok = !q || p.title.toLowerCase().includes(q) ||
+      p.keywords.some(k=>k.includes(q)) ||
+      (QUESTIONS[p.id]||[]).some(qs=>qs.title.toLowerCase().includes(q));
+    el.style.display = ok?'':'none';
   });
+}
 
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  updateProgress();
-});
+const progBar = document.getElementById('prog');
+window.addEventListener('scroll', ()=>{
+  const pct = window.scrollY/(document.documentElement.scrollHeight-innerHeight)*100;
+  progBar.style.width = Math.min(pct,100)+'%';
+},{passive:true});
+
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if (!entry.isIntersecting) return;
+    entry.target.classList.add('show');
+    if (activeSbTab==='patterns') {
+      const m = entry.target.id.match(/block-(\d+)/);
+      if (m) setActive(+m[1]);
+    }
+    observer.unobserve(entry.target);
+  });
+},{threshold:0.04, rootMargin:'0px 0px -60px 0px'});
+
+function init() {
+  buildNav(); buildPatterns(); initGuide();
+  document.querySelectorAll('.pattern-block').forEach(el=>observer.observe(el));
+  document.querySelector('.pattern-block')?.classList.add('show');
+  const ao = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='none';ao.unobserve(e.target);}
+    });
+  },{threshold:0.05});
+  document.querySelectorAll('.guide-step,.ds-card,.complexity-card,.sort-card').forEach(el=>{
+    el.style.opacity='0'; el.style.transform='translateY(18px)';
+    el.style.transition='opacity .45s ease,transform .45s ease';
+    ao.observe(el);
+  });
+}
+init();

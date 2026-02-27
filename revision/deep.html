@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DSA Master — 150+ Pattern-Based Questions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ========== VARIABLES ========== */
+:root {
+  --p0: #FEFCF7; --p1: #F8F3E8; --p2: #EFE8D6; --p3: #E2D8C2;
+  --i0: #1C1710; --i1: #2E2820; --i2: #4A4238; --i3: #7A6E60; --i4: #A8998A;
+  --a0: #9E6208; --a1: #B8720A; --a2: #D4900F; --a3: #F0B030;
+  --ag: rgba(184,114,10,0.10); --ab: rgba(184,114,10,0.20);
+  --bg: var(--p0); --bg-card: var(--p1); --text: var(--i0); --accent: var(--a1);
+  --easy: #256B40; --medium: #9A5A0A; --hard: #882020;
+  --sidebar-w: 320px; --r: 10px; --rl: 16px;
+}
+
+/* ========== BASE ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif;
+  line-height: 1.6; overflow-x: hidden;
+}
+
+/* ========== SIDEBAR ========== */
+#sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--p1); border-right: 1.5px solid var(--p3); z-index: 200;
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+#sidebar-top { padding: 24px 16px; border-bottom: 1px solid var(--p2); }
+.logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.logo-sq { 
+  width: 44px; height: 44px; background: var(--i0); border-radius: 12px; 
+  display: flex; align-items: center; justify-content: center; color: var(--a2); font-size: 24px;
+}
+.logo-text-main { font-family: 'Lora', serif; font-weight: 700; font-size: 18px; color: var(--i0); }
+.logo-text-sub { font-size: 11px; color: var(--i4); }
+
+.search-box { position: relative; margin-top: 16px; }
+.search-box input {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--p3); border-radius: var(--r);
+  padding: 9px 12px 9px 36px; font-size: 13px; outline: none;
+}
+.search-box input:focus { border-color: var(--a1); }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--i4); }
+
+.sb-tabs { display: flex; border-bottom: 1px solid var(--p2); }
+.sb-tab {
+  flex: 1; padding: 10px 8px; background: transparent; border: none;
+  font-size: 12px; font-weight: 500; color: var(--i3); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.sb-tab.active { color: var(--a1); border-bottom-color: var(--a1); }
+
+#nav-list { flex: 1; overflow-y: auto; padding: 10px; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px; padding: 9px 11px;
+  border-radius: 9px; cursor: pointer; color: var(--i2); font-size: 13px;
+  text-decoration: none; border: 1.5px solid transparent;
+}
+.nav-item:hover { background: var(--p2); }
+.nav-item.active { background: var(--i0); color: var(--p0); }
+.nav-icon { width: 24px; text-align: center; }
+.nav-count {
+  font-size: 10px; padding: 1px 6px; border-radius: 20px;
+  background: var(--p2); color: var(--i3); margin-left: auto;
+}
+
+/* ========== MAIN ========== */
+#main { margin-left: var(--sidebar-w); padding: 40px 60px; }
+
+/* ========== STATS CARDS ========== */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin: 30px 0;
+}
+.stat-card {
+  background: var(--p1); border: 1.5px solid var(--p3); border-radius: var(--rl);
+  padding: 20px; text-align: center;
+}
+.stat-number {
+  font-family: 'Lora'; font-size: 36px; font-weight: 700; color: var(--a1);
+}
+.stat-label { font-size: 13px; color: var(--i3); }
+
+/* ========== PATTERN DISTRIBUTION ========== */
+.distribution-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin: 30px 0;
+}
+.dist-card {
+  background: var(--p1); border: 1.5px solid var(--p3); border-radius: var(--rl);
+  padding: 16px;
+}
+.dist-title {
+  display: flex; justify-content: space-between; margin-bottom: 8px;
+}
+.dist-bar {
+  height: 8px; background: var(--p2); border-radius: 4px; overflow: hidden;
+}
+.dist-fill {
+  height: 100%; background: var(--a1); border-radius: 4px;
+  width: 0%; transition: width 1s;
+}
+
+/* ========== COMPLEXITY SECTION ========== */
+.complexity-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin: 30px 0;
+}
+.complexity-card {
+  background: var(--p1); border: 1.5px solid var(--p3); border-radius: var(--rl);
+  padding: 20px;
+}
+.complexity-badge { font-family: 'JetBrains Mono'; font-size: 20px; font-weight: 700; color: var(--a1); }
+
+.constraint-grid {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin: 20px 0;
+}
+.constraint-card {
+  padding: 16px; border-radius: var(--r); text-align: center;
+  background: var(--p1); border: 1.5px solid var(--p3);
+}
+.constraint-card.small { border-color: var(--easy); }
+.constraint-card.medium { border-color: var(--medium); }
+.constraint-card.large { border-color: var(--hard); }
+
+/* ========== ALGORITHM TABLE ========== */
+.algo-table {
+  width: 100%; border-collapse: collapse; background: var(--p1);
+  border: 1.5px solid var(--p3); border-radius: var(--rl); overflow: hidden;
+  margin: 20px 0;
+}
+.algo-table th {
+  background: var(--i0); color: var(--p0); padding: 12px 16px;
+  font-size: 12px; font-weight: 600; text-align: left;
+}
+.algo-table td {
+  padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--p2);
+}
+.algo-table tr:last-child td { border-bottom: none; }
+.algo-table tr:hover td { background: var(--p2); }
+.complexity-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 600;
+}
+.tag-best { background: rgba(37,107,64,0.1); color: var(--easy); }
+.tag-worst { background: rgba(136,32,32,0.1); color: var(--hard); }
+
+/* ========== PATTERN BLOCKS ========== */
+.pattern-block {
+  padding: 40px 0; border-bottom: 1.5px solid var(--p2);
+  opacity: 0; transform: translateY(20px); transition: 0.5s;
+}
+.pattern-block.show { opacity: 1; transform: none; }
+.pat-title-row { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.pat-icon-box {
+  width: 50px; height: 50px; background: var(--i0); border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--a2);
+}
+.pat-title { font-family: 'Lora', serif; font-size: 32px; font-weight: 700; }
+.pat-meta { display: flex; gap: 8px; margin-bottom: 20px; }
+.meta-chip {
+  font-size: 12px; font-family: 'JetBrains Mono'; color: var(--i2);
+  background: var(--p1); border: 1px solid var(--p3); padding: 4px 10px; border-radius: 100px;
+}
+
+/* ========== THEORY CARDS ========== */
+.theory-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+.theory-card {
+  background: var(--p1); border: 1.5px solid var(--p2); border-radius: var(--rl); padding: 24px;
+}
+.theory-card-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--a1); margin-bottom: 10px;
+}
+.keyword-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.kw-pill {
+  font-size: 11px; background: var(--p0); border: 1px solid var(--p3);
+  padding: 3px 9px; border-radius: 5px; font-family: 'JetBrains Mono';
+}
+
+/* ========== QUESTIONS GRID ========== */
+.qs-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+}
+.q-card {
+  background: var(--p0); border: 1.5px solid var(--p2); border-radius: var(--rl);
+  padding: 20px; cursor: pointer; transition: 0.2s;
+}
+.q-card:hover { transform: translateY(-4px); border-color: var(--a1); }
+.q-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.q-num { font-size: 11px; color: var(--i4); font-family: 'JetBrains Mono'; }
+.diff {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 5px;
+}
+.diff-Easy { color: var(--easy); background: rgba(37,107,64,0.1); }
+.diff-Medium { color: var(--medium); background: rgba(154,90,10,0.1); }
+.diff-Hard { color: var(--hard); background: rgba(136,32,32,0.1); }
+.q-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.q-desc { font-size: 13px; color: var(--i3); margin-bottom: 12px; }
+.constraint-hint {
+  font-size: 11px; color: var(--a1); background: var(--ag);
+  padding: 4px 8px; border-radius: 4px; margin-top: 8px;
+}
+
+/* ========== MODAL ========== */
+#overlay {
+  position: fixed; inset: 0; background: rgba(28,23,16,0.85);
+  backdrop-filter: blur(10px); z-index: 1000; display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+}
+#overlay.hidden { display: none; }
+#modal {
+  background: var(--p0); border: 1.5px solid var(--p3); border-radius: var(--rl);
+  width: 100%; max-width: 1300px; max-height: 90vh; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+#modal-hdr {
+  padding: 20px 24px; border-bottom: 1.5px solid var(--p2);
+  display: flex; align-items: flex-start; justify-content: space-between;
+  background: var(--p1);
+}
+#modal-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; margin: 8px 0; }
+
+#modal-analysis {
+  background: var(--ag); border-bottom: 1px solid var(--ab);
+  padding: 12px 24px; display: flex; gap: 16px; flex-wrap: wrap;
+}
+.analysis-item {
+  display: flex; align-items: center; gap: 6px; font-size: 12px;
+  background: var(--p0); padding: 4px 12px; border-radius: 6px;
+  border: 1px solid var(--ab);
+}
+
+#modal-body {
+  display: grid; grid-template-columns: 1.2fr 0.8fr; overflow: auto;
+  min-height: 400px;
+}
+#modal-left { padding: 24px; overflow-y: auto; border-right: 1.5px solid var(--p2); }
+#modal-desc-box { background: var(--p1); border-radius: var(--r); padding: 16px; margin-bottom: 16px; }
+
+.constraint-list {
+  background: #FFFBF0; border: 1.5px solid rgba(184,114,10,0.25);
+  border-radius: var(--r); padding: 16px; margin: 16px 0;
+}
+.constraint-item {
+  font-size: 13px; font-family: 'JetBrains Mono'; padding: 6px 0;
+  border-bottom: 1px dashed var(--p2);
+}
+.constraint-item:last-child { border-bottom: none; }
+.constraint-highlight {
+  color: var(--a1); font-weight: 600; background: var(--ag);
+  padding: 2px 6px; border-radius: 4px; margin-left: 8px;
+}
+
+#modal-steps {
+  list-style: none; margin-top: 16px;
+}
+#modal-steps li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; background: var(--p1); border: 1.5px solid var(--p2);
+  border-radius: var(--r); margin-bottom: 8px; font-size: 13px;
+}
+.step-n {
+  width: 24px; height: 24px; background: var(--i0); color: var(--p0);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+
+#modal-right { display: flex; flex-direction: column; overflow: hidden; }
+#code-wrap {
+  overflow: auto; flex: 1; padding: 20px; background: #1E1E1E;
+  font-family: 'JetBrains Mono'; font-size: 13px; line-height: 1.6;
+}
+#code-el { color: #D4D4D4; white-space: pre-wrap; }
+.close-btn {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--p2);
+  border: 1.5px solid var(--p3); cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+}
+.close-btn:hover { background: var(--i0); color: var(--p0); }
+
+/* ========== SYNTAX ========== */
+.keyword { color: #569CD6; } .function { color: #DCDCAA; } 
+.string { color: #CE9178; } .number { color: #B5CEA8; } 
+.comment { color: #6A9955; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div id="sidebar-top">
+    <div class="logo-row">
+      <div class="logo-sq">⚡</div>
+      <div>
+        <div class="logo-text-main">DSA Master</div>
+        <div class="logo-text-sub">150+ Pattern Questions</div>
+      </div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input id="srch" type="text" placeholder="Search patterns..." oninput="filterNav(this.value)"/>
+    </div>
+  </div>
+
+  <div class="sb-tabs">
+    <button class="sb-tab active" onclick="setSbTab('patterns',this)">📚 Patterns</button>
+    <button class="sb-tab" onclick="setSbTab('stats',this)">📊 Distribution</button>
+  </div>
+
+  <nav id="nav-list"></nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- STATS OVERVIEW -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-number">150+</div><div class="stat-label">Total Problems</div></div>
+    <div class="stat-card"><div class="stat-number">12</div><div class="stat-label">Patterns</div></div>
+    <div class="stat-card"><div class="stat-number">91%</div><div class="stat-label">Coverage</div></div>
+    <div class="stat-card"><div class="stat-number">4</div><div class="stat-label">Steps to Solve</div></div>
+  </div>
+
+  <!-- PATTERN DISTRIBUTION FROM YOUR IMAGES -->
+  <h2 style="font-family:'Lora'; margin: 30px 0 20px;">📊 Pattern Distribution (NeetCode 150)</h2>
+  <div class="distribution-grid" id="distGrid"></div>
+
+  <!-- COMPLEXITY REFERENCE -->
+  <section id="complexity-ref" style="margin: 40px 0;">
+    <h2 style="font-family:'Lora';font-size:28px;margin-bottom:20px;">⏱️ Time Complexity Guide</h2>
+    
+    <div class="complexity-grid">
+      <div class="complexity-card"><span class="complexity-badge">O(1)</span> Constant<div class="complexity-example">Hash lookup, array access</div></div>
+      <div class="complexity-card"><span class="complexity-badge">O(log n)</span> Logarithmic<div class="complexity-example">Binary Search, BST</div></div>
+      <div class="complexity-card"><span class="complexity-badge">O(n)</span> Linear<div class="complexity-example">Single loop, DFS/BFS</div></div>
+      <div class="complexity-card"><span class="complexity-badge">O(n log n)</span> Linearithmic<div class="complexity-example">Sorting, Heap ops</div></div>
+      <div class="complexity-card"><span class="complexity-badge">O(n²)</span> Quadratic<div class="complexity-example">Nested loops, DP</div></div>
+      <div class="complexity-card"><span class="complexity-badge">O(2ⁿ)</span> Exponential<div class="complexity-example">Backtracking (n≤20)</div></div>
+    </div>
+
+    <div class="constraint-grid">
+      <div class="constraint-card small"><strong>n ≤ 20</strong><br>O(2ⁿ) OK</div>
+      <div class="constraint-card"><strong>n ≤ 100</strong><br>O(n³) OK</div>
+      <div class="constraint-card"><strong>n ≤ 500</strong><br>O(n²) OK</div>
+      <div class="constraint-card medium"><strong>n ≤ 10⁵</strong><br>O(n log n)</div>
+      <div class="constraint-card large"><strong>n > 10⁶</strong><br>O(log n) only</div>
+    </div>
+  </section>
+
+  <!-- PATTERNS WILL BE RENDERED HERE -->
+  <div id="patterns"></div>
+
+</main>
+
+<!-- MODAL -->
+<div id="overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <div id="modal-hdr">
+      <div>
+        <div id="modal-meta" style="font-size:11px;color:var(--i4);"></div>
+        <div id="modal-title"></div>
+        <div id="modal-tags" style="margin-top:8px;"></div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-analysis"></div>
+    <div id="modal-body">
+      <div id="modal-left">
+        <div id="modal-desc-box"></div>
+        <div id="modal-constraints-box" class="constraint-list"></div>
+        <h4 style="margin:20px 0 10px;">📋 Step by Step</h4>
+        <ol id="modal-steps"></ol>
+      </div>
+      <div id="modal-right">
+        <div style="padding:12px 20px; background:#2D2D2D; color:#fff;">JavaScript Solution</div>
+        <div id="code-wrap"><pre><code id="code-el"></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== PATTERN DISTRIBUTION FROM IMAGES ==========
+const PATTERN_DIST = [
+  { name: 'Two Pointers', percentage: 13.9, icon: '⟷', count: 21 },
+  { name: 'Basic DSA', percentage: 19.0, icon: '📦', count: 28 },
+  { name: 'Binary Search', percentage: 7.7, icon: '⊘', count: 12 },
+  { name: 'BFS', percentage: 8.8, icon: '⬡', count: 13 },
+  { name: 'DFS', percentage: 10.0, icon: '🌳', count: 15 },
+  { name: 'DP', percentage: 10.8, icon: '◈', count: 16 },
+  { name: 'Backtracking', percentage: 7.1, icon: '↩', count: 11 },
+  { name: 'Heap', percentage: 8.9, icon: '△', count: 13 },
+  { name: 'Graph', percentage: 6.7, icon: '⬡', count: 10 },
+  { name: 'Adv. Data Structure', percentage: 7.1, icon: '🔷', count: 11 },
+  { name: 'Misc', percentage: 12.1, icon: '📌', count: 18 },
+  { name: 'Simulation', percentage: 1.3, icon: '⚙️', count: 2 }
+];
+
+// ========== 150+ NEETCODE/BLIND 75 QUESTIONS ==========
+const PATTERNS = [
+  { 
+    id: 'two-pointers', icon: '⟷', title: 'Two Pointers', 
+    time: 'O(n)', space: 'O(1)',
+    theory: 'Do pointers ek saath move karte hain. Sorted arrays mein pairs/triplets dhundhne ke liye perfect.',
+    when: 'Sorted arrays, palindrome, in-place modification, container with water',
+    keywords: ['sorted', 'palindrome', 'pairs', 'in-place', 'two sum'],
+    questions: [
+      { id: 167, title: 'Two Sum II', diff: 'Easy', desc: 'Sorted array mein do numbers jinka sum target ho.' },
+      { id: 15, title: '3Sum', diff: 'Medium', desc: 'Teen numbers jinka sum zero ho.' },
+      { id: 11, title: 'Container With Most Water', diff: 'Medium', desc: 'Do lines ke beech maximum pani.' },
+      { id: 42, title: 'Trapping Rain Water', diff: 'Hard', desc: 'Bars ke beech kitna pani trap hoga.' },
+      { id: 125, title: 'Valid Palindrome', diff: 'Easy', desc: 'String palindrome hai ya nahi.' },
+      { id: 680, title: 'Valid Palindrome II', diff: 'Easy', desc: 'Ek char delete karke palindrome?' },
+      { id: 26, title: 'Remove Duplicates', diff: 'Easy', desc: 'Sorted array se duplicates hatao.' },
+      { id: 283, title: 'Move Zeroes', diff: 'Easy', desc: 'Zeroes ko end mein move karo.' },
+      { id: 986, title: 'Interval List Intersections', diff: 'Medium', desc: 'Do interval lists ka intersection.' },
+      { id: 844, title: 'Backspace String Compare', diff: 'Easy', desc: 'Backspace apply karke compare.' },
+      { id: 977, title: 'Squares of Sorted Array', diff: 'Easy', desc: 'Sorted array ke squares sorted order mein.' },
+      { id: 18, title: '4Sum', diff: 'Medium', desc: 'Chaar numbers jinka sum target ho.' },
+      { id: 16, title: '3Sum Closest', diff: 'Medium', desc: 'Target ke closest sum wale teen numbers.' },
+      { id: 259, title: '3Sum Smaller', diff: 'Medium', desc: 'Sum target se chhote wale triplets count.' },
+      { id: 713, title: 'Subarray Product Less Than K', diff: 'Medium', desc: 'Product k se chhote subarrays.' },
+      { id: 75, title: 'Sort Colors', diff: 'Medium', desc: '0,1,2 sort karo (Dutch flag).' },
+      { id: 360, title: 'Sort Transformed Array', diff: 'Medium', desc: 'Quadratic equation apply karke sort.' },
+      { id: 88, title: 'Merge Sorted Array', diff: 'Easy', desc: 'Do sorted arrays merge karo.' },
+      { id: 141, title: 'Linked List Cycle', diff: 'Easy', desc: 'Cycle detect karo fast/slow pointers.' },
+      { id: 142, title: 'Linked List Cycle II', diff: 'Medium', desc: 'Cycle ka starting point.' },
+      { id: 287, title: 'Find Duplicate Number', diff: 'Medium', desc: 'Duplicate number Floyd algorithm.' }
+    ]
+  },
+  {
+    id: 'binary-search', icon: '⊘', title: 'Binary Search',
+    time: 'O(log n)', space: 'O(1)',
+    theory: 'Har step mein search space half. Sorted array ya monotonic property chahiye.',
+    when: 'Sorted array search, rotated array, first/last occurrence, sqrt, capacity',
+    keywords: ['sorted', 'rotated', 'first/last', 'minimize', 'search'],
+    questions: [
+      { id: 704, title: 'Binary Search', diff: 'Easy', desc: 'Sorted array mein target ka index.' },
+      { id: 33, title: 'Search in Rotated Array', diff: 'Medium', desc: 'Rotated sorted array mein target.' },
+      { id: 81, title: 'Search in Rotated Array II', diff: 'Medium', desc: 'Duplicates ke saath rotated search.' },
+      { id: 153, title: 'Find Minimum in Rotated', diff: 'Medium', desc: 'Rotated array mein minimum.' },
+      { id: 154, title: 'Find Minimum in Rotated II', diff: 'Hard', desc: 'Duplicates ke saath minimum.' },
+      { id: 34, title: 'First and Last Position', diff: 'Medium', desc: 'Target ka first aur last index.' },
+      { id: 35, title: 'Search Insert Position', diff: 'Easy', desc: 'Insert karne ki position.' },
+      { id: 74, title: 'Search a 2D Matrix', diff: 'Medium', desc: '2D matrix mein search.' },
+      { id: 240, title: 'Search a 2D Matrix II', diff: 'Medium', desc: '2D matrix mein search (row/col sorted).' },
+      { id: 69, title: 'Sqrt(x)', diff: 'Easy', desc: 'Square root binary search se.' },
+      { id: 367, title: 'Valid Perfect Square', diff: 'Easy', desc: 'Perfect square check.' },
+      { id: 875, title: 'Koko Eating Bananas', diff: 'Medium', desc: 'Minimum eating speed.' },
+      { id: 1011, title: 'Capacity To Ship Packages', diff: 'Medium', desc: 'Minimum ship capacity.' },
+      { id: 1283, title: 'Find Smallest Divisor', diff: 'Medium', desc: 'Smallest divisor threshold.' },
+      { id: 1482, title: 'Minimum Days to Make Bouquets', diff: 'Medium', desc: 'Minimum days.' },
+      { id: 1292, title: 'Maximum Side Length', diff: 'Medium', desc: 'Square sum less than threshold.' },
+      { id: 1060, title: 'Missing Element in Sorted', diff: 'Medium', desc: 'Kth missing element.' },
+      { id: 410, title: 'Split Array Largest Sum', diff: 'Hard', desc: 'Split array minimize max sum.' },
+      { id: 4, title: 'Median of Two Sorted', diff: 'Hard', desc: 'Do sorted arrays ka median.' }
+    ]
+  },
+  {
+    id: 'sliding-window', icon: '▣', title: 'Sliding Window',
+    time: 'O(n)', space: 'O(k)',
+    theory: 'Window expand/shrink karo condition ke hisaab se. Har element do baar touch hota hai.',
+    when: 'Substring, subarray problems, max/min window, no repeating chars',
+    keywords: ['substring', 'subarray', 'longest', 'window', 'no repeating'],
+    questions: [
+      { id: 3, title: 'Longest Substring Without Repeating', diff: 'Medium', desc: 'Bina repeat ke longest substring.' },
+      { id: 76, title: 'Minimum Window Substring', diff: 'Hard', desc: 'Sabse chota window jisme t ke saare chars.' },
+      { id: 424, title: 'Longest Repeating Character Replacement', diff: 'Medium', desc: 'K replacements ke saath longest.' },
+      { id: 438, title: 'Find All Anagrams', diff: 'Medium', desc: 'String mein anagrams ke indices.' },
+      { id: 567, title: 'Permutation in String', diff: 'Medium', desc: 's2 mein s1 ka permutation?' },
+      { id: 239, title: 'Sliding Window Maximum', diff: 'Hard', desc: 'Har window ka maximum.' },
+      { id: 480, title: 'Sliding Window Median', diff: 'Hard', desc: 'Har window ka median.' },
+      { id: 1004, title: 'Max Consecutive Ones III', diff: 'Medium', desc: 'K zeros flip karke max ones.' },
+      { id: 904, title: 'Fruit Into Baskets', diff: 'Medium', desc: 'Do types ke fruits max collect.' },
+      { id: 209, title: 'Minimum Size Subarray Sum', diff: 'Medium', desc: 'Sum ≥ target ka min subarray.' },
+      { id: 713, title: 'Subarray Product Less Than K', diff: 'Medium', desc: 'Product k se chhote subarrays.' },
+      { id: 340, title: 'Longest Substring with K Distinct', diff: 'Medium', desc: 'K distinct chars ka longest.' },
+      { id: 159, title: 'Longest Substring with At Most Two', diff: 'Medium', desc: 'At most 2 distinct chars.' },
+      { id: 1100, title: 'Find K-Length Substrings', diff: 'Medium', desc: 'K length ke unique substrings.' },
+      { id: 1151, title: 'Minimum Swaps to Group Ones', diff: 'Medium', desc: 'Ones ko group karne ke swaps.' }
+    ]
+  },
+  {
+    id: 'hashmap', icon: '#', title: 'HashMap & HashSet',
+    time: 'O(1) avg', space: 'O(n)',
+    theory: 'O(1) lookup, insertion, deletion. Complement store, frequency count, grouping.',
+    when: 'Frequency count, duplicates, anagrams, complements, O(1) lookup needed',
+    keywords: ['frequency', 'duplicate', 'anagram', 'group', 'complement'],
+    questions: [
+      { id: 1, title: 'Two Sum', diff: 'Easy', desc: 'Do numbers jinka sum target.' },
+      { id: 49, title: 'Group Anagrams', diff: 'Medium', desc: 'Anagrams group karo.' },
+      { id: 128, title: 'Longest Consecutive Sequence', diff: 'Medium', desc: 'Longest consecutive sequence.' },
+      { id: 202, title: 'Happy Number', diff: 'Easy', desc: 'Happy number check.' },
+      { id: 217, title: 'Contains Duplicate', diff: 'Easy', desc: 'Duplicate hai?' },
+      { id: 219, title: 'Contains Duplicate II', diff: 'Easy', desc: 'Duplicate within k distance.' },
+      { id: 220, title: 'Contains Duplicate III', diff: 'Hard', desc: 'Duplicate within k and t difference.' },
+      { id: 242, title: 'Valid Anagram', diff: 'Easy', desc: 'Anagram check.' },
+      { id: 349, title: 'Intersection of Two Arrays', diff: 'Easy', desc: 'Do arrays ka intersection.' },
+      { id: 350, title: 'Intersection of Two Arrays II', diff: 'Easy', desc: 'Duplicate allowed.' },
+      { id: 387, title: 'First Unique Character', diff: 'Easy', desc: 'First non-repeating char.' },
+      { id: 389, title: 'Find the Difference', diff: 'Easy', desc: 'String mein extra char.' },
+      { id: 409, title: 'Longest Palindrome', diff: 'Easy', desc: 'Longest palindrome possible.' },
+      { id: 447, title: 'Number of Boomerangs', diff: 'Medium', desc: 'Points ke pairs count.' },
+      { id: 451, title: 'Sort Characters By Frequency', diff: 'Medium', desc: 'Frequency ke hisaab se sort.' },
+      { id: 454, title: '4Sum II', diff: 'Medium', desc: 'Chaar arrays ka sum zero.' },
+      { id: 525, title: 'Contiguous Array', diff: 'Medium', desc: 'Equal 0s and 1s.' },
+      { id: 560, title: 'Subarray Sum Equals K', diff: 'Medium', desc: 'Sum k wale subarrays.' },
+      { id: 594, title: 'Longest Harmonious Subsequence', diff: 'Easy', desc: 'Max diff 1 wala subsequence.' },
+      { id: 599, title: 'Minimum Index Sum', diff: 'Easy', desc: 'Do lists ka common min index.' },
+      { id: 692, title: 'Top K Frequent Words', diff: 'Medium', desc: 'K most frequent words.' },
+      { id: 706, title: 'Design HashMap', diff: 'Easy', desc: 'HashMap implement karo.' }
+    ]
+  },
+  {
+    id: 'stack', icon: '📚', title: 'Stack & Monotonic Stack',
+    time: 'O(n)', space: 'O(n)',
+    theory: 'LIFO data structure. Monotonic stack next greater/smaller element ke liye.',
+    when: 'Parentheses, expression evaluation, next greater element, histogram',
+    keywords: ['parentheses', 'next greater', 'histogram', 'valid', 'evaluate'],
+    questions: [
+      { id: 20, title: 'Valid Parentheses', diff: 'Easy', desc: 'Brackets valid hai?' },
+      { id: 22, title: 'Generate Parentheses', diff: 'Medium', desc: 'N pairs ke saare valid combinations.' },
+      { id: 32, title: 'Longest Valid Parentheses', diff: 'Hard', desc: 'Longest valid parentheses.' },
+      { id: 155, title: 'Min Stack', diff: 'Easy', desc: 'Stack with min in O(1).' },
+      { id: 225, title: 'Implement Stack using Queues', diff: 'Easy', desc: 'Stack using queues.' },
+      { id: 232, title: 'Implement Queue using Stacks', diff: 'Easy', desc: 'Queue using stacks.' },
+      { id: 394, title: 'Decode String', diff: 'Medium', desc: 'String decode karo.' },
+      { id: 496, title: 'Next Greater Element I', diff: 'Easy', desc: 'Next greater element.' },
+      { id: 503, title: 'Next Greater Element II', diff: 'Medium', desc: 'Circular array next greater.' },
+      { id: 556, title: 'Next Greater Element III', diff: 'Medium', desc: 'Next greater permutation.' },
+      { id: 739, title: 'Daily Temperatures', diff: 'Medium', desc: 'Next warmer day.' },
+      { id: 84, title: 'Largest Rectangle in Histogram', diff: 'Hard', desc: 'Histogram mein largest rectangle.' },
+      { id: 85, title: 'Maximal Rectangle', diff: 'Hard', desc: 'Binary matrix mein largest rectangle.' },
+      { id: 42, title: 'Trapping Rain Water', diff: 'Hard', desc: 'Rain water trapping (stack).' },
+      { id: 150, title: 'Evaluate Reverse Polish', diff: 'Medium', desc: 'RPN expression evaluate.' },
+      { id: 224, title: 'Basic Calculator', diff: 'Hard', desc: 'Calculator with + - ( ).' },
+      { id: 227, title: 'Basic Calculator II', diff: 'Medium', desc: 'Calculator with * /.' },
+      { id: 772, title: 'Basic Calculator III', diff: 'Hard', desc: 'Calculator with all ops.' },
+      { id: 316, title: 'Remove Duplicate Letters', diff: 'Medium', desc: 'Remove duplicates smallest.' },
+      { id: 402, title: 'Remove K Digits', diff: 'Medium', desc: 'Remove k digits smallest.' },
+      { id: 456, title: '132 Pattern', diff: 'Medium', desc: '132 pattern check.' },
+      { id: 735, title: 'Asteroid Collision', diff: 'Medium', desc: 'Asteroid collisions.' },
+      { id: 901, title: 'Online Stock Span', diff: 'Medium', desc: 'Stock span.' }
+    ]
+  },
+  {
+    id: 'heap', icon: '△', title: 'Heap & Priority Queue',
+    time: 'O(n log k)', space: 'O(k)',
+    theory: 'Min-heap top = smallest, max-heap top = largest. K-size heap for top K.',
+    when: 'Top K elements, Kth largest, median, K-way merge, priority problems',
+    keywords: ['top k', 'kth largest', 'median', 'priority', 'streaming'],
+    questions: [
+      { id: 215, title: 'Kth Largest Element', diff: 'Medium', desc: 'Array mein kth largest.' },
+      { id: 347, title: 'Top K Frequent Elements', diff: 'Medium', desc: 'K most frequent.' },
+      { id: 692, title: 'Top K Frequent Words', diff: 'Medium', desc: 'K most frequent words.' },
+      { id: 973, title: 'K Closest Points', diff: 'Medium', desc: 'Origin ke closest K points.' },
+      { id: 703, title: 'Kth Largest in Stream', diff: 'Easy', desc: 'Stream mein kth largest.' },
+      { id: 1046, title: 'Last Stone Weight', diff: 'Easy', desc: 'Heaviest stones smash.' },
+      { id: 295, title: 'Find Median from Stream', diff: 'Hard', desc: 'Stream ka median.' },
+      { id: 480, title: 'Sliding Window Median', diff: 'Hard', desc: 'Window median.' },
+      { id: 23, title: 'Merge K Sorted Lists', diff: 'Hard', desc: 'K sorted lists merge.' },
+      { id: 378, title: 'Kth Smallest in Matrix', diff: 'Medium', desc: 'Sorted matrix mein kth smallest.' },
+      { id: 373, title: 'Find K Pairs with Smallest Sums', diff: 'Medium', desc: 'Smallest sum pairs.' },
+      { id: 264, title: 'Ugly Number II', diff: 'Medium', desc: 'Nth ugly number.' },
+      { id: 313, title: 'Super Ugly Number', diff: 'Medium', desc: 'Nth super ugly number.' },
+      { id: 621, title: 'Task Scheduler', diff: 'Medium', desc: 'Task scheduler with cooldown.' },
+      { id: 767, title: 'Reorganize String', diff: 'Medium', desc: 'String rearrange no adjacent same.' },
+      { id: 358, title: 'Rearrange String K Distance', diff: 'Hard', desc: 'Rearrange with k distance.' },
+      { id: 355, title: 'Design Twitter', diff: 'Medium', desc: 'Twitter feed design.' }
+    ]
+  },
+  {
+    id: 'backtracking', icon: '↩', title: 'Backtracking',
+    time: 'O(2ⁿ)', space: 'O(n)',
+    theory: 'Choose → Explore → Unchoose. Pruning se time bachao. Saare combinations explore karne hain.',
+    when: 'All permutations, combinations, subsets, N-Queens, word search, palindrome partitioning',
+    keywords: ['all combinations', 'permutations', 'subsets', 'generate all', 'N-Queens'],
+    questions: [
+      { id: 46, title: 'Permutations', diff: 'Medium', desc: 'Array ke saare permutations.' },
+      { id: 47, title: 'Permutations II', diff: 'Medium', desc: 'Permutations with duplicates.' },
+      { id: 78, title: 'Subsets', diff: 'Medium', desc: 'Array ke saare subsets.' },
+      { id: 90, title: 'Subsets II', diff: 'Medium', desc: 'Subsets with duplicates.' },
+      { id: 39, title: 'Combination Sum', diff: 'Medium', desc: 'Sum target combinations (reuse allowed).' },
+      { id: 40, title: 'Combination Sum II', diff: 'Medium', desc: 'Sum target (no reuse).' },
+      { id: 216, title: 'Combination Sum III', diff: 'Medium', desc: 'K numbers sum to n.' },
+      { id: 377, title: 'Combination Sum IV', diff: 'Medium', desc: 'Number of combinations.' },
+      { id: 77, title: 'Combinations', diff: 'Medium', desc: 'N choose k combinations.' },
+      { id: 17, title: 'Letter Combinations', diff: 'Medium', desc: 'Phone number combinations.' },
+      { id: 22, title: 'Generate Parentheses', diff: 'Medium', desc: 'N pairs parentheses.' },
+      { id: 79, title: 'Word Search', diff: 'Medium', desc: 'Grid mein word exist?' },
+      { id: 212, title: 'Word Search II', diff: 'Hard', desc: 'Multiple words search.' },
+      { id: 131, title: 'Palindrome Partitioning', diff: 'Medium', desc: 'String ko palindromes mein split.' },
+      { id: 93, title: 'Restore IP Addresses', diff: 'Medium', desc: 'Valid IP addresses.' },
+      { id: 51, title: 'N-Queens', diff: 'Hard', desc: 'N queens place karo.' },
+      { id: 52, title: 'N-Queens II', diff: 'Hard', desc: 'N queens count.' },
+      { id: 37, title: 'Sudoku Solver', diff: 'Hard', desc: 'Sudoku solve karo.' },
+      { id: 526, title: 'Beautiful Arrangement', diff: 'Medium', desc: 'Beautiful arrangements count.' },
+      { id: 784, title: 'Letter Case Permutation', diff: 'Medium', desc: 'Letter case permutations.' },
+      { id: 320, title: 'Generalized Abbreviation', diff: 'Medium', desc: 'Word abbreviations.' },
+      { id: 401, title: 'Binary Watch', diff: 'Easy', desc: 'Binary watch times.' }
+    ]
+  },
+  {
+    id: 'dp', icon: '◈', title: 'Dynamic Programming',
+    time: 'O(n²)', space: 'O(n)',
+    theory: 'Overlapping subproblems ek baar solve karo aur store karo. Top-down ya bottom-up.',
+    when: 'Ways count, min/max cost, longest sequence, subset sum, knapsack, stock, house robber',
+    keywords: ['ways', 'minimum', 'maximum', 'longest', 'subset', 'knapsack', 'stock'],
+    questions: [
+      { id: 70, title: 'Climbing Stairs', diff: 'Easy', desc: 'n stairs 1/2 steps.' },
+      { id: 746, title: 'Min Cost Climbing Stairs', diff: 'Easy', desc: 'Min cost to climb.' },
+      { id: 198, title: 'House Robber', diff: 'Medium', desc: 'Adjacent houses rob.' },
+      { id: 213, title: 'House Robber II', diff: 'Medium', desc: 'Circular houses.' },
+      { id: 337, title: 'House Robber III', diff: 'Medium', desc: 'Binary tree robber.' },
+      { id: 121, title: 'Best Time to Buy Stock', diff: 'Easy', desc: 'One transaction.' },
+      { id: 122, title: 'Best Time to Buy Stock II', diff: 'Medium', desc: 'Multiple transactions.' },
+      { id: 123, title: 'Best Time to Buy Stock III', diff: 'Hard', desc: 'At most 2 transactions.' },
+      { id: 188, title: 'Best Time to Buy Stock IV', diff: 'Hard', desc: 'K transactions.' },
+      { id: 309, title: 'Best Time to Buy Stock with Cooldown', diff: 'Medium', desc: 'With cooldown.' },
+      { id: 714, title: 'Best Time to Buy Stock with Fee', diff: 'Medium', desc: 'With transaction fee.' },
+      { id: 300, title: 'Longest Increasing Subsequence', diff: 'Medium', desc: 'LIS length.' },
+      { id: 673, title: 'Number of LIS', diff: 'Medium', desc: 'Count of LIS.' },
+      { id: 354, title: 'Russian Doll Envelopes', diff: 'Hard', desc: 'Max envelopes.' },
+      { id: 53, title: 'Maximum Subarray', diff: 'Easy', desc: 'Max sum subarray.' },
+      { id: 152, title: 'Maximum Product Subarray', diff: 'Medium', desc: 'Max product subarray.' },
+      { id: 918, title: 'Maximum Sum Circular', diff: 'Medium', desc: 'Circular array max sum.' },
+      { id: 1143, title: 'Longest Common Subsequence', diff: 'Medium', desc: 'LCS length.' },
+      { id: 1035, title: 'Uncrossed Lines', diff: 'Medium', desc: 'LCS variation.' },
+      { id: 72, title: 'Edit Distance', diff: 'Hard', desc: 'Min operations to convert.' },
+      { id: 583, title: 'Delete Operation for Two Strings', diff: 'Medium', desc: 'Delete to make equal.' },
+      { id: 712, title: 'Minimum ASCII Delete Sum', diff: 'Medium', desc: 'ASCII sum delete.' },
+      { id: 322, title: 'Coin Change', diff: 'Medium', desc: 'Min coins for amount.' },
+      { id: 518, title: 'Coin Change II', diff: 'Medium', desc: 'Number of combinations.' },
+      { id: 416, title: 'Partition Equal Subset Sum', diff: 'Medium', desc: 'Equal sum partition?' },
+      { id: 494, title: 'Target Sum', diff: 'Medium', desc: '+/- se target achieve.' },
+      { id: 1049, title: 'Last Stone Weight II', diff: 'Medium', desc: 'Partition problem.' },
+      { id: 139, title: 'Word Break', diff: 'Medium', desc: 'String dictionary mein?' },
+      { id: 140, title: 'Word Break II', diff: 'Hard', desc: 'All possible sentences.' },
+      { id: 62, title: 'Unique Paths', diff: 'Medium', desc: 'Grid paths.' },
+      { id: 63, title: 'Unique Paths II', diff: 'Medium', desc: 'With obstacles.' },
+      { id: 64, title: 'Minimum Path Sum', diff: 'Medium', desc: 'Min sum path.' },
+      { id: 120, title: 'Triangle', diff: 'Medium', desc: 'Min path in triangle.' },
+      { id: 931, title: 'Minimum Falling Path Sum', diff: 'Medium', desc: 'Falling path sum.' }
+    ]
+  },
+  {
+    id: 'graphs', icon: '⬡', title: 'Graphs (BFS/DFS/Union-Find)',
+    time: 'O(V+E)', space: 'O(V)',
+    theory: 'BFS = queue (shortest path). DFS = recursion/stack (connectivity, cycles). Union-Find = connectivity.',
+    when: 'Connected components, shortest path, islands, topological sort, dependencies, union find',
+    keywords: ['islands', 'connected', 'shortest', 'cycle', 'topological', 'union find'],
+    questions: [
+      { id: 200, title: 'Number of Islands', diff: 'Medium', desc: 'Grid mein islands count.' },
+      { id: 694, title: 'Number of Distinct Islands', diff: 'Medium', desc: 'Distinct shapes count.' },
+      { id: 695, title: 'Max Area of Island', diff: 'Medium', desc: 'Sabse badi island ka area.' },
+      { id: 463, title: 'Island Perimeter', diff: 'Easy', desc: 'Island ka perimeter.' },
+      { id: 130, title: 'Surrounded Regions', diff: 'Medium', desc: 'X se surround karo.' },
+      { id: 417, title: 'Pacific Atlantic Water Flow', diff: 'Medium', desc: 'Dono oceans mein flow.' },
+      { id: 733, title: 'Flood Fill', diff: 'Easy', desc: 'Color change karo.' },
+      { id: 994, title: 'Rotting Oranges', diff: 'Medium', desc: 'Oranges rot time.' },
+      { id: 286, title: 'Walls and Gates', diff: 'Medium', desc: 'Gate se distance.' },
+      { id: 542, title: '01 Matrix', diff: 'Medium', desc: 'Nearest 0 distance.' },
+      { id: 1162, title: 'As Far from Land', diff: 'Medium', desc: 'Max distance from land.' },
+      { id: 1091, title: 'Shortest Path in Binary Matrix', diff: 'Medium', desc: 'Binary matrix shortest path.' },
+      { id: 127, title: 'Word Ladder', diff: 'Hard', desc: 'Word transformation steps.' },
+      { id: 126, title: 'Word Ladder II', diff: 'Hard', desc: 'All shortest paths.' },
+      { id: 207, title: 'Course Schedule', diff: 'Medium', desc: 'Cycle detect topological.' },
+      { id: 210, title: 'Course Schedule II', diff: 'Medium', desc: 'Course order.' },
+      { id: 269, title: 'Alien Dictionary', diff: 'Hard', desc: 'Alien language order.' },
+      { id: 329, title: 'Longest Increasing Path', diff: 'Hard', desc: 'Matrix mein increasing path.' },
+      { id: 133, title: 'Clone Graph', diff: 'Medium', desc: 'Graph deep copy.' },
+      { id: 399, title: 'Evaluate Division', diff: 'Medium', desc: 'Equation evaluate.' },
+      { id: 261, title: 'Graph Valid Tree', diff: 'Medium', desc: 'Valid tree check.' },
+      { id: 323, title: 'Number of Connected Components', diff: 'Medium', desc: 'Undirected graph components.' },
+      { id: 684, title: 'Redundant Connection', diff: 'Medium', desc: 'Extra edge find.' },
+      { id: 685, title: 'Redundant Connection II', diff: 'Hard', desc: 'Directed graph extra edge.' },
+      { id: 721, title: 'Accounts Merge', diff: 'Medium', desc: 'Accounts merge.' },
+      { id: 737, title: 'Sentence Similarity II', diff: 'Medium', desc: 'Union find similarity.' }
+    ]
+  },
+  {
+    id: 'trees', icon: '🌳', title: 'Binary Trees & BST',
+    time: 'O(n)', space: 'O(h)',
+    theory: 'Recursive structure. DFS traversal, BFS level order. BST left < root < right.',
+    when: 'Tree traversal, path sum, LCA, BST validation, diameter, level order, serialization',
+    keywords: ['traversal', 'path sum', 'LCA', 'BST', 'depth', 'diameter', 'level order'],
+    questions: [
+      { id: 104, title: 'Max Depth', diff: 'Easy', desc: 'Tree max depth.' },
+      { id: 111, title: 'Min Depth', diff: 'Easy', desc: 'Tree min depth.' },
+      { id: 110, title: 'Balanced Binary Tree', diff: 'Easy', desc: 'Height balanced?' },
+      { id: 543, title: 'Diameter of Tree', diff: 'Easy', desc: 'Longest path between nodes.' },
+      { id: 226, title: 'Invert Binary Tree', diff: 'Easy', desc: 'Tree invert.' },
+      { id: 101, title: 'Symmetric Tree', diff: 'Easy', desc: 'Tree symmetric?' },
+      { id: 100, title: 'Same Tree', diff: 'Easy', desc: 'Do trees same?' },
+      { id: 572, title: 'Subtree of Another', diff: 'Easy', desc: 'Subtree check.' },
+      { id: 965, title: 'Univalued Tree', diff: 'Easy', desc: 'All values same?' },
+      { id: 102, title: 'Level Order Traversal', diff: 'Medium', desc: 'Level by level.' },
+      { id: 107, title: 'Level Order Bottom', diff: 'Medium', desc: 'Bottom-up level.' },
+      { id: 103, title: 'Zigzag Level Order', diff: 'Medium', desc: 'Zigzag traversal.' },
+      { id: 199, title: 'Right Side View', diff: 'Medium', desc: 'Right side view.' },
+      { id: 637, title: 'Average of Levels', diff: 'Easy', desc: 'Level averages.' },
+      { id: 429, title: 'N-ary Level Order', diff: 'Medium', desc: 'N-ary tree level order.' },
+      { id: 515, title: 'Largest in Each Row', diff: 'Medium', desc: 'Row max values.' },
+      { id: 116, title: 'Populating Next Right', diff: 'Medium', desc: 'Perfect tree next pointers.' },
+      { id: 117, title: 'Populating Next Right II', diff: 'Medium', desc: 'Any tree next pointers.' },
+      { id: 105, title: 'Build Tree from Pre/In', diff: 'Medium', desc: 'Pre + Inorder se tree.' },
+      { id: 106, title: 'Build Tree from Post/In', diff: 'Medium', desc: 'Post + Inorder se tree.' },
+      { id: 889, title: 'Build Tree from Pre/Post', diff: 'Medium', desc: 'Pre + Post se tree.' },
+      { id: 144, title: 'Preorder Traversal', diff: 'Easy', desc: 'Root, left, right.' },
+      { id: 94, title: 'Inorder Traversal', diff: 'Easy', desc: 'Left, root, right.' },
+      { id: 145, title: 'Postorder Traversal', diff: 'Easy', desc: 'Left, right, root.' },
+      { id: 98, title: 'Validate BST', diff: 'Medium', desc: 'Valid BST check.' },
+      { id: 230, title: 'Kth Smallest in BST', diff: 'Medium', desc: 'BST mein kth smallest.' },
+      { id: 235, title: 'LCA of BST', diff: 'Easy', desc: 'BST ka LCA.' },
+      { id: 236, title: 'LCA of Binary Tree', diff: 'Medium', desc: 'Binary tree LCA.' },
+      { id: 108, title: 'Sorted Array to BST', diff: 'Easy', desc: 'Sorted array se BST.' },
+      { id: 109, title: 'Sorted List to BST', diff: 'Medium', desc: 'Sorted list se BST.' },
+      { id: 653, title: 'Two Sum in BST', diff: 'Easy', desc: 'BST mein two sum.' },
+      { id: 173, title: 'BST Iterator', diff: 'Medium', desc: 'Inorder iterator.' },
+      { id: 297, title: 'Serialize & Deserialize', diff: 'Hard', desc: 'Tree to string and back.' },
+      { id: 449, title: 'Serialize BST', diff: 'Medium', desc: 'BST serialize.' },
+      { id: 124, title: 'Max Path Sum', diff: 'Hard', desc: 'Any path max sum.' },
+      { id: 129, title: 'Sum Root to Leaf', diff: 'Medium', desc: 'Root to leaf sum.' },
+      { id: 257, title: 'Binary Tree Paths', diff: 'Easy', desc: 'All root to leaf paths.' },
+      { id: 112, title: 'Path Sum', diff: 'Easy', desc: 'Path sum exists?' },
+      { id: 113, title: 'Path Sum II', diff: 'Medium', desc: 'All paths with sum.' },
+      { id: 437, title: 'Path Sum III', diff: 'Medium', desc: 'Number of paths with sum.' }
+    ]
+  },
+  {
+    id: 'intervals', icon: '⟼', title: 'Intervals & Greedy',
+    time: 'O(n log n)', space: 'O(n)',
+    theory: 'Sort by start/end time. Greedy choice → local optimum = global optimum.',
+    when: 'Merge intervals, meeting rooms, non-overlapping, jump game, scheduling, gas station',
+    keywords: ['merge', 'overlap', 'schedule', 'meeting rooms', 'jump game', 'greedy'],
+    questions: [
+      { id: 56, title: 'Merge Intervals', diff: 'Medium', desc: 'Overlapping intervals merge.' },
+      { id: 57, title: 'Insert Interval', diff: 'Medium', desc: 'Naya interval insert.' },
+      { id: 435, title: 'Non-overlapping Intervals', diff: 'Medium', desc: 'Min removals for non-overlap.' },
+      { id: 252, title: 'Meeting Rooms', diff: 'Easy', desc: 'Ek insaan attend kar sakta?' },
+      { id: 253, title: 'Meeting Rooms II', diff: 'Medium', desc: 'Minimum rooms needed.' },
+      { id: 452, title: 'Minimum Arrows', diff: 'Medium', desc: 'Balloons burst arrows.' },
+      { id: 986, title: 'Interval Intersection', diff: 'Medium', desc: 'Do lists ka intersection.' },
+      { id: 1288, title: 'Remove Covered Intervals', diff: 'Medium', desc: 'Covered intervals hatao.' },
+      { id: 55, title: 'Jump Game', diff: 'Medium', desc: 'Last index pe pahunche?' },
+      { id: 45, title: 'Jump Game II', diff: 'Medium', desc: 'Min jumps to last.' },
+      { id: 1306, title: 'Jump Game III', diff: 'Medium', desc: 'Jump game with 0.' },
+      { id: 1345, title: 'Jump Game IV', diff: 'Hard', desc: 'Jump game with same values.' },
+      { id: 763, title: 'Partition Labels', diff: 'Medium', desc: 'String partition.' },
+      { id: 134, title: 'Gas Station', diff: 'Medium', desc: 'Circular gas station.' },
+      { id: 135, title: 'Candy', diff: 'Hard', desc: 'Candy distribution.' },
+      { id: 406, title: 'Queue Reconstruction', diff: 'Medium', desc: 'People queue reconstruct.' },
+      { id: 621, title: 'Task Scheduler', diff: 'Medium', desc: 'Task scheduler.' },
+      { id: 659, title: 'Split Array Consecutive', diff: 'Medium', desc: 'Consecutive subsequences.' },
+      { id: 1029, title: 'Two City Scheduling', diff: 'Medium', desc: 'Min cost city scheduling.' }
+    ]
+  },
+  {
+    id: 'adv-ds', icon: '🔷', title: 'Advanced Data Structures',
+    time: 'Varies', space: 'Varies',
+    theory: 'Trie, Union-Find, Segment Tree, Fenwick Tree, Monotonic Queue',
+    when: 'Prefix search, connectivity, range queries, frequency, LRU/LFU cache',
+    keywords: ['trie', 'union find', 'lru', 'design', 'range query'],
+    questions: [
+      { id: 208, title: 'Implement Trie', diff: 'Medium', desc: 'Trie implement karo.' },
+      { id: 211, title: 'Add & Search Word', diff: 'Medium', desc: 'Trie with dot.' },
+      { id: 212, title: 'Word Search II', diff: 'Hard', desc: 'Multiple words search.' },
+      { id: 642, title: 'Design Search Autocomplete', diff: 'Hard', desc: 'Autocomplete system.' },
+      { id: 421, title: 'Maximum XOR of Two Numbers', diff: 'Medium', desc: 'Max XOR using trie.' },
+      { id: 677, title: 'Map Sum Pairs', diff: 'Medium', desc: 'Map sum with prefix.' },
+      { id: 720, title: 'Longest Word in Dictionary', diff: 'Medium', desc: 'Longest word built.' },
+      { id: 692, title: 'Top K Frequent Words', diff: 'Medium', desc: 'Heap + Trie.' },
+      { id: 146, title: 'LRU Cache', diff: 'Medium', desc: 'LRU cache design.' },
+      { id: 460, title: 'LFU Cache', diff: 'Hard', desc: 'LFU cache design.' },
+      { id: 380, title: 'Insert Delete GetRandom O(1)', diff: 'Medium', desc: 'Randomized set.' },
+      { id: 381, title: 'Insert Delete GetRandom O(1) - Duplicates', diff: 'Hard', desc: 'With duplicates.' },
+      { id: 155, title: 'Min Stack', diff: 'Easy', desc: 'Stack with min.' },
+      { id: 716, title: 'Max Stack', diff: 'Hard', desc: 'Stack with max.' },
+      { id: 432, title: 'All O(1) Data Structure', diff: 'Hard', desc: 'O(1) operations.' },
+      { id: 895, title: 'Maximum Frequency Stack', diff: 'Hard', desc: 'Freq stack.' },
+      { id: 1472, title: 'Design Browser History', diff: 'Medium', desc: 'Browser history.' },
+      { id: 341, title: 'Flatten Nested List Iterator', diff: 'Medium', desc: 'Nested list iterator.' },
+      { id: 173, title: 'BST Iterator', diff: 'Medium', desc: 'Tree iterator.' },
+      { id: 284, title: 'Peeking Iterator', diff: 'Medium', desc: 'Peek iterator.' },
+      { id: 706, title: 'Design HashMap', diff: 'Easy', desc: 'HashMap implement.' },
+      { id: 705, title: 'Design HashSet', diff: 'Easy', desc: 'HashSet implement.' }
+    ]
+  },
+  {
+    id: 'misc', icon: '📌', title: 'Miscellaneous',
+    time: 'Varies', space: 'Varies',
+    theory: 'Bit manipulation, math, string manipulation, simulation',
+    when: 'Bit operations, math problems, simulation, string patterns',
+    keywords: ['bit', 'math', 'simulation', 'string', 'matrix'],
+    questions: [
+      { id: 136, title: 'Single Number', diff: 'Easy', desc: 'Ek number ek baar.' },
+      { id: 137, title: 'Single Number II', diff: 'Medium', desc: 'Ek number ek baar, baaki teen.' },
+      { id: 260, title: 'Single Number III', diff: 'Medium', desc: 'Do numbers ek baar.' },
+      { id: 268, title: 'Missing Number', diff: 'Easy', desc: 'Missing number.' },
+      { id: 191, title: 'Number of 1 Bits', diff: 'Easy', desc: 'Set bits count.' },
+      { id: 338, title: 'Counting Bits', diff: 'Easy', desc: '1..n ke set bits.' },
+      { id: 190, title: 'Reverse Bits', diff: 'Easy', desc: 'Bits reverse.' },
+      { id: 371, title: 'Sum of Two Integers', diff: 'Medium', desc: 'Add without +/.' },
+      { id: 201, title: 'Bitwise AND Range', diff: 'Medium', desc: 'Range AND.' },
+      { id: 7, title: 'Reverse Integer', diff: 'Medium', desc: 'Integer reverse.' },
+      { id: 8, title: 'String to Integer', diff: 'Medium', desc: 'atoi implement.' },
+      { id: 9, title: 'Palindrome Number', diff: 'Easy', desc: 'Number palindrome?' },
+      { id: 12, title: 'Integer to Roman', diff: 'Medium', desc: 'Number to Roman.' },
+      { id: 13, title: 'Roman to Integer', diff: 'Easy', desc: 'Roman to number.' },
+      { id: 29, title: 'Divide Two Integers', diff: 'Medium', desc: 'Divide without *//.' },
+      { id: 50, title: 'Pow(x, n)', diff: 'Medium', desc: 'Power function.' },
+      { id: 69, title: 'Sqrt(x)', diff: 'Easy', desc: 'Square root.' },
+      { id: 172, title: 'Factorial Trailing Zeroes', diff: 'Easy', desc: 'Trailing zeroes.' },
+      { id: 202, title: 'Happy Number', diff: 'Easy', desc: 'Happy number.' },
+      { id: 204, title: 'Count Primes', diff: 'Medium', desc: 'Primes count.' },
+      { id: 326, title: 'Power of Three', diff: 'Easy', desc: 'Power of 3?' },
+      { id: 342, title: 'Power of Four', diff: 'Easy', desc: 'Power of 4?' },
+      { id: 231, title: 'Power of Two', diff: 'Easy', desc: 'Power of 2?' },
+      { id: 263, title: 'Ugly Number', diff: 'Easy', desc: 'Ugly number?' },
+      { id: 264, title: 'Ugly Number II', diff: 'Medium', desc: 'Nth ugly number.' },
+      { id: 279, title: 'Perfect Squares', diff: 'Medium', desc: 'Min squares sum.' },
+      { id: 292, title: 'Nim Game', diff: 'Easy', desc: 'Nim game.' }
+    ]
+  }
+];
+
+// ========== RENDER FUNCTIONS ==========
+function renderDistribution() {
+  const grid = document.getElementById('distGrid');
+  grid.innerHTML = PATTERN_DIST.map(p => `
+    <div class="dist-card">
+      <div class="dist-title">
+        <span><strong>${p.icon} ${p.name}</strong></span>
+        <span>${p.percentage}%</span>
+      </div>
+      <div class="dist-bar"><div class="dist-fill" style="width:${p.percentage}%"></div></div>
+      <div style="margin-top:8px; font-size:12px; color:var(--i3);">${p.count} problems</div>
+    </div>
+  `).join('');
+}
+
+function renderNav() {
+  document.getElementById('nav-list').innerHTML = PATTERNS.map((p,i) => `
+    <a class="nav-item" href="#block-${i}">
+      <span class="nav-icon">${p.icon}</span>
+      <span class="nav-label">${p.title}</span>
+      <span class="nav-count">${p.questions.length}</span>
+    </a>
+  `).join('');
+}
+
+function renderPatterns() {
+  document.getElementById('patterns').innerHTML = PATTERNS.map((p,i) => `
+    <div class="pattern-block" id="block-${i}">
+      <div class="pat-title-row">
+        <div class="pat-icon-box">${p.icon}</div>
+        <h2 class="pat-title">${p.title}</h2>
+      </div>
+      <div class="pat-meta">
+        <span class="meta-chip">⏱ ${p.time}</span>
+        <span class="meta-chip">💾 ${p.space}</span>
+        <span class="meta-chip">📋 ${p.questions.length} problems</span>
+      </div>
+      <div class="theory-row">
+        <div class="theory-card">
+          <div class="theory-card-tag">🎯 Theory</div>
+          <p>${p.theory}</p>
+        </div>
+        <div class="theory-card">
+          <div class="theory-card-tag">📌 When to Use</div>
+          <p>${p.when}</p>
+          <div class="keyword-row">${p.keywords.map(k => `<span class="kw-pill">${k}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="qs-grid">
+        ${p.questions.map(q => `
+          <div class="q-card" onclick="openModal('${q.id}','${p.id}')">
+            <div class="q-top">
+              <span class="q-num">#${q.id}</span>
+              <span class="diff diff-${q.diff}">${q.diff}</span>
+            </div>
+            <div class="q-title">${q.title}</div>
+            <div class="q-desc">${q.desc}</div>
+            <div class="constraint-hint">
+              ⚡ ${p.title} · ${p.time}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+  
+  setTimeout(() => document.querySelectorAll('.pattern-block').forEach(el => el.classList.add('show')), 100);
+}
+
+// ========== MODAL FUNCTIONS ==========
+let activeQ = null;
+
+function openModal(qId, patId) {
+  const p = PATTERNS.find(x => x.id === patId);
+  const q = p.questions.find(x => String(x.id) === String(qId));
+  if (!q) return;
+  activeQ = q;
+  
+  document.getElementById('modal-meta').innerHTML = `#${q.id}  ·  ${p.title}`;
+  document.getElementById('modal-title').innerHTML = q.title;
+  document.getElementById('modal-tags').innerHTML = `<span class="diff diff-${q.diff}">${q.diff}</span>`;
+  document.getElementById('modal-desc-box').innerHTML = q.desc;
+  
+  // Pattern analysis
+  document.getElementById('modal-analysis').innerHTML = `
+    <span class="analysis-item">🧠 ${p.title}</span>
+    <span class="analysis-item">⏱ ${p.time}</span>
+    <span class="analysis-item">🔑 ${p.keywords.slice(0,3).join(' · ')}</span>
+    <span class="analysis-item">📊 Difficulty: ${q.diff}</span>
+  `;
+  
+  // Sample constraints (since we don't have them individually)
+  document.getElementById('modal-constraints-box').innerHTML = `
+    <h4 style="margin-bottom:10px;">📏 Pattern Recognition</h4>
+    <div class="constraint-item">Pattern: <span class="constraint-highlight">${p.title}</span></div>
+    <div class="constraint-item">Time Complexity: <span class="constraint-highlight">${p.time}</span></div>
+    <div class="constraint-item">Keywords: <span class="constraint-highlight">${p.keywords.join(', ')}</span></div>
+    <div style="margin-top:12px; padding:8px; background:var(--ag); border-radius:4px;">
+      <strong>✅ Why this pattern?</strong> ${p.theory}
+    </div>
+  `;
+  
+  // Sample steps (generic)
+  document.getElementById('modal-steps').innerHTML = `
+    <li><span class="step-n">1</span> Identify if problem matches ${p.keywords[0]} or ${p.keywords[1]} keywords</li>
+    <li><span class="step-n">2</span> Check constraints: ${p.time} time allowed</li>
+    <li><span class="step-n">3</span> Apply ${p.title} pattern approach</li>
+    <li><span class="step-n">4</span> Optimize and handle edge cases</li>
+  `;
+  
+  // Sample solution
+  document.getElementById('code-el').innerHTML = highlightCode(`// ${q.title} - ${q.desc}\n// Pattern: ${p.title}\n// Time: ${p.time}\n\nfunction solve() {\n  // Implementation here\n  // Check LeetCode #${q.id} for full solution\n}`);
+  
+  document.getElementById('overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function highlightCode(code) {
+  return code
+    .replace(/\b(function|return|if|else|while|for|let|const|var|if|else)\b/g, '<span class="keyword">$1</span>')
+    .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+    .replace(/\".*?\"/g, '<span class="string">$&</span>')
+    .replace(/\'.*?\'/g, '<span class="string">$&</span>')
+    .replace(/\/\/.*/g, '<span class="comment">$&</span>');
+}
+
+function filterNav(query) {
+  query = query.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach((el,i) => {
+    const p = PATTERNS[i];
+    el.style.display = p.title.toLowerCase().includes(query) ? '' : 'none';
+  });
+}
+
+function setSbTab(tab, btn) {
+  document.querySelectorAll('.sb-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'patterns') renderNav();
+  else {
+    document.getElementById('nav-list').innerHTML = `
+      <div style="padding:16px">
+        <h3 style="margin-bottom:16px;">📊 Pattern Distribution</h3>
+        ${PATTERN_DIST.map(p => `
+          <div style="margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <span>${p.icon} ${p.name}</span>
+              <span>${p.percentage}%</span>
+            </div>
+            <div class="dist-bar"><div class="dist-fill" style="width:${p.percentage}%; height:4px;"></div></div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+}
+
+// ========== INIT ==========
+window.onload = function() {
+  renderDistribution();
+  renderNav();
+  renderPatterns();
+};
+</script>
+</body>
+</html>

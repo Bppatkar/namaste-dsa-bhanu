@@ -373,6 +373,7 @@ var characterReplacement = function (s, k) {
   }
   return maxWin;
 };
+
 var isValidWin = function (map, k) {
   let maxCount = 0, totalCount = 0;
   for (let i = 0; i < 26; i++) {
@@ -386,3 +387,42 @@ var isValidWin = function (map, k) {
 // console.log(characterReplacement(s = "ABAB", k = 2)) //Output: 4
 // console.log(characterReplacement(s = "AABABBA", k = 1)) //Output: 4
 // console.log(characterReplacement(s = "AABEAFAABEAFA", k = 2)) //Output: 5
+
+// ----------------------------------------------------
+//! Leetcode 567. Permutation in String
+// ----------------------------------------------------
+var checkInclusion = function (s1, s2) {
+  let hashS = Array(26).fill(0)
+  let hashW = Array(26).fill(0);
+
+  let windowLength = s1.length;
+
+  for (let i = 0; i < windowLength; i++) {
+    ++hashS[s1.charCodeAt(i) - 97];
+    ++hashW[s2.charCodeAt(i) - 97];
+  }
+
+  let i = 0, j = windowLength - 1;
+
+  while (j < s2.length) {
+    if (hashSame(hashS, hashW)) { return true; }
+    else {
+      --hashW[s2.charCodeAt(i) - 97]
+      ++i;
+      ++j;
+      ++hashW[s2.charCodeAt(j) - 97]
+    }
+  }
+  return false;
+};
+
+var hashSame = function (hashW, hashS) {
+  for (let i = 0; i < 26; i++) {
+    if (hashS[i] !== hashW[i]) return false
+  }
+  return true;
+}
+
+console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
