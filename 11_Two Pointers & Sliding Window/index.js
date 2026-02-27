@@ -301,16 +301,61 @@ var lengthOfLongestSubstring = function (s) {
   let map = {};
   let i = 0, max = 0, j = 0;
   while (j < s.length) {
-    // If char is seen and inside current window, move i pointer
-    if (map[s[j]] >= i) {
-      i = map[s[j]] + 1;
-    }
+    // If char is inside map and inside the current window , move i pointer
+    if (map[s[j]] != undefined && map[s[j]] >= i) i = map[s[j]] + 1;
     map[s[j]] = j; // Update index of current char
     max = Math.max(max, j - i + 1);
     j++;
   }
   return max;
 };
-console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
-console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
-console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+// console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+
+// ----------------------------------------------------
+//! Leetcode 424. Longest Repeating Character Replacement
+// ----------------------------------------------------
+
+var characterReplacement = function (s, k) {
+  let i = 0, j = 0, maxWindow = 0;
+  let map = {};
+  map[s[0]] = 1;
+  while (j < s.length) {
+    if (iswindowValid(map, k)) {
+      // update the map means add in the map and inrease the window on right
+      // finding the max value before moving window on right
+      maxWindow = Math.max(maxWindow, j - i + 1);
+      // update the pointer first
+      ++j;
+      // then updating the map
+      map[s[j]] = !map[s[j]] ? 1 : ++map[s[j]];
+    }
+    else {
+      // decrease window from left and update the map
+      // here firstly update the map then move the pointer
+      --map[s[i]];
+      i++;
+    }
+  }
+  return maxWindow;
+};
+
+var iswindowValid = function (map, k) {
+  // in constraints  - mentioned that s contains only english uppercase character means only 26 char
+  let totalCount = 0;
+  let maxCount = 0;
+  for (let i = 0; i < 26; i++) {
+    let char = String.fromCharCode(i + 65);
+    if (map[char]) {
+      totalCount += map[char];
+      maxCount = Math.max(maxCount, map[char])
+    }
+  }
+  return (totalCount - maxCount <= k);
+}
+
+
+
+console.log(characterReplacement(s = "ABAB", k = 2)) //Output: 4
+console.log(characterReplacement(s = "AABABBA", k = 1)) //Output: 4
