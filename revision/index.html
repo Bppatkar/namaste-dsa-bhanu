@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="styles.css"/>
-<link rel="stylesheet" href="complexity.css"/>
 </head>
 <body>
 
@@ -23,31 +22,60 @@
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
       </div>
-      <div>
-        <div class="logo-text-main">DSA Master</div>
-        <div class="logo-text-sub">Pattern-Based Prep</div>
+      <div style="flex:1">
+        <div class="logo-title">DSA Master</div>
+        <div class="logo-sub">Pattern-Based Prep</div>
       </div>
+      <!-- Dark mode toggle -->
+      <button id="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+        <svg id="dark-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="dark-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <!-- Collapse sidebar button -->
+      <button id="sb-collapse" onclick="toggleSidebar()" title="Collapse sidebar" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+      </button>
     </div>
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="srch" type="text" placeholder="Search patterns or questions..." oninput="filterNav(this.value)"/>
+
+    <!-- Search with clear button -->
+    <div class="search-wrap">
+      <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="srch" type="text" placeholder="Search patterns, problems…" oninput="filterNav(this.value)"/>
+      <button id="srch-clear" onclick="clearSearch()" title="Clear search" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Difficulty filter pills -->
+    <div class="diff-filter">
+      <button class="df-pill active" data-diff="all"   onclick="setDiffFilter('all',this)">All</button>
+      <button class="df-pill easy"  data-diff="Easy"   onclick="setDiffFilter('Easy',this)">Easy</button>
+      <button class="df-pill med"   data-diff="Medium" onclick="setDiffFilter('Medium',this)">Med</button>
+      <button class="df-pill hard"  data-diff="Hard"   onclick="setDiffFilter('Hard',this)">Hard</button>
     </div>
   </div>
 
   <div class="sb-tabs">
     <button class="sb-tab active" onclick="setSbTab('patterns',this)">Patterns</button>
     <button class="sb-tab" onclick="setSbTab('guide',this)">Guide</button>
-    <button class="sb-tab" onclick="setSbTab('ds',this)">DS</button>
+    <button class="sb-tab" onclick="setSbTab('ds',this)">DS Pick</button>
+    <button class="sb-tab" onclick="setSbTab('complexity',this)">Big O</button>
   </div>
 
   <nav id="nav-list"></nav>
 
-  <div id="sidebar-footer">
-    <div class="coverage-bar-label">
-      <span>Interview Coverage</span><span class="coverage-pct">91%</span>
+  <div id="sb-footer">
+    <!-- Progress tracker -->
+    <div class="prog-row">
+      <span class="prog-label">Solved</span>
+      <span class="prog-count"><span id="solved-count">0</span> / <span id="total-count">0</span></span>
     </div>
-    <div class="coverage-bar-track"><div class="coverage-bar-fill"></div></div>
-    <div style="font-size:11px;color:var(--i4);margin-top:8px">Google, Meta, Amazon data</div>
+    <div class="prog-track"><div id="solved-bar" class="prog-bar"></div></div>
+    <div class="cov-row" style="margin-top:8px">
+      <span>Interview Coverage</span>
+      <span class="cov-pct">91%</span>
+    </div>
+    <div class="cov-track"><div class="cov-fill"></div></div>
   </div>
 </aside>
 
@@ -56,226 +84,444 @@
 
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-content">
-      <div class="hero-eyebrow hero-anim">Interview ka 90% sirf 10 patterns se aata hai</div>
-      <h1 class="hero-anim">Crack Every<br/><em>Coding Interview</em></h1>
-      <p class="hero-subtitle hero-anim">Pattern Recognition + Time Complexity + Sorting &amp; Searching</p>
-      <p class="hero-desc hero-anim">Patterns, constraints analysis, DS decision guide — sab ek jagah. Har question pe constraints se pattern automatically identify hota hai.</p>
-      <div class="hero-stats hero-anim">
-        <div class="stat-item"><div class="stat-num">10<span>x</span></div><div class="stat-label">Core Patterns</div></div>
-        <div class="stat-item"><div class="stat-num">80<span>+</span></div><div class="stat-label">Best Problems</div></div>
-        <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Steps to Identify</div></div>
-        <div class="stat-item"><div class="stat-num">91<span>%</span></div><div class="stat-label">Coverage</div></div>
+    <div class="hero-left">
+      <div class="hero-eyebrow">🎯 The Only DSA Guide You Need</div>
+      <h1>Crack Every<br/><em>Coding Interview</em></h1>
+      <p class="hero-tagline">10 Patterns · 150+ Problems · Full Pattern Recognition</p>
+      <p class="hero-desc">Master the 10 core patterns that cover 90% of Google, Meta, and Amazon interview questions. Every problem includes constraints analysis, pattern recognition steps, and Big O breakdown.</p>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hnum">10</span><span class="hlbl">Patterns</span></div>
+        <div class="hstat"><span class="hnum">150+</span><span class="hlbl">Problems</span></div>
+        <div class="hstat"><span class="hnum">4</span><span class="hlbl">Steps</span></div>
+        <div class="hstat"><span class="hnum">91%</span><span class="hlbl">Coverage</span></div>
       </div>
-      <div class="hero-cta hero-anim">
-        <button class="btn-primary" onclick="document.getElementById('recognition-guide').scrollIntoView({behavior:'smooth'})">Pattern Recognition Guide</button>
-        <button class="btn-secondary" onclick="document.getElementById('complexity-section').scrollIntoView({behavior:'smooth'})">Time Complexity</button>
-        <button class="btn-secondary" onclick="document.getElementById('sorting-section').scrollIntoView({behavior:'smooth'})">Sorting &amp; Searching</button>
-        <button class="btn-outline" onclick="document.getElementById('block-0').scrollIntoView({behavior:'smooth'})">Start Problems →</button>
-      </div>
-    </div>
-    <div class="hero-deco">
-      <div class="deco-card">
-        <div class="deco-card-tag">PATTERN IDENTIFIED</div>
-        <div class="deco-card-name">Sliding Window</div>
-        <div class="deco-card-why">Keyword: "longest substring", "no repeating" + n≤10⁵ = O(n)</div>
-        <div class="deco-card-cplx">T: O(n) &nbsp;·&nbsp; S: O(k)</div>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="smoothScroll('#recognition-guide')">🧠 Pattern Guide</button>
+        <button class="btn-s" onclick="smoothScroll('#complexity-section')">⏱ Big O & Sorting</button>
+        <button class="btn-o" onclick="smoothScroll('#block-0')">Start Learning →</button>
       </div>
     </div>
+    <div class="hero-right">
+      <div class="donut-card">
+        <div class="donut-hdr">
+          <div class="donut-title">Pattern Distribution by Company</div>
+          <div class="donut-src">AlgoMonster · Real Interview Data</div>
+        </div>
+        <div class="co-tabs">
+          <button class="co-tab active" onclick="switchCoTab('google',this)">Google</button>
+          <button class="co-tab" onclick="switchCoTab('meta',this)">Meta</button>
+          <button class="co-tab" onclick="switchCoTab('amazon',this)">Amazon</button>
+          <button class="co-tab" onclick="switchCoTab('overall',this)">Overall</button>
+        </div>
+        <div class="donut-wrap">
+          <svg id="donut-svg" viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="donut-tooltip" class="donut-tooltip"></div>
+        </div>
+        <div id="donut-legend" class="donut-legend"></div>
+      </div>
+    </div>
+
+    <script>
+    // ── Donut chart data from AlgoMonster pie charts ──
+    const DONUT_DATA = {
+      google: [
+        { label:'Basic DSA',         pct:13.3, color:'#4E5BA6' },
+        { label:'DFS',               pct:13.3, color:'#26A69A' },
+        { label:'BFS',               pct:12.0, color:'#2E9C7A' },
+        { label:'Heap',              pct:10.7, color:'#3DB87A' },
+        { label:'DP',                pct:9.3,  color:'#26C6A0' },
+        { label:'Adv. Data Struct',  pct:13.3, color:'#5E35B1' },
+        { label:'Backtracking',      pct:5.3,  color:'#6C3DB8' },
+        { label:'Two Pointers',      pct:4.0,  color:'#E6C846' },
+        { label:'Binary Search',     pct:4.0,  color:'#4A5E9C' },
+        { label:'Graph',             pct:6.7,  color:'#36B8A8' },
+        { label:'Simulation',        pct:1.3,  color:'#A8C44A' },
+        { label:'Misc.',             pct:6.7,  color:'#7CB342' },
+      ],
+      meta: [
+        { label:'Basic DSA',         pct:18.5, color:'#4E5BA6' },
+        { label:'DFS',               pct:16.9, color:'#26A69A' },
+        { label:'Two Pointers',      pct:15.4, color:'#E6C846' },
+        { label:'BFS',               pct:10.8, color:'#2E9C7A' },
+        { label:'Misc.',             pct:12.3, color:'#7CB342' },
+        { label:'Heap',              pct:6.2,  color:'#3DB87A' },
+        { label:'Binary Search',     pct:7.7,  color:'#4A5E9C' },
+        { label:'Backtracking',      pct:4.6,  color:'#6C3DB8' },
+        { label:'Adv. Data Struct',  pct:3.1,  color:'#5E35B1' },
+        { label:'DP',                pct:3.1,  color:'#26C6A0' },
+        { label:'Simulation',        pct:1.5,  color:'#A8C44A' },
+        { label:'Sliding Window',    pct:0.9,  color:'#F0A030' },
+      ],
+      amazon: [
+        { label:'Basic DSA',         pct:19.0, color:'#4E5BA6' },
+        { label:'Misc.',             pct:17.7, color:'#7CB342' },
+        { label:'Two Pointers',      pct:13.9, color:'#E6C846' },
+        { label:'Heap',              pct:8.9,  color:'#3DB87A' },
+        { label:'BFS',               pct:7.6,  color:'#2E9C7A' },
+        { label:'DFS',               pct:7.6,  color:'#26A69A' },
+        { label:'DP',                pct:6.3,  color:'#26C6A0' },
+        { label:'Binary Search',     pct:6.3,  color:'#4A5E9C' },
+        { label:'Adv. Data Struct',  pct:5.1,  color:'#5E35B1' },
+        { label:'Backtracking',      pct:3.8,  color:'#6C3DB8' },
+        { label:'Graph',             pct:2.5,  color:'#36B8A8' },
+        { label:'Simulation',        pct:1.3,  color:'#A8C44A' },
+      ],
+      overall: [
+        { label:'Basic DSA',         pct:16.9, color:'#4E5BA6' },
+        { label:'Misc.',             pct:12.1, color:'#7CB342' },
+        { label:'Two Pointers',      pct:12.0, color:'#E6C846' },
+        { label:'DP',                pct:10.8, color:'#26C6A0' },
+        { label:'DFS',               pct:10.0, color:'#26A69A' },
+        { label:'BFS',               pct:8.8,  color:'#2E9C7A' },
+        { label:'Adv. Data Struct',  pct:7.1,  color:'#5E35B1' },
+        { label:'Backtracking',      pct:7.1,  color:'#6C3DB8' },
+        { label:'Binary Search',     pct:5.6,  color:'#4A5E9C' },
+        { label:'Heap',              pct:4.8,  color:'#3DB87A' },
+        { label:'Graph',             pct:2.5,  color:'#36B8A8' },
+        { label:'Simulation',        pct:2.2,  color:'#A8C44A' },
+      ],
+    };
+
+    let currentCo = 'google';
+    let animFrame = null;
+
+    function polarToXY(cx, cy, r, angleDeg) {
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    }
+
+    function arcPath(cx, cy, r, startDeg, endDeg) {
+      const s = polarToXY(cx, cy, r, startDeg);
+      const e = polarToXY(cx, cy, r, endDeg);
+      const large = (endDeg - startDeg) > 180 ? 1 : 0;
+      return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y}`;
+    }
+
+    function renderDonut(coKey, animate) {
+      const svg = document.getElementById('donut-svg');
+      const legend = document.getElementById('donut-legend');
+      const data = DONUT_DATA[coKey];
+      const cx = 200, cy = 155, R = 108, r = 66, gap = 1.5;
+      const total = data.reduce((s,d) => s + d.pct, 0);
+      svg.innerHTML = '';
+
+      // Center label
+      const centerG = document.createElementNS('http://www.w3.org/2000/svg','g');
+      const cLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+      cLabel.setAttribute('x', cx); cLabel.setAttribute('y', cy - 8);
+      cLabel.setAttribute('text-anchor','middle');
+      cLabel.setAttribute('font-size','22'); cLabel.setAttribute('font-weight','700');
+      cLabel.setAttribute('fill', document.documentElement.classList.contains('dark') ? '#F8F3E8' : '#1C1710');
+      cLabel.setAttribute('font-family','Lora, serif');
+      cLabel.textContent = coKey.charAt(0).toUpperCase() + coKey.slice(1);
+      const cSub = document.createElementNS('http://www.w3.org/2000/svg','text');
+      cSub.setAttribute('x', cx); cSub.setAttribute('y', cy + 12);
+      cSub.setAttribute('text-anchor','middle');
+      cSub.setAttribute('font-size','11'); cSub.setAttribute('fill','#7A6E60');
+      cSub.setAttribute('font-family','DM Sans, sans-serif');
+      cSub.textContent = 'Interview Data';
+      centerG.appendChild(cLabel); centerG.appendChild(cSub);
+      svg.appendChild(centerG);
+
+      // Tooltip element
+      const tooltip = document.getElementById('donut-tooltip');
+
+      let startDeg = 0;
+      const segments = [];
+
+      data.forEach((d, i) => {
+        const sweep = (d.pct / total) * 360;
+        const endDeg = startDeg + sweep - gap;
+        const midDeg = startDeg + sweep / 2;
+
+        // Arc segment
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const outerPath = arcPath(cx, cy, R, startDeg, endDeg);
+        const innerPathEnd = polarToXY(cx, cy, r, endDeg);
+        const innerPathStart = polarToXY(cx, cy, r, startDeg);
+        const d_attr = outerPath +
+          ` L ${innerPathEnd.x} ${innerPathEnd.y}` +
+          ` A ${r} ${r} 0 ${sweep > 180 ? 1 : 0} 0 ${innerPathStart.x} ${innerPathStart.y} Z`;
+        path.setAttribute('d', d_attr);
+        path.setAttribute('fill', d.color);
+        path.setAttribute('opacity', '0.92');
+        path.style.cursor = 'pointer';
+        path.style.transition = 'opacity .15s, transform .15s';
+        path.style.transformOrigin = `${cx}px ${cy}px`;
+
+        // Hover
+        path.addEventListener('mouseenter', function(e) {
+          this.style.opacity = '1';
+          this.style.transform = 'scale(1.05)';
+          tooltip.style.display = 'block';
+          const note = d.label === 'Basic DSA' ? '<br/><small style="color:#ccc">Arrays · Strings · LinkedList · Stack · Queue</small>' : '';
+          tooltip.innerHTML = `<strong>${d.label}</strong> — ${d.pct}%${note}`;
+          positionTooltip(e);
+          cLabel.textContent = `${d.pct}%`;
+          cSub.textContent = d.label;
+        });
+        path.addEventListener('mousemove', positionTooltip);
+        path.addEventListener('mouseleave', function() {
+          this.style.opacity = '0.92';
+          this.style.transform = 'scale(1)';
+          tooltip.style.display = 'none';
+          cLabel.textContent = coKey.charAt(0).toUpperCase() + coKey.slice(1);
+          cSub.textContent = 'Interview Data';
+        });
+
+        segments.push({ path, startDeg, endDeg: startDeg + sweep - gap, midDeg, sweep, d });
+
+        // Labels for segments ≥ 4.5%
+        if (d.pct >= 4.5) {
+          const labelR = R + 22;
+          const lp  = polarToXY(cx, cy, labelR, midDeg);
+          const lp2 = polarToXY(cx, cy, R + 5,  midDeg);
+          const lp3 = polarToXY(cx, cy, R + 14,  midDeg);
+
+          // Leader line
+          const line = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+          const isRight = lp.x >= cx;
+          const anchorX = isRight ? lp.x + 30 : lp.x - 30;
+          line.setAttribute('points', `${lp2.x},${lp2.y} ${lp3.x},${lp3.y} ${anchorX},${lp.y}`);
+          line.setAttribute('fill','none');
+          line.setAttribute('stroke', d.color);
+          line.setAttribute('stroke-width','1.1');
+          line.setAttribute('opacity','0.75');
+          svg.appendChild(line);
+
+          const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+          txt.setAttribute('x', isRight ? anchorX + 4 : anchorX - 4);
+          txt.setAttribute('y', lp.y + 4);
+          txt.setAttribute('text-anchor', isRight ? 'start' : 'end');
+          txt.setAttribute('font-size','9');
+          txt.setAttribute('fill', document.documentElement.classList.contains('dark') ? '#C8BCAA' : '#2E2820');
+          txt.setAttribute('font-family','DM Sans, sans-serif');
+          txt.setAttribute('font-weight','600');
+          txt.textContent = `${d.label} (${d.pct}%)`;
+          svg.appendChild(txt);
+        }
+
+        svg.appendChild(path);
+        startDeg += sweep;
+      });
+
+      // Animate sweep
+      if (animate) {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        const start = performance.now();
+        const dur = 700;
+        segments.forEach(s => s.path.setAttribute('d',''));
+        function frame(now) {
+          const progress = Math.min((now - start) / dur, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          segments.forEach(s => {
+            const curEnd = s.startDeg + (s.endDeg - s.startDeg) * ease;
+            if (curEnd <= s.startDeg) return;
+            const outerP = arcPath(cx, cy, R, s.startDeg, curEnd);
+            const innerEnd = polarToXY(cx, cy, r, curEnd);
+            const innerStart = polarToXY(cx, cy, r, s.startDeg);
+            const sweep = curEnd - s.startDeg;
+            s.path.setAttribute('d',
+              outerP + ` L ${innerEnd.x} ${innerEnd.y}` +
+              ` A ${r} ${r} 0 ${sweep > 180 ? 1 : 0} 0 ${innerStart.x} ${innerStart.y} Z`
+            );
+          });
+          if (progress < 1) animFrame = requestAnimationFrame(frame);
+        }
+        animFrame = requestAnimationFrame(frame);
+      }
+
+      // Legend
+      legend.innerHTML = data.map(d => `
+        <div class="dl-item" title="${d.label === 'Basic DSA' ? d.label + ': Arrays·Strings·LinkedList·Stack·Queue' : d.label + ': ' + d.pct + '%'}">
+          <span class="dl-dot" style="background:${d.color}"></span>
+          <span class="dl-name">${d.label}</span>
+          <span class="dl-pct">${d.pct}%</span>
+        </div>`).join('');
+    }
+
+    function positionTooltip(e) {
+      const wrap = document.querySelector('.donut-wrap');
+      const rect = wrap.getBoundingClientRect();
+      const tt = document.getElementById('donut-tooltip');
+      tt.style.left = (e.clientX - rect.left + 12) + 'px';
+      tt.style.top  = (e.clientY - rect.top  - 10) + 'px';
+    }
+
+    function switchCoTab(key, btn) {
+      currentCo = key;
+      document.querySelectorAll('.co-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDonut(key, true);
+    }
+
+    // Init on load
+    document.addEventListener('DOMContentLoaded', () => renderDonut('google', true));
+    </script>
   </section>
 
   <!-- PATTERN RECOGNITION GUIDE -->
   <section id="recognition-guide">
-    <div class="section-header">
-      <div class="section-eyebrow">The Secret Weapon</div>
-      <h2 class="section-title">Problem Pattern Recognition Guide</h2>
-      <p class="section-sub">4 steps mein koi bhi problem ka pattern identify karo. Ye guide dimag mein store karo — interview mein yahi kaam aata hai. Har question ke modal mein ye guide highlighted milegi.</p>
+    <div class="sec-hdr">
+      <div class="sec-eye">🧠 Your Secret Weapon</div>
+      <h2 class="sec-title">Problem Pattern Recognition Guide</h2>
+      <p class="sec-sub">A systematic 4-step framework to identify the right algorithm for any interview problem — before writing a single line of code.</p>
     </div>
+    <div id="guide-steps-container"></div>
+  </section>
 
-    <div class="guide-step" id="step-constraints">
-      <div class="step-badge green-badge">Step 1</div>
-      <h3 class="step-title">Start with the Constraints</h3>
-      <p class="step-desc">Input size dekho — yeh batata hai kaunsa approach allowed hai aur kaunsa TLE dega.</p>
-      <div class="constraint-cards">
-        <div class="constraint-card small">
-          <div class="c-card-header">
-            <span class="c-size">n &le; 20</span>
-            <span class="c-label">Small Input</span>
-            <span class="c-badge ok">Brute Force OK</span>
-          </div>
-          <ul class="c-list">
-            <li>Brute force acceptable hai</li>
-            <li>Backtracking + recursive enumeration</li>
-            <li>O(2<sup>n</sup>) ya O(n!) OK hai</li>
-            <li>Saare combinations explore karo</li>
-          </ul>
-          <div class="c-patterns">Use: Backtracking, DFS, Recursion</div>
-        </div>
-        <div class="constraint-card moderate">
-          <div class="c-card-header">
-            <span class="c-size">10<sup>3</sup> &le; n &le; 10<sup>6</sup></span>
-            <span class="c-label">Moderate Input</span>
-            <span class="c-badge warn">Brute Force TLE</span>
-          </div>
-          <ul class="c-list">
-            <li>Brute force bahut slow hoga</li>
-            <li>O(n) ya O(n log n) chahiye</li>
-            <li>Two Pointers, Sliding Window, DP</li>
-            <li>HashMap, Heap, Binary Search</li>
-          </ul>
-          <div class="c-patterns">Use: 2P, SW, DP, HashMap, Heap, BS</div>
-        </div>
-        <div class="constraint-card large">
-          <div class="c-card-header">
-            <span class="c-size">n &ge; 10<sup>7</sup></span>
-            <span class="c-label">Very Large Input</span>
-            <span class="c-badge danger">Even O(n) slow</span>
-          </div>
-          <ul class="c-list">
-            <li>O(n) bhi bahut slow hoga</li>
-            <li>O(log n) ya O(1) chahiye</li>
-            <li>Binary Search, Math tricks</li>
-            <li>Precomputed formulas</li>
-          </ul>
-          <div class="c-patterns">Use: Binary Search, Math, Prefix Sum</div>
-        </div>
-      </div>
+  <!-- COMPLEXITY + SORTING/SEARCHING -->
+  <section id="complexity-section">
+    <div class="sec-hdr">
+      <div class="sec-eye">⏱ Must Know</div>
+      <h2 class="sec-title">Time & Space Complexity + Sorting & Searching</h2>
+      <p class="sec-sub">Every complexity class explained with code examples, LeetCode constraint mapping, and when to use each sorting algorithm.</p>
     </div>
-
-    <div class="guide-step" id="step-input">
-      <div class="step-badge blue-badge">Step 2</div>
-      <h3 class="step-title">Decode the Input Format</h3>
-      <p class="step-desc">Input ka structure dekho — yeh seedha pattern suggest karta hai.</p>
-      <div class="input-grid">
-        <div class="input-card"><div class="ic-icon">Tree</div><div class="ic-title">Trees (Binary / BST)</div><div class="ic-tips"><div class="ic-tip">DFS: all paths, preorder/inorder</div><div class="ic-tip">BFS: level-order, shortest path</div><div class="ic-tip">BST property: O(log n) search</div></div></div>
-        <div class="input-card"><div class="ic-icon">Graph</div><div class="ic-title">Graphs (Nodes+Edges)</div><div class="ic-tips"><div class="ic-tip">BFS: shortest path</div><div class="ic-tip">DFS: connected components</div><div class="ic-tip">Union-Find: connectivity</div></div></div>
-        <div class="input-card"><div class="ic-icon">Grid</div><div class="ic-title">2D Grids / Matrices</div><div class="ic-tips"><div class="ic-tip">DFS/BFS: "islands" problems</div><div class="ic-tip">Union-Find: connected regions</div><div class="ic-tip">DP: pathfinding, counting</div></div></div>
-        <div class="input-card"><div class="ic-icon">Sort</div><div class="ic-title">Sorted Arrays</div><div class="ic-tips"><div class="ic-tip">Binary Search: O(log n) lookup</div><div class="ic-tip">Two Pointers: pairs/triplets</div><div class="ic-tip">Greedy: optimal selection</div></div></div>
-        <div class="input-card"><div class="ic-icon">Str</div><div class="ic-title">Strings</div><div class="ic-tips"><div class="ic-tip">Two Pointers: palindrome</div><div class="ic-tip">Sliding Window: substring</div><div class="ic-tip">Trie: prefix/word problems</div></div></div>
-        <div class="input-card"><div class="ic-icon">List</div><div class="ic-title">Linked Lists</div><div class="ic-tips"><div class="ic-tip">Fast/Slow: cycle detection</div><div class="ic-tip">Dummy node: cleaner code</div><div class="ic-tip">Reverse: in-place modification</div></div></div>
-      </div>
-    </div>
-
-    <div class="guide-step" id="step-output">
-      <div class="step-badge purple-badge">Step 3</div>
-      <h3 class="step-title">Understand the Output Type</h3>
-      <p class="step-desc">Answer kaisa chahiye — yeh bhi pattern narrow karta hai.</p>
-      <div class="output-row">
-        <div class="output-card"><div class="out-icon">List</div><div class="out-type">List of Lists</div><div class="out-eg">(paths, subsets, combos)</div><div class="out-use">Backtracking / DFS<br/>Recursion: Take, Not Take</div></div>
-        <div class="output-card"><div class="out-icon">Val</div><div class="out-type">Single Value</div><div class="out-eg">(max profit, min cost, #ways)</div><div class="out-use">Dynamic Programming<br/>Greedy for quick optimal</div></div>
-        <div class="output-card"><div class="out-icon">Mod</div><div class="out-type">Modified Structure</div><div class="out-eg">(in-place edits)</div><div class="out-use">Two Pointers<br/>Space-efficient O(1)</div></div>
-        <div class="output-card"><div class="out-icon">Ord</div><div class="out-type">Ordered Output</div><div class="out-eg">(sorted tasks, ranked)</div><div class="out-use">Heap / Topological Sort<br/>Custom sorting</div></div>
-      </div>
-    </div>
-
-    <div class="guide-step" id="step-keywords">
-      <div class="step-badge amber-badge">Step 4</div>
-      <h3 class="step-title">Keyword Triggers — Sunke Pattern Pehchano</h3>
-      <p class="step-desc">Ye keywords sunna — seedha pattern yaad aana chahiye. Ratto inhe.</p>
-      <div id="keyword-grid"></div>
-    </div>
+    <div id="complexity-container"></div>
   </section>
 
   <!-- DS DECISION GUIDE -->
-  <section id="ds-picker">
-    <div class="section-header">
-      <div class="section-eyebrow">Data Structure Selector</div>
-      <h2 class="section-title">When to Use What</h2>
-      <p class="section-sub">Array, HashMap, Set, Stack, Queue, Heap — kab kaunsa use karo, kab avoid karo. Ye chart yaad rakhna.</p>
+  <section id="ds-section">
+    <div class="sec-hdr">
+      <div class="sec-eye">🔧 Data Structure Selector</div>
+      <h2 class="sec-title">When to Use What — DS Decision Guide</h2>
+      <p class="sec-sub">Array, HashMap, Set, Stack, Heap — choosing the right data structure is half the solution. ROI table shows which patterns to learn first.</p>
     </div>
-    <div id="ds-grid"></div>
-    <div class="roi-section">
-      <h3 class="roi-title">Pattern ROI Table — Sabse Pehle Kya Seekho?</h3>
-      <div class="roi-table-wrap">
-        <table class="roi-table">
-          <thead><tr><th>Pattern / Topic</th><th>Difficulty</th><th>Return</th><th>Priority</th></tr></thead>
-          <tbody id="roi-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+    <div id="ds-container"></div>
   </section>
 
-  <!-- TIME & SPACE COMPLEXITY (from your notes) -->
-  <section id="complexity-section">
-    <div class="section-header">
-      <div class="section-eyebrow">Interview Must-Know</div>
-      <h2 class="section-title">Time &amp; Space Complexity</h2>
-      <p class="section-sub">Big O notation — ye samajh gaye toh constraint dekh ke seedha algorithm decide hoga. Teri notes se banaya hai.</p>
+  <!-- REVISION SECTION -->
+  <section id="revision-section">
+    <div class="sec-hdr">
+      <div class="sec-eye">⚡ 1-Day Revision</div>
+      <h2 class="sec-title">Complete DSA Revision in 1 Day</h2>
+      <p class="sec-sub">All 10 patterns, key concepts, trigger keywords, and complexity at a glance. Use this before any interview.</p>
     </div>
-    <div id="complexity-content"></div>
+    <div id="revision-container"></div>
   </section>
 
-  <!-- SORTING & SEARCHING (from your notes) -->
-  <section id="sorting-section">
-    <div class="section-header">
-      <div class="section-eyebrow">Foundation</div>
-      <h2 class="section-title">Sorting &amp; Searching</h2>
-      <p class="section-sub">Linear Search vs Binary Search. Bubble, Selection, Insertion, Merge, Quick Sort — kab kaunsa use karo, real examples ke saath.</p>
-    </div>
-    <div id="sorting-content"></div>
-  </section>
-
-  <!-- PATTERNS -->
-  <div id="patterns"></div>
+  <!-- PATTERN BLOCKS -->
+  <div id="patterns-container"></div>
 
 </main>
 
-<!-- ═══ MODAL (3-panel: left info | middle code | right pattern guide) ═══ -->
-<div id="overlay" class="hidden" onclick="tryClose(event)">
-  <div id="modal">
+<!-- ═══ FOOTER ═══ -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#D4900F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <div class="footer-name">DSA Master</div>
+          <div class="footer-tagline">Pattern-Based Interview Preparation</div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="https://portfolio-bhanu-2026.vercel.app/" target="_blank" class="footer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Portfolio
+        </a>
+        <a href="https://github.com/Bppatkar" target="_blank" class="footer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+        <a href="https://linkedin.com/in/bhanu-pratap-patkar" target="_blank" class="footer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="mailto:bhanupratappatkar777@gmail.com" class="footer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email
+        </a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        Built by <strong>Bhanu Pratap Patkar</strong> &nbsp;·&nbsp; MERN Stack Developer &amp; Software Engineer
+      </div>
+      <div class="footer-copy" style="color:var(--i4)">
+        Problem data from LeetCode Blind 75 &amp; NeetCode 150 &nbsp;·&nbsp; Stats from AlgoMonster
+      </div>
+    </div>
+  </div>
+</footer>
 
+<!-- ═══ MODAL ═══ -->
+<div id="overlay" class="hidden" onclick="overlayClick(event)">
+  <div id="modal">
     <!-- Modal Header -->
     <div id="modal-hdr">
-      <div style="flex:1;min-width:0">
-        <div id="modal-meta"></div>
+      <div id="modal-hdr-left">
+        <div id="modal-breadcrumb"></div>
         <div id="modal-title"></div>
-        <div id="modal-tags"></div>
+        <div id="modal-badges"></div>
       </div>
-      <button class="close-btn" onclick="closeModal()" title="Close (Esc)">
+      <button class="close-btn" onclick="closeModal()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <!-- Analysis Bar -->
-    <div id="modal-analysis"></div>
+    <!-- Pattern Analysis Strip -->
+    <div id="modal-analysis-strip"></div>
 
-    <!-- Modal Body: 3 columns -->
+    <!-- Modal Body: Left Panel + Right Code Panel -->
     <div id="modal-body">
 
-      <!-- LEFT: description + constraints + steps -->
+      <!-- LEFT -->
       <div id="modal-left">
-        <div id="modal-desc-box"></div>
-        <div id="modal-constraints-box"></div>
-        <div>
-          <div class="steps-label">Aise Solve Karo — Step by Step</div>
+        <div id="modal-desc"></div>
+
+        <!-- Constraints Box -->
+        <div id="modal-constraints"></div>
+
+        <!-- Why This Pattern -->
+        <div id="modal-why-pattern"></div>
+
+        <!-- Steps -->
+        <div id="modal-steps-wrap">
+          <div class="panel-label">📋 Step-by-Step Approach</div>
           <ol id="modal-steps"></ol>
         </div>
       </div>
 
-      <!-- MIDDLE: code panel -->
+      <!-- RIGHT: Code + Mini Pattern Guide -->
       <div id="modal-right">
-        <div id="code-hdr">
-          <div id="code-hdr-left">
-            <div class="win-dot dot-r"></div>
-            <div class="win-dot dot-y"></div>
-            <div class="win-dot dot-g"></div>
-            <span id="code-lang-label">JavaScript Solution</span>
+        <div id="code-panel">
+          <div id="code-hdr">
+            <div id="code-dots">
+              <span class="dot dr"></span>
+              <span class="dot dy"></span>
+              <span class="dot dg"></span>
+              <span id="code-lang">JavaScript Solution</span>
+            </div>
+            <button id="copy-btn" onclick="doCopy()">Copy</button>
           </div>
-          <button id="copy-btn" onclick="doCopy()">Copy</button>
+          <div id="code-wrap"><code id="code-el"></code></div>
         </div>
-        <div id="code-wrap"><code id="code-el"></code></div>
-      </div>
 
-      <!-- RIGHT: pattern recognition guide panel -->
-      <div id="modal-guide-panel"></div>
+        <!-- Mini Pattern Guide Panel -->
+        <div id="mini-guide-panel">
+          <div class="panel-label">🧠 Pattern Recognition — Apply Here</div>
+          <div id="mini-guide-content"></div>
+        </div>
+      </div>
 
     </div>
   </div>
 </div>
 
 <script src="data.js"></script>
-<script src="guide.js"></script>
 <script src="complexity-data.js"></script>
+<script src="guide.js"></script>
+<script src="renderer.js"></script>
 <script src="app.js"></script>
+
+<!-- Floating expand button — visible when sidebar is collapsed -->
+<button id="sb-expand" onclick="toggleSidebar()" title="Open sidebar" style="display:none">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5"/><path d="M6 17l5-5-5-5"/></svg>
+</button>
 </body>
 </html>

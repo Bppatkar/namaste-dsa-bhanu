@@ -423,6 +423,32 @@ var hashSame = function (hashW, hashS) {
   return true;
 }
 
-console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
-console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
-console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+// console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+
+// ----------------------------------------------------
+//! Leetcode 239. Sliding Window Maximum
+// ----------------------------------------------------
+var maxSlidingWindow = function (nums, k) {
+  let i = j = 0;
+  let result = [], q = [];
+  while (j < nums.length) {
+    while (q.length && nums[j] > q[q.length - 1]) {
+      q.pop();
+    }
+
+    q.push(nums[j]);
+
+    if (j >= k - 1) {
+      result.push(q[0]);
+      nums[i] === q[0] && q.shift();
+      ++i;
+    }
+    j++;
+  }
+  return result;
+};
+
+// console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
+// console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]

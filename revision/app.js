@@ -1,22 +1,24 @@
 // ═══════════════════════════════════════════════════════════
-// APP.JS — FIXED Highlighter + Pattern Guide in Modal
-// THE BUG: function-name regex was matching PH tokens as function names
-// FIX: Highlight function names BEFORE keywords, using null-byte delimiters
+// APP.JS — FIXED Syntax Highlighter + Full App Logic
 // ═══════════════════════════════════════════════════════════
 
+// ══ CRITICAL FIX: Syntax Highlighter ══
+// BUG: \x000\x00 placeholders — \b(\d+)\b matched the '0' INSIDE \x000\x00
+// FIX: negative lookbehind (?<!\x00) and lookahead (?!\x00) skip those digits
 const KW_SET = new Set([
   'if','else','while','for','switch','return','function','new',
   'typeof','instanceof','class','catch','try','case','default',
   'of','in','do','delete','void','throw','import','export','from',
-  'extends','super','yield','async','await','static'
+  'extends','super','yield','async','await','static','this',
+  'null','undefined','true','false','break','continue'
 ]);
 
-// ══ FIXED SYNTAX HIGHLIGHTER ══
-// Uses NULL-BYTE delimiters \x00N\x00 — these can NEVER be matched by word-boundary regexes
-// And function names are processed BEFORE keywords so placeholder tokens don't get wrapped
 function highlight(raw) {
   if (!raw) return '';
-  let s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let s = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
   const parts = [];
   const protect = html => {
@@ -26,99 +28,238 @@ function highlight(raw) {
   };
 
   // 1. Block comments
-  s = s.replace(/(\/\*[\s\S]*?\*\/)/g,  m => protect(`<span class="cc">${m}</span>`));
+  s = s.replace(/(\/\*[\s\S]*?\*\/)/g, m => protect(`<span class="cc">${m}</span>`));
   // 2. Line comments
-  s = s.replace(/(\/\/[^\n]*)/g,         m => protect(`<span class="cc">${m}</span>`));
+  s = s.replace(/(\/\/[^\n]*)/g, m => protect(`<span class="cc">${m}</span>`));
   // 3. Template literals
-  s = s.replace(/(`[^`]*`)/g,            m => protect(`<span class="cs">${m}</span>`));
-  // 4. Single-quoted strings
-  s = s.replace(/('(?:[^'\\]|\\.)*')/g,  m => protect(`<span class="cs">${m}</span>`));
-  // 5. Double-quoted strings
-  s = s.replace(/("(?:[^"\\]|\\.)*")/g,  m => protect(`<span class="cs">${m}</span>`));
+  s = s.replace(/(`[^`]*`)/g, m => protect(`<span class="cs">${m}</span>`));
+  // 4. Strings
+  s = s.replace(/('(?:[^'\\]|\\.)*')/g, m => protect(`<span class="cs">${m}</span>`));
+  s = s.replace(/("(?:[^"\\]|\\.)*")/g, m => protect(`<span class="cs">${m}</span>`));
 
-  // 6. Function names FIRST — skip keywords, skip already-protected tokens
+  // 5. Function calls — BEFORE keywords so KW_SET exclusion works cleanly
   s = s.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g, m =>
     KW_SET.has(m) ? m : protect(`<span class="cfn">${m}</span>`)
   );
 
-  // 7. Keywords
+  // 6. Keywords
   s = s.replace(
     /\b(const|let|var|function|return|if|else|while|for|of|in|do|new|class|this|null|undefined|true|false|break|continue|typeof|instanceof|async|await|throw|try|catch|switch|case|default|import|export|from|extends|static|super|yield|delete|void)\b/g,
     m => protect(`<span class="ck">${m}</span>`)
   );
 
-  // 8. Built-ins
+  // 7. Built-ins
   s = s.replace(
-    /\b(Math|Map|Set|Array|Object|String|Number|Boolean|Promise|JSON|console|parseInt|parseFloat|Infinity|NaN|Symbol|BigInt|Error|RegExp|Date|setTimeout|clearTimeout|setInterval|clearInterval)\b/g,
+    /\b(Math|Map|Set|Array|Object|String|Number|Boolean|Promise|JSON|console|parseInt|parseFloat|Infinity|NaN|Symbol|BigInt|Error|RegExp|Date|setTimeout|clearTimeout|setInterval|clearInterval|Uint8Array)\b/g,
     m => protect(`<span class="ct">${m}</span>`)
   );
 
-  // 9. Numbers — \x00 is not a word char so \b won't span into placeholders
-  s = s.replace(/\b(\d+(?:\.\d+)?)\b/g,  m => protect(`<span class="cn">${m}</span>`));
+  // 8. Numbers — THE FIX: lookbehind/lookahead prevents matching inside \x00N\x00 tokens
+  // \x00 is NOT a word char, so without the fix, \b0\b matches the 0 in \x000\x00
+  s = s.replace(/(?<!\x00)\b(\d+(?:\.\d+)?)\b(?!\x00)/g,
+    m => protect(`<span class="cn">${m}</span>`)
+  );
 
-  // 10. Restore
+  // 9. Restore all placeholders
   return s.replace(/\x00(\d+)\x00/g, (_, i) => parts[+i]);
 }
 
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
-let activeQ     = null;
-let activePatId = null;
-let activeSbTab = 'patterns';
+let activeQ      = null;
+let activePat    = null;
+let activeSbTab  = 'patterns';
+let activeDiff   = 'all';
+
+// ── Solved tracker (localStorage) ──
+const SOLVED_KEY = 'dsa-master-solved-v1';
+function getSolved() {
+  try { return new Set(JSON.parse(localStorage.getItem(SOLVED_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveSolved(set) {
+  try { localStorage.setItem(SOLVED_KEY, JSON.stringify([...set])); } catch {}
+}
+function toggleSolved(qId) {
+  const s = getSolved();
+  s.has(qId) ? s.delete(qId) : s.add(qId);
+  saveSolved(s);
+  updateSolvedUI();
+  // Update the card and button
+  const card = document.querySelector(`.q-card[data-qid="${qId}"]`);
+  const btn  = document.querySelector(`.solve-btn[data-qid="${qId}"]`);
+  if (card) card.classList.toggle('solved-card', s.has(qId));
+  if (btn)  btn.classList.toggle('solved', s.has(qId));
+}
+function updateSolvedUI() {
+  const s = getSolved();
+  const total = Object.values(QUESTIONS).flat().length;
+  const count = s.size;
+  document.getElementById('solved-count').textContent = count;
+  document.getElementById('total-count').textContent  = total;
+  const bar = document.getElementById('solved-bar');
+  if (bar) bar.style.width = (total > 0 ? (count / total * 100) : 0) + '%';
+}
+
+// ── Dark mode ──
+function toggleDark() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('dsa-dark', isDark ? '1' : '0');
+  document.getElementById('dark-icon-moon').style.display = isDark ? 'none' : '';
+  document.getElementById('dark-icon-sun').style.display  = isDark ? '' : 'none';
+}
+(function initDark() {
+  if (localStorage.getItem('dsa-dark') === '1') {
+    document.documentElement.classList.add('dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('dark-icon-moon').style.display = 'none';
+      document.getElementById('dark-icon-sun').style.display  = '';
+    });
+  }
+})();
+
+// ── Collapsible sidebar ──
+let sidebarOpen = true;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  const sb     = document.getElementById('sidebar');
+  const main   = document.getElementById('main');
+  const footer = document.getElementById('site-footer');
+  const expBtn = document.getElementById('sb-expand');
+  if (sidebarOpen) {
+    sb.classList.remove('collapsed');
+    main.classList.remove('sidebar-hidden');
+    if (footer) footer.classList.remove('sidebar-hidden');
+    expBtn.style.display = 'none';
+  } else {
+    sb.classList.add('collapsed');
+    main.classList.add('sidebar-hidden');
+    if (footer) footer.classList.add('sidebar-hidden');
+    expBtn.style.display = 'flex';
+  }
+}
+
+// ── Search clear ──
+function clearSearch() {
+  const inp = document.getElementById('srch');
+  inp.value = '';
+  filterNav('');
+  document.getElementById('srch-clear').style.display = 'none';
+  inp.focus();
+}
+function setDiffFilter(diff, btn) {
+  activeDiff = diff;
+  document.querySelectorAll('.df-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyDiffFilter();
+}
+function applyDiffFilter() {
+  document.querySelectorAll('.q-card').forEach(card => {
+    const d = card.dataset.diff || '';
+    card.style.display = (activeDiff === 'all' || d === activeDiff) ? '' : 'none';
+  });
+  // Update counts in sidebar
+  document.querySelectorAll('.nav-item[id^="nav-"]').forEach(item => {
+    const idx = item.id.replace('nav-','');
+    const pat = PATTERNS[idx];
+    if (!pat) return;
+    const qs = QUESTIONS[pat.id] || [];
+    const count = activeDiff === 'all' ? qs.length : qs.filter(q => q.diff === activeDiff).length;
+    const badge = item.querySelector('.nav-count');
+    if (badge) badge.textContent = count;
+  });
+}
 
 // ═══════════════════════════════════════════════════════════
-// SIDEBAR
+// SIDEBAR BUILD
 // ═══════════════════════════════════════════════════════════
-function buildNav() {
+function buildPatternNav() {
   const nav = document.getElementById('nav-list');
-  nav.innerHTML = PATTERNS.map((p, i) => {
-    const count = (QUESTIONS[p.id] || []).length;
-    return `<a class="nav-item" href="#block-${i}" id="nav-${i}" onclick="setActive(${i});return true;" title="${p.title}">
-      <span class="nav-icon">${p.icon}</span>
-      <span class="nav-label">${p.title}</span>
-      <span class="nav-count">${count}</span>
-    </a>`;
+  const items = [
+    { label: 'Pattern Recognition Guide', icon: '🧠', href: '#recognition-guide', special: true },
+    { label: 'Big O & Complexity',        icon: '⏱', href: '#complexity-section', special: true },
+    { label: 'DS Decision Guide',         icon: '🔧', href: '#ds-section',         special: true },
+    { label: '1-Day Revision Sheet',      icon: '⚡', href: '#revision-section',   special: true },
+    null, // divider
+    ...PATTERNS.map((p, i) => ({ label: p.title, icon: p.icon, href: `#block-${i}`, idx: i, count: (QUESTIONS[p.id]||[]).length }))
+  ];
+
+  nav.innerHTML = items.map((item, i) => {
+    if (!item) return `<div style="height:1px;background:var(--p2);margin:8px 4px"></div>`;
+    if (item.special) return `
+      <a class="nav-item" href="${item.href}">
+        <span class="nav-icon">${item.icon}</span>
+        <span class="nav-label" style="font-size:12px">${item.label}</span>
+      </a>`;
+    return `
+      <a class="nav-item" href="${item.href}" id="nav-${item.idx}" onclick="setActive(${item.idx})">
+        <span class="nav-icon">${item.icon}</span>
+        <span class="nav-label">${item.label}</span>
+        <span class="nav-count">${item.count}</span>
+      </a>`;
   }).join('');
 }
 
-function buildSbGuide() {
+function buildGuideNav() {
   const nav = document.getElementById('nav-list');
-  nav.innerHTML = `<div style="padding:4px 2px">
-    <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 10px 10px">4-Step Pattern Recognition</p>
-    ${[
-      {n:'1',t:'Check n Size',   s:'n≤20→Backtrack | n≤10⁶→O(n) | n≥10⁷→O(log n)', c:'#256B40'},
-      {n:'2',t:'Input Format',   s:'Tree→DFS/BFS · Graph→BFS/DFS · String→Slide',   c:'#1A4A80'},
-      {n:'3',t:'Output Type',    s:'List→BT · Single→DP · Ordered→Heap · Inplace→2P',c:'#7B2D8C'},
-      {n:'4',t:'Keyword Triggers',s:'Palindrome→2P · K elem→Heap · Ways→DP · Long→SW',c:'#9E6208'},
-    ].map(r=>`<div class="sb-guide-item" onclick="document.getElementById('recognition-guide').scrollIntoView({behavior:'smooth'})">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
-        <span style="width:20px;height:20px;background:${r.c};color:#fff;border-radius:6px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${r.n}</span>
-        <strong style="font-size:13px;color:var(--i0)">${r.t}</strong>
-      </div>
-      <div style="font-size:11px;color:var(--i3);padding-left:28px;line-height:1.6">${r.s}</div>
-    </div>`).join('')}
-    <div style="margin:14px 8px 6px;padding-top:12px;border-top:1px solid var(--p3)">
-      <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);margin-bottom:8px">Keyword ↦ Pattern</p>
-      ${KEYWORD_TRIGGERS.slice(0,10).map(k=>`<div class="sb-guide-item" style="padding:7px 8px;margin-bottom:2px">
-        <span style="font-size:11px;font-weight:700;color:var(--a1)">${k.pattern}</span>
-        <span style="font-size:11px;color:var(--i3);display:block;margin-top:2px;line-height:1.5">${k.triggers.slice(0,2).join(' · ')}</span>
+  nav.innerHTML = `
+    <div style="padding:4px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 8px;margin-bottom:6px">4 Steps to Identify Pattern</div>
+      ${[
+        { step:'1', title:'Constraints → n size', sub:'≤20→BT · ≤10⁶→O(n) · ≥10⁷→O(log n)' },
+        { step:'2', title:'Input Format', sub:'Tree/Graph/Grid/String/Array/List' },
+        { step:'3', title:'Output Type', sub:'List→BT · Single→DP · Ordered→Heap' },
+        { step:'4', title:'Keywords', sub:'Palindrome→2P · K→Heap · Ways→DP' },
+      ].map(s => `
+        <div class="sb-item">
+          <div class="sb-item-head">
+            <div class="sb-step-num">${s.step}</div>
+            <div class="sb-item-title">${s.title}</div>
+          </div>
+          <div class="sb-item-sub">${s.sub}</div>
+        </div>`).join('')}
+      <div style="height:1px;background:var(--p2);margin:10px 4px"></div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 8px;margin-bottom:4px">Keyword → Pattern</div>
+      ${KEYWORD_TRIGGERS.slice(0,8).map(k => `
+        <div class="sb-kw-row">
+          <div class="sb-kw-pat">${k.pattern}</div>
+          <div class="sb-kw-trg">${k.triggers.slice(0,2).join(' · ')}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function buildDsNav() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = `<div style="padding:4px">
+    ${DS_GUIDE.map(ds => `
+      <div class="sb-ds-item">
+        <div class="sb-ds-name">${ds.icon} ${ds.name}</div>
+        <div class="sb-ds-when">${ds.when}</div>
+        ${ds.uses.slice(0,2).map(u => `<div class="sb-ds-use"><strong>${u.bold}</strong>${u.desc}</div>`).join('')}
       </div>`).join('')}
-    </div>
   </div>`;
 }
 
-function buildSbDsPicker() {
+function buildComplexityNav() {
   const nav = document.getElementById('nav-list');
   nav.innerHTML = `<div style="padding:4px">
-    ${DS_GUIDE.map(ds=>`<div class="sb-guide-item" style="padding:10px 8px;margin-bottom:3px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-        <span style="font-size:15px">${ds.icon}</span>
-        <strong style="font-size:13px;color:var(--i0)">${ds.name}</strong>
-      </div>
-      <div style="font-size:11px;color:var(--a1);font-family:'JetBrains Mono',monospace;margin-bottom:5px;padding-left:24px">${ds.when}</div>
-      ${ds.uses.slice(0,2).map(u=>`<div style="font-size:11px;color:var(--i2);padding:3px 6px 3px 24px;background:var(--p0);border-radius:4px;margin-bottom:2px"><strong>${u.bold}</strong>${u.desc}</div>`).join('')}
-    </div>`).join('')}
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 8px;margin-bottom:6px">Quick Complexity Guide</div>
+    ${BIGO_TYPES.map(b => `
+      <div class="sb-item">
+        <div class="sb-item-head">
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--a1);background:var(--ag);padding:1px 6px;border-radius:4px">${b.notation}</code>
+          <div class="sb-item-title" style="font-size:12px">${b.name}</div>
+        </div>
+        <div class="sb-item-sub">${b.pattern}</div>
+      </div>`).join('')}
+    <div style="height:1px;background:var(--p2);margin:10px 4px"></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--i4);padding:6px 8px;margin-bottom:6px">n → Max Complexity</div>
+    ${CONSTRAINT_CHEATSHEET.slice(0,5).map(r => `
+      <div class="sb-item">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--i0)">${r.n}</div>
+        <div class="sb-item-sub" style="padding-left:0;color:var(--a1);font-weight:600">${r.allow}</div>
+      </div>`).join('')}
   </div>`;
 }
 
@@ -126,59 +267,27 @@ function setSbTab(tab, btn) {
   activeSbTab = tab;
   document.querySelectorAll('.sb-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (tab==='patterns') buildNav();
-  else if (tab==='guide') buildSbGuide();
-  else if (tab==='ds') buildSbDsPicker();
+  if (tab === 'patterns') buildPatternNav();
+  else if (tab === 'guide') buildGuideNav();
+  else if (tab === 'ds') buildDsNav();
+  else if (tab === 'complexity') buildComplexityNav();
 }
 
-// ═══════════════════════════════════════════════════════════
-// BUILD PATTERN BLOCKS
-// ═══════════════════════════════════════════════════════════
-function buildPatterns() {
-  document.getElementById('patterns').innerHTML = PATTERNS.map((p, i) => {
-    const qs = QUESTIONS[p.id] || [];
-    return `<div class="pattern-block" id="block-${i}">
-      <div class="pat-eyebrow">Pattern ${p.num}</div>
-      <div class="pat-title-row">
-        <div class="pat-icon-box">${p.icon}</div>
-        <h2 class="pat-title">${p.title}</h2>
-      </div>
-      <div class="pat-meta">
-        <span class="meta-chip">Time: ${p.time}</span>
-        <span class="meta-chip">Space: ${p.space}</span>
-        <span class="meta-chip">${qs.length} Problems</span>
-      </div>
-      <div class="theory-row">
-        <div class="theory-card">
-          <div class="theory-card-tag">Theory — Kya Hai?</div>
-          <p class="theory-card-text">${p.theory}</p>
-        </div>
-        <div class="theory-card">
-          <div class="theory-card-tag">Kab Use Karo</div>
-          <p class="theory-card-text">${p.when}</p>
-          <div class="keyword-row">${p.keywords.map(k=>`<span class="kw-pill">${k}</span>`).join('')}</div>
-        </div>
-      </div>
-      <div class="qs-header">
-        <span>LeetCode Problems</span><span>${qs.length} problems</span>
-      </div>
-      <div class="qs-grid">
-        ${qs.map(q=>`<div class="q-card" onclick="openModal('${q.id}','${p.id}')">
-          <div class="q-top">
-            <span class="q-num">#${q.id}</span>
-            <span class="diff diff-${q.diff}">${q.diff}</span>
-          </div>
-          <div class="q-title">${q.title}</div>
-          <div class="q-desc">${q.desc}</div>
-          <div class="q-tags">${(q.tags||[]).slice(0,3).map(t=>`<span class="q-tag">${t}</span>`).join('')}</div>
-          <div class="q-bottom-row">
-            <span class="q-complexity">T: ${q.time||p.time} &nbsp;|&nbsp; S: ${q.space||p.space}</span>
-            <span class="q-arrow">View solution →</span>
-          </div>
-        </div>`).join('')}
-      </div>
-    </div>`;
-  }).join('');
+function filterNav(q) {
+  // Show/hide clear button
+  const clearBtn = document.getElementById('srch-clear');
+  if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
+
+  if (activeSbTab !== 'patterns') return;
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('#nav-list .nav-item').forEach((el, i) => {
+    const p = PATTERNS[i - 3]; // offset by special items + divider
+    if (!p) return;
+    const match = !q || p.title.toLowerCase().includes(q) ||
+      p.keywords.some(k => k.includes(q)) ||
+      (QUESTIONS[p.id] || []).some(qs => qs.title.toLowerCase().includes(q));
+    el.style.display = match ? '' : 'none';
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -186,258 +295,191 @@ function buildPatterns() {
 // ═══════════════════════════════════════════════════════════
 function openModal(qId, patId) {
   const p = PATTERNS.find(x => x.id === patId);
-  const q = (QUESTIONS[patId]||[]).find(x => String(x.id)===String(qId));
+  const q = (QUESTIONS[patId] || []).find(x => String(x.id) === String(qId));
   if (!q || !p) return;
-  activeQ = q; activePatId = patId;
+  activeQ = q; activePat = p;
 
-  document.getElementById('modal-meta').textContent = `#${q.id}  ·  ${p.title}`;
+  // Header
+  document.getElementById('modal-breadcrumb').textContent = `#${q.id}  ·  ${p.title}`;
   document.getElementById('modal-title').textContent = q.title;
-  document.getElementById('modal-tags').innerHTML =
-    `<span class="m-diff diff-${q.diff}">${q.diff}</span>` +
-    `<span class="m-tag-cmplx">T: ${q.time||p.time} | S: ${q.space||p.space}</span>` +
-    (q.tags||[]).map(t=>`<span class="m-tag">${t}</span>`).join('');
 
-  buildModalAnalysis(q, p);
+  // Badges — difficulty + matched keywords
+  const matchedKws = p.keywords.filter(k =>
+    (q.desc || '').toLowerCase().includes(k.toLowerCase()) ||
+    (q.title || '').toLowerCase().includes(k.toLowerCase())
+  );
+  document.getElementById('modal-badges').innerHTML =
+    `<span class="diff diff-${q.diff} m-badge" style="border:none">${q.diff}</span>` +
+    matchedKws.slice(0,3).map(k => `<span class="m-kw-badge">${k}</span>`).join('') +
+    `<span class="m-badge" style="background:var(--ag);color:var(--a1);border-color:var(--ab)">⏱ ${p.time}</span>`;
 
-  // Highlight keywords in description
-  let desc = q.desc||'';
-  [...(p.keywords||[])].forEach(kw => {
-    const rx = new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-    desc = desc.replace(rx, `<mark class="kw-hl">$1</mark>`);
-  });
-  document.getElementById('modal-desc-box').innerHTML = desc;
+  // Analysis strip
+  const hints = getConstraintHints(q.constraints || []);
+  const whyReasons = getPatternWhy(p, q);
+  const stripEl = document.getElementById('modal-analysis-strip');
+  stripEl.innerHTML = `<span class="strip-label">🧠 Pattern Recognition</span>` +
+    (hints.length
+      ? hints.slice(0,2).map(h => `<div class="strip-item"><span class="strip-icon">${h.icon}</span><span>${h.text}</span></div>`).join('')
+      : p.keywords.slice(0,2).map(k => `<div class="strip-item"><span class="strip-icon">🔑</span><strong>${k}</strong> → ${p.title}</div>`).join('')
+    );
 
-  buildConstraintsPanel(q);
+  // Description
+  document.getElementById('modal-desc').textContent = q.desc;
 
-  document.getElementById('modal-steps').innerHTML = (q.steps||[]).map((s,i)=>
+  // Constraints
+  const conEl = document.getElementById('modal-constraints');
+  if (q.constraints && q.constraints.length) {
+    conEl.style.display = 'block';
+    conEl.innerHTML = `
+      <div class="con-title">📏 Problem Constraints</div>
+      <ul class="con-list">
+        ${q.constraints.map(c => `<li class="con-item">${c}</li>`).join('')}
+      </ul>
+      ${hints.map(h => `<div class="con-hint">${h.icon} ${h.text}</div>`).join('')}`;
+  } else {
+    conEl.style.display = 'none';
+  }
+
+  // Why this pattern
+  const whyEl = document.getElementById('modal-why-pattern');
+  whyEl.innerHTML = `
+    <div class="why-title">💡 Why ${p.title} Pattern?</div>
+    ${matchedKws.map(k => `
+      <div class="why-row">
+        <span class="why-icon">🔑</span>
+        <span>Keyword <span class="why-hl">"${k}"</span> → Pattern Recognition Step 4 → ${p.title}</span>
+      </div>`).join('')}
+    ${hints.map(h => `
+      <div class="why-row">
+        <span class="why-icon">${h.icon}</span>
+        <span>${h.text}</span>
+      </div>`).join('')}
+    ${!matchedKws.length && !hints.length ? `
+      <div class="why-row">
+        <span class="why-icon">💡</span>
+        <span>${p.when.split('.')[0]}</span>
+      </div>` : ''}`;
+
+  // Steps
+  document.getElementById('modal-steps').innerHTML = (q.steps || []).map((s, i) =>
     `<li><span class="step-n">${i+1}</span><span>${s}</span></li>`
   ).join('');
 
-  // FIXED: code highlight with null-byte placeholders
-  document.getElementById('code-el').innerHTML = highlight(q.solution||'// No solution');
+  // Code — FIXED highlight
+  document.getElementById('code-el').innerHTML = highlight(q.solution || '');
 
-  buildPatternGuidePanel(q, p);
+  // Mini Guide Panel (right side, below code)
+  document.getElementById('mini-guide-content').innerHTML = buildMiniGuide(p, q);
 
-  const cb = document.getElementById('copy-btn');
-  cb.textContent='Copy'; cb.className='';
+  // Reset copy btn
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'Copy'; btn.className = '';
 
+  // Show
   document.getElementById('overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  ['modal-left','code-wrap','modal-guide-panel'].forEach(id => {
+
+  // Scroll panels to top
+  ['modal-left', 'code-wrap', 'mini-guide-panel'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.scrollTop = 0;
   });
 }
 
-function buildModalAnalysis(q, p) {
-  const el = document.getElementById('modal-analysis');
-  const hints = getConstraintHint(q.constraints||[]);
-  const kws   = (p.keywords||[]).filter(kw => (q.desc||'').toLowerCase().includes(kw.toLowerCase()));
-  let html = `<span class="analysis-label">Pattern</span>
-    <div class="analysis-chip pat-chip">${p.icon} ${p.title}</div>`;
-  if (kws.length) html += kws.slice(0,2).map(kw=>`<div class="analysis-chip kw-chip">Keyword: <strong>${kw}</strong></div>`).join('');
-  if (hints&&hints.length) html += hints.slice(0,1).map(h=>`<div class="analysis-chip hint-chip">${h.icon} Constraint matched</div>`).join('');
-  el.innerHTML = html; el.style.display='flex';
-}
-
-function buildConstraintsPanel(q) {
-  const box = document.getElementById('modal-constraints-box');
-  if (!q.constraints||!q.constraints.length) { box.style.display='none'; return; }
-  const hints = getConstraintHint(q.constraints);
-  box.innerHTML = `
-    <div class="constraints-title">Problem Constraints</div>
-    <ul class="constraint-list">
-      ${q.constraints.map(c=>`<li class="constraint-item">${c}</li>`).join('')}
-    </ul>
-    ${hints&&hints.length?`<div class="constraints-hints">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--a1);margin-bottom:8px">Pattern Recognition from Constraints</div>
-      ${hints.map(h=>`<div class="constraint-hint">${h.icon} ${h.text}</div>`).join('')}
-    </div>`:''}`;
-  box.style.display='block';
-}
-
-function buildPatternGuidePanel(q, p) {
-  const panel = document.getElementById('modal-guide-panel');
-  if (!panel) return;
-  const pid = p.id;
-  const cs  = q.constraints||[];
-
-  // Detect constraint tier
-  let tier = null;
-  for (const c of cs) {
-    const lo = c.toLowerCase();
-    if (lo.includes('≤ 20')||lo.includes('<= 20'))                      { tier='small';    break; }
-    if (lo.match(/10[³3]/)||lo.includes('10^6')||lo.includes('10⁶'))   { tier='moderate'; break; }
-    if (lo.includes('10^7')||lo.includes('10⁷')||lo.includes('10^9'))  { tier='large';    break; }
-  }
-
-  // Detect input type
-  const inputMap = {
-    'trees':'Trees (Binary / BST)', 'graphs':'Graphs (Nodes + Edges)',
-    'backtracking':'2D Grids / Matrices', 'binary-search':'Sorted Arrays',
-    'two-pointers':'Sorted Arrays', 'sliding-window':'Strings',
-    'hashmap':'Strings', 'heap':'Array (Unsorted)', 'intervals':'Array (Intervals)',
-    'dynamic-programming':'Array / String'
-  };
-  const step2 = inputMap[pid]||'';
-
-  const outputMap = {
-    'backtracking':'List of Lists', 'dynamic-programming':'Single Value',
-    'two-pointers':'Modified Structure', 'heap':'Ordered Output',
-    'intervals':'Ordered Output', 'graphs':'Single Value'
-  };
-  const step3 = outputMap[pid]||'';
-
-  const matchingKws = KEYWORD_TRIGGERS.filter(kt => {
-    const qText = ((q.desc||'')+(q.title||'')).toLowerCase();
-    return kt.pattern===p.title || kt.triggers.some(t=>qText.includes(t.replace(/"/g,'').toLowerCase()));
-  }).slice(0,3);
-
-  const tierData = {
-    small:    {label:'n ≤ 20 — Backtracking OK',          cls:'gpb-green',  tip:'O(2ⁿ) or O(n!) acceptable here'},
-    moderate: {label:'10³≤n≤10⁶ — O(n log n) needed',    cls:'gpb-amber',  tip:'Two Pointers, Sliding Window, DP, Heap'},
-    large:    {label:'n ≥ 10⁷ — O(log n) or O(1) only',  cls:'gpb-red',    tip:'Binary Search, Math tricks only'},
-  };
-
-  panel.innerHTML = `
-    <div class="guide-panel-header">
-      <div class="guide-panel-title">Pattern Recognition</div>
-      <div class="guide-panel-sub">Is question mein ye steps apply hue</div>
-    </div>
-
-    <div class="guide-panel-step">
-      <div class="step-pill green-pill">Step 1 — Constraints</div>
-      <div class="guide-panel-step-title">Input Size Check</div>
-      ${tier ? `<div class="gpb gpb-active ${tierData[tier].cls}">
-        <span class="gpb-label">${tierData[tier].label}</span>
-        <div style="font-size:11px;color:var(--i2);margin-top:4px">${tierData[tier].tip}</div>
-        <div class="gpb-arrow">↑ This question ka constraint</div>
-      </div>` : `<div class="gpb"><span class="gpb-label">Check constraint values in constraints panel</span></div>`}
-      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
-        <strong style="color:var(--i0)">Rule:</strong> n≤20→BT · n≤10⁶→O(n) · n≥10⁷→O(log n)
-      </div>
-    </div>
-
-    <div class="guide-panel-step">
-      <div class="step-pill blue-pill">Step 2 — Input Format</div>
-      <div class="guide-panel-step-title">Data Structure Type</div>
-      ${step2 ? `<div class="gpb gpb-active gpb-blue">
-        <span class="gpb-label">${step2}</span>
-        <div class="gpb-arrow">↑ This question ka input format</div>
-      </div>` : ''}
-      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
-        Sorted→BS/2P · String→SW · Graph→BFS/DFS · Tree→DFS
-      </div>
-    </div>
-
-    <div class="guide-panel-step">
-      <div class="step-pill purple-pill">Step 3 — Output Type</div>
-      <div class="guide-panel-step-title">Answer Format</div>
-      ${step3 ? `<div class="gpb gpb-active gpb-purple">
-        <span class="gpb-label">${step3}</span>
-        <div class="gpb-arrow">↑ This question ka output type</div>
-      </div>` : ''}
-      <div style="font-size:11px;color:var(--i3);margin-top:8px;padding:8px;background:var(--p0);border-radius:7px;border-left:2px solid var(--p3)">
-        List→BT · Single→DP/Greedy · Modified→2P · Sorted→Heap
-      </div>
-    </div>
-
-    <div class="guide-panel-step">
-      <div class="step-pill amber-pill">Step 4 — Keywords</div>
-      <div class="guide-panel-step-title">Pattern Trigger Words</div>
-      ${matchingKws.map(kt=>`<div class="gpb gpb-active gpb-amber" style="margin-bottom:6px">
-        <span class="gpb-label" style="font-weight:700">${kt.pattern}</span>
-        <div style="font-size:11px;color:var(--i2);margin-top:4px;font-family:'JetBrains Mono',monospace">${kt.triggers.slice(0,3).join(' · ')}</div>
-        <div class="gpb-arrow">↑ Pattern matched!</div>
-      </div>`).join('')}
-    </div>
-
-    <div class="guide-panel-why">
-      <div class="guide-panel-why-title">Why ${p.title}?</div>
-      <p style="font-size:12px;color:var(--i2);line-height:1.75;margin:8px 0">${p.when}</p>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
-        ${p.keywords.map(k=>`<span class="why-pill">${k}</span>`).join('')}
-      </div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--ab);font-size:12px;color:var(--i2)">
-        <strong style="color:var(--a1)">Complexity:</strong> Time ${p.time} · Space ${p.space}
-      </div>
-    </div>
-  `;
-}
-
-function tryClose(evt) {
-  if (evt.target===document.getElementById('overlay')) closeModal();
+function overlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
 }
 function closeModal() {
   document.getElementById('overlay').classList.add('hidden');
-  document.body.style.overflow='';
-  activeQ=null; activePatId=null;
+  document.body.style.overflow = '';
+  activeQ = activePat = null;
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 async function doCopy() {
   if (!activeQ) return;
   const btn = document.getElementById('copy-btn');
-  const text = activeQ.solution;
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(activeQ.solution);
+    btn.textContent = '✓ Copied!'; btn.className = 'done';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.className = ''; }, 2000);
   } catch {
+    // fallback
     const ta = document.createElement('textarea');
-    ta.value=text; ta.style.cssText='position:fixed;opacity:0';
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    ta.value = activeQ.solution;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
     document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!'; btn.className = 'done';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.className = ''; }, 2000);
   }
-  btn.textContent='Copied!'; btn.className='done';
-  setTimeout(()=>{ btn.textContent='Copy'; btn.className=''; }, 2000);
 }
 
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION + SCROLL
+// ═══════════════════════════════════════════════════════════
 function setActive(i) {
-  document.querySelectorAll('.nav-item').forEach((el,j) => el.classList.toggle('active',i===j));
+  document.querySelectorAll('.nav-item[id^="nav-"]').forEach(el => el.classList.remove('active'));
+  document.getElementById(`nav-${i}`)?.classList.add('active');
 }
 
-function filterNav(q) {
-  if (activeSbTab!=='patterns') return;
-  q = q.toLowerCase().trim();
-  document.querySelectorAll('.nav-item').forEach((el,i)=>{
-    const p = PATTERNS[i];
-    const ok = !q || p.title.toLowerCase().includes(q) ||
-      p.keywords.some(k=>k.includes(q)) ||
-      (QUESTIONS[p.id]||[]).some(qs=>qs.title.toLowerCase().includes(q));
-    el.style.display = ok?'':'none';
+const prog = document.getElementById('prog');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.documentElement.scrollHeight - innerHeight) * 100;
+  prog.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+// IntersectionObserver for pattern blocks
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('show');
+    const m = e.target.id.match(/block-(\d+)/);
+    if (m && activeSbTab === 'patterns') setActive(+m[1]);
+    io.unobserve(e.target);
   });
-}
+}, { threshold: 0.04, rootMargin: '0px 0px -50px 0px' });
 
-const progBar = document.getElementById('prog');
-window.addEventListener('scroll', ()=>{
-  const pct = window.scrollY/(document.documentElement.scrollHeight-innerHeight)*100;
-  progBar.style.width = Math.min(pct,100)+'%';
-},{passive:true});
-
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if (!entry.isIntersecting) return;
-    entry.target.classList.add('show');
-    if (activeSbTab==='patterns') {
-      const m = entry.target.id.match(/block-(\d+)/);
-      if (m) setActive(+m[1]);
+// IntersectionObserver for fade-up elements
+const ioFade = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('show');
+      ioFade.unobserve(e.target);
     }
-    observer.unobserve(entry.target);
   });
-},{threshold:0.04, rootMargin:'0px 0px -60px 0px'});
+}, { threshold: 0.05 });
 
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
 function init() {
-  buildNav(); buildPatterns(); initGuide();
-  document.querySelectorAll('.pattern-block').forEach(el=>observer.observe(el));
-  document.querySelector('.pattern-block')?.classList.add('show');
-  const ao = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='none';ao.unobserve(e.target);}
-    });
-  },{threshold:0.05});
-  document.querySelectorAll('.guide-step,.ds-card,.complexity-card,.sort-card').forEach(el=>{
-    el.style.opacity='0'; el.style.transform='translateY(18px)';
-    el.style.transition='opacity .45s ease,transform .45s ease';
-    ao.observe(el);
+  renderGuideSection();
+  renderComplexitySection();
+  renderDsSection();
+  renderRevisionSection();
+  renderPatterns();
+  buildPatternNav();
+
+  // Mark solved cards from localStorage
+  const solved = getSolved();
+  document.querySelectorAll('.q-card').forEach(card => {
+    const qId = +card.dataset.qid;
+    if (solved.has(qId)) {
+      card.classList.add('solved-card');
+      const btn = card.querySelector('.solve-btn');
+      if (btn) btn.classList.add('solved');
+    }
   });
+
+  updateSolvedUI();
+
+  document.querySelectorAll('.pat-block').forEach(el => io.observe(el));
+  document.querySelector('.pat-block')?.classList.add('show');
+  setTimeout(() => {
+    document.querySelectorAll('.fade-up').forEach(el => ioFade.observe(el));
+  }, 100);
 }
+
 init();
