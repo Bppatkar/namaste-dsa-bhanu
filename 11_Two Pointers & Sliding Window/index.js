@@ -430,6 +430,7 @@ var hashSame = function (hashW, hashS) {
 // ----------------------------------------------------
 //! Leetcode 239. Sliding Window Maximum
 // ----------------------------------------------------
+//* Monotonic Decreasing Queue
 var maxSlidingWindow = function (nums, k) {
   let i = j = 0;
   let result = [], q = [];
