@@ -1,3 +1,6 @@
+// ═══════════════════════════════════════════════════════════
+// GUIDE.JS — Pattern Recognition Guide + DS Picker + ROI
+// ═══════════════════════════════════════════════════════════
 
 // ── Step 1: Constraints ──
 const STEP1_CONSTRAINTS = [
@@ -137,21 +140,27 @@ const STEP3_OUTPUTS = [
 
 // ── Step 4: Keyword Triggers ── (from PDF)
 const KEYWORD_TRIGGERS = [
-  { pattern: 'Dynamic Programming',   triggers: ['"Number of ways"', '"Max/Min sum"', '"Can you reach"', '"Longest/Shortest subsequence"', '"Optimal solution"'] },
-  { pattern: 'Two Pointers',          triggers: ['"Palindrome"', '"Sorted array"', '"Target sum"', '"Remove duplicates"', '"Reverse in-place"'] },
-  { pattern: 'Sliding Window',        triggers: ['"Longest substring"', '"Fixed/variable window"', '"Max/Min subarray"', '"No repeating chars"', '"Substring match"'] },
-  { pattern: 'Heap / Priority Queue', triggers: ['"K largest/smallest"', '"Top K elements"', '"Median"', '"Priority queue"', '"Streaming data"'] },
-  { pattern: 'Stack',                 triggers: ['"Parentheses/brackets"', '"Valid expression"', '"Nested structure"', '"Undo/Redo"'] },
-  { pattern: 'Monotonic Stack',       triggers: ['"Next greater element"', '"Next smaller element"', '"Daily temperatures"', '"Stock span"'] },
-  { pattern: 'HashMap / HashSet',     triggers: ['"Frequency count"', '"Find duplicates"', '"Anagram check"', '"Two Sum"', '"Seen before"'] },
-  { pattern: 'Binary Search',         triggers: ['"Kth element"', '"Search in sorted"', '"Minimize maximum"', '"First/last occurrence"', '"Search on answer"'] },
-  { pattern: 'BFS',                   triggers: ['"Shortest path"', '"Level order"', '"Minimum steps"', '"Connected components"', '"Multi-source spread"'] },
-  { pattern: 'DFS / Backtracking',    triggers: ['"All combinations"', '"All permutations"', '"All subsets"', '"Explore all paths"', '"Word search"'] },
-  { pattern: 'Trie',                  triggers: ['"Word search"', '"Prefix matching"', '"Autocomplete"', '"Dictionary lookup"'] },
-  { pattern: 'Union-Find',            triggers: ['"Connected components"', '"Number of groups"', '"Disjoint sets"', '"Network connectivity"'] },
-  { pattern: 'Bit Manipulation',      triggers: ['"XOR trick"', '"Single number"', '"Power of 2"', '"Count bits"', '"Bitmask"'] },
-  { pattern: 'Greedy',                triggers: ['"Minimum operations"', '"Maximum profit"', '"Interval scheduling"', '"Activity selection"'] },
-  { pattern: 'Intervals',             triggers: ['"Merge intervals"', '"Meeting rooms"', '"Overlapping"', '"Schedule conflicts"'] },
+  { pattern: 'Dynamic Programming',    triggers: ['"Number of ways"', '"Max/Min sum"', '"Can you reach"', '"Longest/Shortest subsequence"', '"Optimal solution"'] },
+  { pattern: 'Two Pointers',           triggers: ['"Palindrome"', '"Sorted array"', '"Target sum"', '"Remove duplicates"', '"Reverse in-place"'] },
+  { pattern: 'Sliding Window',         triggers: ['"Longest substring"', '"Fixed/variable window"', '"Max/Min subarray"', '"No repeating chars"', '"Substring match"'] },
+  { pattern: 'Heap / Priority Queue',  triggers: ['"K largest/smallest"', '"Top K elements"', '"Median"', '"Priority queue"', '"Streaming data"'] },
+  { pattern: 'Stack Patterns',         triggers: ['"Parentheses/brackets"', '"Valid expression"', '"Nested structure"', '"Min stack design"', '"Undo/Redo"'] },
+  { pattern: 'Monotonic Stack',        triggers: ['"Next greater element"', '"Next smaller element"', '"Daily temperatures"', '"Stock span"', '"Histogram"'] },
+  { pattern: 'HashMap / HashSet',      triggers: ['"Frequency count"', '"Find duplicates"', '"Anagram check"', '"Two Sum"', '"Seen before"'] },
+  { pattern: 'Binary Search',          triggers: ['"Kth element"', '"Search in sorted"', '"Minimize maximum"', '"First/last occurrence"', '"Search on answer"'] },
+  { pattern: 'BFS',                    triggers: ['"Shortest path"', '"Level order"', '"Minimum steps"', '"Connected components"', '"Multi-source spread"'] },
+  { pattern: 'DFS / Backtracking',     triggers: ['"All combinations"', '"All permutations"', '"All subsets"', '"Explore all paths"', '"Word search"'] },
+  { pattern: 'Trie',                   triggers: ['"Word prefix"', '"Prefix matching"', '"Autocomplete"', '"Dictionary lookup"', '"Starts with"'] },
+  { pattern: 'Union-Find',             triggers: ['"Connected components"', '"Number of groups"', '"Disjoint sets"', '"Network connectivity"'] },
+  { pattern: 'Bit Manipulation',       triggers: ['"XOR trick"', '"Single number"', '"Power of 2"', '"Count bits"', '"Bitmask"', '"Missing number"'] },
+  { pattern: 'Greedy',                 triggers: ['"Minimum operations"', '"Maximum profit"', '"Interval scheduling"', '"Activity selection"'] },
+  { pattern: 'Intervals',              triggers: ['"Merge intervals"', '"Meeting rooms"', '"Overlapping"', '"Schedule conflicts"'] },
+  { pattern: 'Fast & Slow Pointers',   triggers: ['"Cycle detection"', '"Linked list loop"', '"Middle of list"', '"Floyd algorithm"', '"Duplicate in array"'] },
+  { pattern: 'Prefix Sum',             triggers: ['"Subarray sum equals k"', '"Range sum"', '"Running total"', '"Cumulative sum"', '"Contiguous sum"'] },
+  { pattern: "Kadane's Algorithm",     triggers: ['"Maximum subarray"', '"Max sum contiguous"', '"Best time to buy"', '"Max product subarray"', '"Circular max"'] },
+  { pattern: 'Linked List Manipulation', triggers: ['"Reverse linked list"', '"Merge sorted lists"', '"Remove nth node"', '"Reorder list"', '"Add two numbers"'] },
+  { pattern: 'Queue & Monotonic Deque', triggers: ['"Sliding window maximum"', '"Sliding window minimum"', '"Window max"', '"First negative"'] },
+  { pattern: 'Topological Sort',       triggers: ['"Course schedule"', '"Task dependency"', '"Build order"', '"Prerequisites"', '"Alien dictionary"'] },
 ];
 
 // ── DS Decision Guide ──

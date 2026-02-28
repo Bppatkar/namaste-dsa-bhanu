@@ -18,7 +18,7 @@ function renderGuideSection() {
     <div class="guide-step fade-up">
       <div class="step-badge">Step 1</div>
       <h3 class="step-title">Start with the Constraints</h3>
-      <p class="step-desc">Pehle n ki value dekho — yeh batata hai kaunsa approach allowed hai aur kaunsa TLE dega.</p>
+      <p class="step-desc">First, look at the value of <strong>n</strong> (input size). It tells you which algorithm is fast enough — and which will cause <strong>TLE</strong> (Time Limit Exceeded — your code takes too long and gets rejected by LeetCode's judge).</p>
       <div class="cst-cards">
         ${STEP1_CONSTRAINTS.map(c => `
           <div class="cst-card ${c.cls}">
@@ -38,7 +38,7 @@ function renderGuideSection() {
     <div class="guide-step fade-up">
       <div class="step-badge">Step 2</div>
       <h3 class="step-title">Decode the Input Format</h3>
-      <p class="step-desc">Input ka structure dekho — woh seedha pattern suggest karta hai.</p>
+      <p class="step-desc">Look at the structure of the input — it directly points to which pattern to use.</p>
       <div class="input-grid">
         ${STEP2_INPUTS.map(inp => `
           <div class="input-card fade-up">
@@ -53,7 +53,7 @@ function renderGuideSection() {
     <div class="guide-step fade-up">
       <div class="step-badge">Step 3</div>
       <h3 class="step-title">Understand the Output Type</h3>
-      <p class="step-desc">Answer kaisa chahiye — yeh bhi pattern narrow karta hai.</p>
+      <p class="step-desc">What does the answer look like? A single value, a list, a boolean? The output type narrows down your pattern choice further.</p>
       <div class="output-row">
         ${STEP3_OUTPUTS.map(o => `
           <div class="output-card fade-up">
@@ -68,8 +68,8 @@ function renderGuideSection() {
     <!-- Step 4: Keywords -->
     <div class="guide-step fade-up">
       <div class="step-badge">Step 4</div>
-      <h3 class="step-title">Keyword Triggers — Sunke Pattern Pehchano</h3>
-      <p class="step-desc">Ye keywords sunna ya padhna — TURANT pattern yaad aana chahiye. Interview mein yahi kaam aata hai.</p>
+      <h3 class="step-title">Keyword Triggers — Hear a Word, Know the Pattern</h3>
+      <p class="step-desc">Certain words in a problem statement are dead giveaways. The moment you read or hear one of these — the pattern should click instantly. This is the fastest skill to build.</p>
       <div class="kw-grid">
         ${KEYWORD_TRIGGERS.map(k => `
           <div class="kw-row fade-up">
@@ -458,18 +458,23 @@ function buildMiniGuide(pattern, q) {
   // Get why this pattern
   const whyReasons = getPatternWhy(pattern, q);
 
-  // Get matching keyword triggers
-  const kwTrigger = KEYWORD_TRIGGERS.find(k =>
-    k.pattern.toLowerCase().includes(pattern.title.split('/')[0].toLowerCase().trim())
-  );
-
-  // Find matching input format
+  // Find matching input format — extended for all 20 patterns
   const inputMatch = STEP2_INPUTS.filter(inp => {
     const t = (q.desc || '').toLowerCase();
     if (pattern.id === 'trees' && inp.title.includes('Tree')) return true;
     if (pattern.id === 'graphs' && inp.title.includes('Graph')) return true;
+    if (pattern.id === 'topological-sort' && inp.title.includes('Graph')) return true;
     if ((pattern.id === 'two-pointers' || pattern.id === 'sliding-window') && inp.title.includes('String')) return t.includes('string') || t.includes('substring');
-    if ((pattern.id === 'binary-search') && inp.title.includes('Sorted')) return true;
+    if (pattern.id === 'binary-search' && inp.title.includes('Sorted')) return true;
+    if (pattern.id === 'fast-slow-pointers' && inp.title.includes('Linked')) return true;
+    if (pattern.id === 'linked-list' && inp.title.includes('Linked')) return true;
+    if (pattern.id === 'prefix-sum' && inp.title.includes('Array')) return true;
+    if (pattern.id === 'monotonic-stack' && inp.title.includes('Array')) return true;
+    if (pattern.id === 'kadane' && inp.title.includes('Array')) return true;
+    if (pattern.id === 'monotonic-deque' && inp.title.includes('Array')) return true;
+    if (pattern.id === 'stack-problems' && inp.title.includes('String')) return t.includes('parenthes') || t.includes('bracket');
+    if (pattern.id === 'trie' && inp.title.includes('String')) return true;
+    if (pattern.id === 'bitwise' && inp.title.includes('Array')) return true;
     return false;
   });
 
@@ -504,16 +509,26 @@ function buildMiniGuide(pattern, q) {
 
   // Step 3: Output type — map pattern to expected output
   const outputMap = {
-    'backtracking':        { icon:'📋', type:'List of Lists', note:'All combinations/permutations/subsets → Backtracking with take/skip' },
-    'dynamic-programming': { icon:'🎯', type:'Single Value (min/max/count)', note:'Optimal substructure → DP table, O(n) or O(n²)' },
-    'two-pointers':        { icon:'✏️', type:'Modified In-Place', note:'In-place changes, no extra array → Two pointer write-position' },
-    'sliding-window':      { icon:'🎯', type:'Single Value (max/min window)', note:'Longest/shortest window size → track with left+right' },
-    'binary-search':       { icon:'🎯', type:'Single Value (index/bool)', note:'Target position or true/false → mid comparison' },
-    'hashmap':             { icon:'🎯', type:'Single Value or count', note:'Frequency/existence → O(1) HashMap lookup' },
-    'heap':                { icon:'📊', type:'Ordered / Top-K output', note:'K largest/smallest → maintain size-K heap' },
-    'intervals':           { icon:'📊', type:'Ordered output (merged intervals)', note:'Sort by start, merge overlapping → greedy' },
-    'graphs':              { icon:'📋', type:'Count / Path / Bool', note:'BFS → shortest path count; DFS → all paths/components' },
-    'trees':               { icon:'🎯', type:'Single value or List', note:'Recursive return value bubbles up from leaves' },
+    'backtracking':         { icon:'📋', type:'List of Lists',              note:'All combinations/permutations/subsets → choose → recurse → undo' },
+    'dynamic-programming':  { icon:'🎯', type:'Single Value (min/max/count)', note:'Optimal substructure → DP table or memoization' },
+    'two-pointers':         { icon:'✏️', type:'Modified In-Place',           note:'In-place changes, no extra array → two pointer write-position' },
+    'sliding-window':       { icon:'🎯', type:'Single Value (max/min window)', note:'Longest/shortest window size → track with left+right pointers' },
+    'binary-search':        { icon:'🎯', type:'Single Value (index/bool)',   note:'Target position or true/false → mid comparison eliminates half' },
+    'hashmap':              { icon:'🎯', type:'Single Value or count',       note:'Frequency/existence → O(1) HashMap lookup per element' },
+    'heap':                 { icon:'📊', type:'Ordered / Top-K output',      note:'K largest/smallest → maintain size-K heap, heap[0] = answer' },
+    'intervals':            { icon:'📊', type:'Ordered merged intervals',    note:'Sort by start, merge overlapping → greedy scan' },
+    'graphs':               { icon:'📋', type:'Count / Path / Bool',        note:'BFS → shortest path count; DFS → all paths/components' },
+    'trees':                { icon:'🎯', type:'Single value or List',        note:'Recursive return value bubbles up from leaves to root' },
+    'fast-slow-pointers':   { icon:'🐢', type:'Node / Bool',                note:'cycle → bool; middle → slow pointer; phase 2 → start node' },
+    'prefix-sum':           { icon:'∑',  type:'Single value (range sum)',    note:'prefix[r] - prefix[l-1] gives range sum in O(1)' },
+    'monotonic-stack':      { icon:'📚', type:'Array (next greater/smaller)', note:'Monotonic stack → one answer per element, O(n) total' },
+    'kadane':               { icon:'⚡', type:'Single value (max sum)',      note:'max_end = max(nums[i], max_end + nums[i]) → global max' },
+    'linked-list':          { icon:'🔗', type:'Modified linked list / node', note:'Dummy node → edge cases. prev/curr/next for in-place reverse' },
+    'trie':                 { icon:'🌲', type:'Bool or String',              note:'O(L) search per word; isEnd marks complete words' },
+    'monotonic-deque':      { icon:'⟺', type:'Array (window max/min)',      note:'Deque front = current window max; pop back when smaller' },
+    'stack-problems':       { icon:'🥞', type:'Bool / Value / Modified',    note:'LIFO: push open brackets, pop on close, match each pair' },
+    'topological-sort':     { icon:'→',  type:'Array (ordered) or Bool',    note:"Kahn's: in-degree 0 → process → repeat. Cycle → impossible" },
+    'bitwise':              { icon:'⊕',  type:'Single value (XOR/count)',   note:'XOR: a^a=0 so pairs cancel. n&(n-1) removes last set bit' },
   };
   const outInfo = outputMap[pattern.id] || { icon:'🎯', type:'Single Value', note:'Check what exactly must be returned' };
   html += `<div class="mg-step">
@@ -521,9 +536,15 @@ function buildMiniGuide(pattern, q) {
     <div class="mg-item hl">${outInfo.icon} ${outInfo.note}</div>
   </div>`;
 
-  // Step 4: Keyword matches
-  if (kwTrigger) {
-    const matchedTrg = kwTrigger.triggers.filter(t => {
+  // Step 4: Keyword matches — match by pattern id OR title
+  const patTitle = pattern.title.toLowerCase();
+  const kwTriggerById = KEYWORD_TRIGGERS.find(k =>
+    k.pattern.toLowerCase() === patTitle ||
+    k.pattern.toLowerCase().includes(patTitle.split(' ')[0]) ||
+    patTitle.includes(k.pattern.toLowerCase().split(' ')[0])
+  );
+  if (kwTriggerById) {
+    const matchedTrg = kwTriggerById.triggers.filter(t => {
       const clean = t.replace(/"/g,'').toLowerCase();
       return (q.desc || '').toLowerCase().includes(clean) || (q.title || '').toLowerCase().includes(clean);
     });
@@ -531,8 +552,14 @@ function buildMiniGuide(pattern, q) {
       <div class="mg-step-hdr"><span class="mg-badge">Step 4</span><span class="mg-step-title">Keyword Triggers Matched</span></div>
       ${matchedTrg.length
         ? matchedTrg.map(t => `<div class="mg-item hl">🔑 ${t} → ${esc(pattern.title)}</div>`).join('')
-        : kwTrigger.triggers.slice(0,2).map(t => `<div class="mg-item">🔑 ${t}</div>`).join('')
+        : kwTriggerById.triggers.slice(0,3).map(t => `<div class="mg-item">🔑 ${t}</div>`).join('')
       }
+    </div>`;
+  } else {
+    // Fallback: show pattern's own keywords
+    html += `<div class="mg-step">
+      <div class="mg-step-hdr"><span class="mg-badge">Step 4</span><span class="mg-step-title">Keyword Triggers for ${esc(pattern.title)}</span></div>
+      ${pattern.keywords.slice(0,3).map(k => `<div class="mg-item">🔑 "${k}" → ${esc(pattern.title)}</div>`).join('')}
     </div>`;
   }
 
@@ -546,73 +573,118 @@ function renderRevisionSection() {
   const el = document.getElementById('revision-container');
   if (!el) return;
 
-  const revData = PATTERNS.map(p => {
-    const kwTrig = KEYWORD_TRIGGERS.find(k =>
-      k.pattern.toLowerCase().includes(p.title.split('/')[0].toLowerCase().trim())
-    );
-    return { p, triggers: kwTrig ? kwTrig.triggers : [] };
-  });
+  // All 20 patterns with hand-crafted revision data
+  const REV = [
+    { icon:'⟷',  title:'Two Pointers',          cx:'O(n)/O(1)',     kw:['sorted','palindrome','pairs','in-place'],        tip:'Opposite ends → converge. Same direction → slow/fast.' },
+    { icon:'🐢',  title:'Fast & Slow Pointers',  cx:'O(n)/O(1)',     kw:['cycle','middle','linked list','duplicate'],      tip:'Floyd: slow×1, fast×2. Cycle detect + middle find.' },
+    { icon:'▣',   title:'Sliding Window',         cx:'O(n)/O(k)',     kw:['longest','substring','no-repeat','window'],      tip:'Expand right → shrink left when invalid.' },
+    { icon:'∑',   title:'Prefix Sum',             cx:'O(n)/O(n)',     kw:['range sum','subarray sum','contiguous','k'],     tip:'prefix[r]-prefix[l] = range sum. HashMap for subarrays.' },
+    { icon:'⊘',   title:'Binary Search',          cx:'O(log n)/O(1)', kw:['sorted','rotated','kth','minimize'],             tip:'Can I eliminate half the search space? → Binary search.' },
+    { icon:'#',   title:'HashMap & HashSet',       cx:'O(n)/O(n)',     kw:['frequency','duplicate','anagram','two sum'],     tip:'O(1) lookup. Complement pattern: map[target-x].' },
+    { icon:'📚',  title:'Monotonic Stack',         cx:'O(n)/O(n)',     kw:['next greater','histogram','temperatures'],       tip:'Pop while stack.top invalid. Push index not value.' },
+    { icon:'🥞',  title:'Stack Patterns',          cx:'O(n)/O(n)',     kw:['parentheses','brackets','expression','design'],  tip:'LIFO. Push open, pop on close. Min stack = 2 stacks.' },
+    { icon:'△',   title:'Heap & Priority Queue',   cx:'O(n log k)/O(k)',kw:['top k','kth','median','priority','stream'],    tip:'Min-heap size K → O(n log k). 2 heaps = O(log n) median.' },
+    { icon:'⚡',  title:"Kadane's Algorithm",      cx:'O(n)/O(1)',     kw:['max subarray','max product','circular'],         tip:'max_end = max(arr[i], max_end+arr[i]). Reset = fresh start.' },
+    { icon:'◈',   title:'Dynamic Programming',     cx:'O(n²)/O(n)',    kw:['ways','min/max','longest','optimal','subset'],   tip:'Overlapping subproblems + optimal substructure → DP.' },
+    { icon:'⟼',  title:'Intervals & Greedy',      cx:'O(n log n)/O(n)',kw:['merge','overlap','meeting','schedule','jump'],  tip:'Sort by start. Overlap: end1 > start2. Greedy: local = global.' },
+    { icon:'⟺',  title:'Queue & Monotonic Deque', cx:'O(n)/O(k)',     kw:['window max','deque','queue','first negative'],   tip:'Front = oldest, back = newest. Pop back when smaller.' },
+    { icon:'→',   title:'Topological Sort',        cx:'O(V+E)/O(V)',   kw:['dependency','course','prerequisite','order'],    tip:'Kahn: in-degree 0 → queue → reduce neighbors.' },
+    { icon:'🔗',  title:'Linked List Ops',         cx:'O(n)/O(1)',     kw:['reverse','dummy node','merge','nth node'],       tip:'Dummy node saves edge cases. Prev/curr/next for reverse.' },
+    { icon:'🌲',  title:'Trie (Prefix Tree)',       cx:'O(L)/O(N×L)',   kw:['prefix','word search','autocomplete'],           tip:'26 children per node. isEnd marker. O(L) insert/search.' },
+    { icon:'⬡',   title:'Graphs — BFS & DFS',      cx:'O(V+E)/O(V)',   kw:['shortest','island','connected','cycle','level'], tip:'BFS = level order. DFS = go deep. Visited set prevents loops.' },
+    { icon:'↩',   title:'Backtracking',            cx:'O(2ⁿ)/O(n)',    kw:['all combos','permutations','subsets','n-queens'], tip:'Choose → recurse → undo. Prune early for speed.' },
+    { icon:'🌳',  title:'Binary Trees & BST',      cx:'O(n)/O(h)',     kw:['path','LCA','depth','diameter','BST'],           tip:'Inorder BST = sorted. Path problems: recurse + track max.' },
+    { icon:'⊕',   title:'Bit Manipulation',        cx:'O(1)/O(1)',     kw:['xor','single number','power of 2','bitmask'],    tip:'XOR: a^a=0. n&(n-1) removes last set bit. Use for subsets.' },
+  ];
 
   el.innerHTML = `
-    <!-- Quick-scan cards: one per pattern -->
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="display:inline-flex;align-items:center;gap:10px;background:var(--ag);border:1.5px solid var(--ab);border-radius:100px;padding:8px 20px;margin-bottom:16px">
+        <span style="font-size:18px">⚡</span>
+        <span style="font-size:13px;font-weight:700;color:var(--a1)">Complete 1-Day Revision</span>
+      </div>
+      <p style="font-size:14px;color:var(--i3);max-width:600px;margin:0 auto">20 patterns · Each card = when to use + trigger keywords + complexity. Read all cards once before any interview.</p>
+    </div>
+
+    <!-- 20 Pattern cards — responsive grid -->
     <div class="rev-grid">
-      ${revData.map(({ p, triggers }) => `
+      ${REV.map(r => `
         <div class="rev-card fade-up">
           <div class="rev-card-hdr">
-            <span class="rev-icon">${p.icon}</span>
-            <span class="rev-title">${esc(p.title)}</span>
-            <span class="rev-cx">${esc(p.time)}</span>
+            <span style="font-size:20px;width:28px;text-align:center;flex-shrink:0">${r.icon}</span>
+            <span class="rev-title">${r.title}</span>
+            <span class="rev-cx">${r.cx.split('/')[0]}</span>
           </div>
           <div class="rev-body">
-            <div class="rev-when">${esc(p.when)}</div>
-            <div class="rev-kws">
-              ${triggers.slice(0,4).map(t => `<span class="rev-kw">${t.replace(/"/g,'')}</span>`).join('')}
+            <div class="rev-kws">${r.kw.map(k => `<span class="rev-kw">${k}</span>`).join('')}</div>
+            <div style="font-size:11px;color:var(--i2);line-height:1.5;margin-top:6px;padding:6px 8px;background:var(--p1);border-radius:6px;border-left:2px solid var(--a2)">
+              💡 ${r.tip}
             </div>
-            <div class="rev-cx-row">
-              <span class="rev-cx-badge">Time: ${esc(p.time)}</span>
-              <span class="rev-cx-badge">Space: ${esc(p.space)}</span>
+            <div class="rev-cx-row" style="margin-top:8px">
+              <span class="rev-cx-badge">Time: ${r.cx.split('/')[0]}</span>
+              <span class="rev-cx-badge">Space: ${r.cx.split('/')[1]}</span>
             </div>
           </div>
         </div>`).join('')}
     </div>
 
-    <!-- Dark cheat sheet strip — all patterns at a glance -->
-    <div class="rev-cheatstrip">
-      <div class="rev-strip-title">⚡ Interview Day Quick Reference — All 10 Patterns</div>
-      <div class="rev-strip-grid">
-        ${[
-          { pat:'Two Pointers',    cx:'O(n) / O(1)',      kw:'sorted · palindrome · pairs · in-place',      when:'Sorted array, opposite ends converging' },
-          { pat:'Sliding Window',  cx:'O(n) / O(k)',      kw:'longest · substring · no-repeat · window',    when:'Contiguous subarray/substring' },
-          { pat:'Binary Search',   cx:'O(log n) / O(1)',  kw:'sorted · rotated · kth · minimize',           when:'Sorted data or monotonic search space' },
-          { pat:'HashMap',         cx:'O(n) / O(n)',      kw:'frequency · duplicate · anagram · two-sum',   when:'O(1) lookup, count, or group elements' },
-          { pat:'DP',              cx:'O(n²) / O(n)',     kw:'ways · min/max · longest · optimal · subset', when:'Overlapping subproblems + optimal substructure' },
-          { pat:'BFS / DFS',       cx:'O(V+E) / O(V)',   kw:'shortest · island · connected · cycle · level', when:'Graph/tree traversal, connected components' },
-          { pat:'Backtracking',    cx:'O(2ⁿ) / O(n)',    kw:'all combos · permutations · subsets · search', when:'Enumerate all valid combinations (n≤20)' },
-          { pat:'Trees',           cx:'O(n) / O(h)',      kw:'path · LCA · depth · diameter · BST',         when:'Binary tree problems, recursive DFS' },
-          { pat:'Heap',            cx:'O(n log k) / O(k)','kw':'top-k · kth · median · priority · stream',  when:'K largest/smallest, always-min/max access' },
-          { pat:'Intervals',       cx:'O(n log n) / O(n)','kw':'merge · overlap · meeting · schedule · jump', when:'Interval merge/selection, greedy scheduling' },
-        ].map(r => `
+    <!-- Quick Reference Cheat Strip — dark band -->
+    <div class="rev-cheatstrip" style="margin-top:24px">
+      <div class="rev-strip-title">⚡ Interview Day Quick Reference — All 20 Patterns</div>
+      <div class="rev-strip-grid" style="grid-template-columns:repeat(4,1fr)">
+        ${REV.map(r => `
           <div class="rev-strip-item">
-            <div class="rev-strip-pat">${r.pat}</div>
-            <div class="rev-strip-kw">${r.kw}</div>
-            <div class="rev-strip-cx">${r.cx} · ${r.when}</div>
+            <div class="rev-strip-pat">${r.icon} ${r.title}</div>
+            <div class="rev-strip-kw">${r.kw.slice(0,2).join(' · ')}</div>
+            <div class="rev-strip-cx">${r.cx}</div>
           </div>`).join('')}
       </div>
     </div>
 
-    <!-- Constraint → Pattern quick-ref -->
+    <!-- Pattern Decision Tree -->
     <div style="margin-top:14px;background:var(--p1);border:1.5px solid var(--p3);border-radius:var(--rl);overflow:hidden">
       <div style="background:var(--i0);padding:14px 20px;font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--p0)">
-        Constraint → Algorithm Cheat Sheet
+        🧠 Pattern Decision Framework — Read This Before Every Problem
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+        ${[
+          { q:'Is input sorted / can I sort?', ans:'→ Binary Search or Two Pointers' },
+          { q:'Is it a subarray/substring problem?', ans:'→ Sliding Window or Prefix Sum' },
+          { q:'Need O(1) lookup / counting?', ans:'→ HashMap or HashSet' },
+          { q:'Find all combinations/permutations?', ans:'→ Backtracking (n ≤ 20)' },
+          { q:'Tree or graph traversal?', ans:'→ BFS (shortest) or DFS (exhaustive)' },
+          { q:'Optimal choice at each step?', ans:'→ Greedy or DP' },
+          { q:'Overlapping subproblems + optimal?', ans:'→ Dynamic Programming' },
+          { q:'Top K or Kth element?', ans:'→ Heap (min-heap size K)' },
+          { q:'Linked list with cycle / middle?', ans:'→ Fast & Slow Pointers' },
+          { q:'Prefix / word search / autocomplete?', ans:'→ Trie' },
+          { q:'Next greater/smaller element?', ans:'→ Monotonic Stack' },
+          { q:'Task ordering with dependencies?', ans:'→ Topological Sort' },
+        ].map((r,i) => `
+          <div style="padding:11px 16px;border-right:${i%2===0?'1px solid var(--p2)':'none'};border-bottom:1px solid var(--p2)">
+            <div style="font-size:12px;color:var(--i2);margin-bottom:3px">${r.q}</div>
+            <div style="font-size:12px;font-weight:600;color:var(--a1);font-family:'JetBrains Mono',monospace">${r.ans}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Constraint → Algorithm -->
+    <div style="margin-top:14px;background:var(--p1);border:1.5px solid var(--p3);border-radius:var(--rl);overflow:hidden">
+      <div style="background:var(--i0);padding:14px 20px;font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--p0)">
+        ⏱ Constraint → Algorithm Cheat Sheet
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0">
         ${[
           { n:'n ≤ 20',         algo:'Backtracking / Brute Force',             cx:'O(2ⁿ) or O(n!)' },
-          { n:'n ≤ 1,000',      algo:'Nested Loops / DP O(n²)',                cx:'O(n²)' },
+          { n:'n ≤ 1,000',      algo:'Nested Loops / DP',                      cx:'O(n²)' },
           { n:'n ≤ 100,000',    algo:'Sorting / Heap / Prefix Sum',            cx:'O(n log n)' },
           { n:'n ≤ 1,000,000',  algo:'Two Pointers / Sliding Window / HashMap', cx:'O(n)' },
           { n:'Sorted array',   algo:'Binary Search / Two Pointers',           cx:'O(log n) or O(n)' },
           { n:'Top K / Kth',    algo:'Heap (size K) or QuickSelect',           cx:'O(n log k)' },
+          { n:'Cycle in list',  algo:'Fast & Slow Pointers',                   cx:'O(n) / O(1)' },
+          { n:'Word prefix',    algo:'Trie',                                   cx:'O(L) per op' },
+          { n:'Next greater',   algo:'Monotonic Stack',                        cx:'O(n) / O(n)' },
         ].map((r,i) => `
           <div style="padding:12px 16px;border-right:${i%3<2?'1px solid var(--p2)':'none'};border-bottom:1px solid var(--p2)">
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--a1);margin-bottom:3px">${r.n}</div>

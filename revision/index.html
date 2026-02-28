@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DSA Master — Pattern-Based Interview Prep</title>
+<title>Constitution of DSA — Pattern-Based Interview Prep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -23,7 +23,7 @@
         </svg>
       </div>
       <div style="flex:1">
-        <div class="logo-title">DSA Master</div>
+        <div class="logo-title">Constitution of DSA</div>
         <div class="logo-sub">Pattern-Based Prep</div>
       </div>
       <!-- Dark mode toggle -->
@@ -85,13 +85,13 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hero-left">
-      <div class="hero-eyebrow">🎯 The Only DSA Guide You Need</div>
-      <h1>Crack Every<br/><em>Coding Interview</em></h1>
-      <p class="hero-tagline">10 Patterns · 150+ Problems · Full Pattern Recognition</p>
-      <p class="hero-desc">Master the 10 core patterns that cover 90% of Google, Meta, and Amazon interview questions. Every problem includes constraints analysis, pattern recognition steps, and Big O breakdown.</p>
+      <div class="hero-eyebrow">📜 The Complete DSA Reference</div>
+      <h1>Constitution of<br/><em>DSA Patterns</em></h1>
+      <p class="hero-tagline">20 Patterns · 128 Problems · Full Pattern Recognition Framework</p>
+      <p class="hero-desc">The most complete pattern-based DSA guide — compiled from AlgoMonster, NeetCode, Fraz, CTO Bhaiya, Padho with Pratyush, LeetCode Blind 75 & NeetCode 150. Every problem: constraints → pattern → Big O → solution.</p>
       <div class="hero-stats">
-        <div class="hstat"><span class="hnum">10</span><span class="hlbl">Patterns</span></div>
-        <div class="hstat"><span class="hnum">150+</span><span class="hlbl">Problems</span></div>
+        <div class="hstat"><span class="hnum">20</span><span class="hlbl">Patterns</span></div>
+        <div class="hstat"><span class="hnum">128</span><span class="hlbl">Problems</span></div>
         <div class="hstat"><span class="hnum">4</span><span class="hlbl">Steps</span></div>
         <div class="hstat"><span class="hnum">91%</span><span class="hlbl">Coverage</span></div>
       </div>
@@ -114,7 +114,7 @@
           <button class="co-tab" onclick="switchCoTab('overall',this)">Overall</button>
         </div>
         <div class="donut-wrap">
-          <svg id="donut-svg" viewBox="0 0 500 310" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg id="donut-svg" viewBox="-20 0 560 310" xmlns="http://www.w3.org/2000/svg"></svg>
           <div id="donut-tooltip" class="donut-tooltip"></div>
         </div>
         <div id="donut-legend" class="donut-legend"></div>
@@ -201,7 +201,7 @@
       const svg = document.getElementById('donut-svg');
       const legend = document.getElementById('donut-legend');
       const data = DONUT_DATA[coKey];
-      const cx = 200, cy = 155, R = 108, r = 66, gap = 1.5;
+      const cx = 230, cy = 155, R = 108, r = 66, gap = 1.5;
       const total = data.reduce((s,d) => s + d.pct, 0);
       svg.innerHTML = '';
 
@@ -273,15 +273,15 @@
 
         // Labels for segments ≥ 4.5%
         if (d.pct >= 4.5) {
-          const labelR = R + 22;
+          const labelR = R + 24;
           const lp  = polarToXY(cx, cy, labelR, midDeg);
           const lp2 = polarToXY(cx, cy, R + 5,  midDeg);
           const lp3 = polarToXY(cx, cy, R + 14,  midDeg);
 
-          // Leader line
+          // Leader line with elbow
           const line = document.createElementNS('http://www.w3.org/2000/svg','polyline');
           const isRight = lp.x >= cx;
-          const anchorX = isRight ? lp.x + 30 : lp.x - 30;
+          const anchorX = isRight ? lp.x + 34 : lp.x - 34;
           line.setAttribute('points', `${lp2.x},${lp2.y} ${lp3.x},${lp3.y} ${anchorX},${lp.y}`);
           line.setAttribute('fill','none');
           line.setAttribute('stroke', d.color);
@@ -400,10 +400,93 @@
     <div id="revision-container"></div>
   </section>
 
+  <!-- SOURCES & CREDITS — before patterns so it's seen early -->
+  <section id="sources-section" style="padding:60px 48px;background:var(--p1);border-top:2px solid var(--p3);border-bottom:2px solid var(--p3)">
+    <div class="sec-hdr" style="margin-bottom:36px">
+      <div class="sec-eye">📜 Sources & Attribution</div>
+      <h2 class="sec-title" style="font-size:28px">Standing on the Shoulders of Giants</h2>
+      <p class="sec-sub">This constitution is compiled from the best DSA resources on the internet. Nothing here is original — it's a curated reference built on the work of these excellent educators and their years of teaching.</p>
+    </div>
+
+    <!-- Constitution preamble — fixed text -->
+    <div style="background:var(--i0);color:var(--p0);border-radius:var(--rl);padding:28px 32px;margin-bottom:32px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;right:0;font-size:120px;opacity:.04;line-height:1;padding:10px">📜</div>
+      <div style="font-family:'Lora',serif;font-size:13px;color:var(--a3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">Preamble</div>
+      <p style="font-family:'Lora',serif;font-size:16px;line-height:1.8;color:var(--p1);margin-bottom:14px">
+        <em>"We, the students of DSA, in order to form a more perfect understanding, establish pattern recognition, and secure the blessings of consistent problem-solving, hereby create and dedicate this Constitution of DSA Patterns."</em>
+      </p>
+      <p style="font-size:13px;color:var(--p4);line-height:1.7">
+        Just like India's constitution borrowed the best ideas from constitutions worldwide — this guide borrows the best from every major DSA resource. The goal: one place, all patterns, zero confusion.
+      </p>
+    </div>
+
+    <!-- Source cards grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px">
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #4E5BA6">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#4E5BA6;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">🤖</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">AlgoMonster</div><div style="font-size:11px;color:var(--i3)">algomonster.com</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">Pattern frequency data — which patterns appear most in Google, Meta and Amazon interviews. The donut charts on the homepage are from here.</p>
+        <div style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--i3);display:inline-block">📊 Company interview frequency data</div>
+      </div>
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #26A69A">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#26A69A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">🎯</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">NeetCode</div><div style="font-size:11px;color:var(--i3)">neetcode.io · YouTube</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">NeetCode 150 problem list, solution approaches, pattern categorization, and complexity analysis for every problem.</p>
+        <div style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--i3);display:inline-block">📝 Problem selection & solutions</div>
+      </div>
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #E6A820">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#E6A820;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">👨‍🏫</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">Fraz</div><div style="font-size:11px;color:var(--i3)">Mohammad Fraz · YouTube</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">LeetCode 75 curated list, step-by-step approach methodology, and constraint-first problem analysis technique.</p>
+        <div style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--i3);display:inline-block">📋 LeetCode 75 curation</div>
+      </div>
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #5E35B1">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#5E35B1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">👨‍💼</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">CTO Bhaiya</div><div style="font-size:11px;color:var(--i3)">OffTheCollege · YouTube</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">30+ DSA Patterns course — "Babua DSA" series, pattern-first approach, real FAANG interview scenarios, crack in 3 months curriculum.</p>
+        <a href="https://www.youtube.com/playlist?list=PLh_njhZ_MgInazcDWlX1RlpwIIYACSyIJ" target="_blank" style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--a1);display:inline-block;text-decoration:none">▶ Master DSA using 25 DSA PATTERNS →</a>
+      </div>
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #3DB87A">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#3DB87A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">🎓</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">Padho with Pratyush</div><div style="font-size:11px;color:var(--i3)">IITian · YouTube</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">DSA Patterns 2025 by IITian — FAANG crack in 3 months, deep pattern coverage with systematic problem-solving approach.</p>
+        <a href="https://www.youtube.com/playlist?list=PLbJhGqY-mq47k_WLUtzVjmarUm1EuXPj2" target="_blank" style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--a1);display:inline-block;text-decoration:none">▶ DSA Patterns 2025 | Crack FAANG →</a>
+      </div>
+
+      <div style="background:var(--p0);border:1.5px solid var(--p3);border-radius:var(--rl);padding:20px;border-left:4px solid #B8720A">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="width:38px;height:38px;background:#B8720A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">🍊</div>
+          <div><div style="font-weight:700;font-size:14px;color:var(--i0)">LeetCode</div><div style="font-size:11px;color:var(--i3)">leetcode.com</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--i2);line-height:1.6">All 128 problems are from LeetCode. Blind 75 and NeetCode 150 are the most recommended problem lists for interview prep.</p>
+        <div style="margin-top:10px;font-size:10px;padding:4px 8px;background:var(--p1);border-radius:5px;color:var(--i3);display:inline-block">🧩 Problem bank — Blind 75 + NeetCode 150</div>
+      </div>
+    </div>
+
+    <!-- TLE explained -->
+    <div style="background:var(--hard-bg);border:1.5px solid rgba(136,32,32,.2);border-radius:var(--rl);padding:18px 22px">
+      <div style="font-weight:700;font-size:13px;color:var(--hard);margin-bottom:6px">⏱ What is TLE? (Time Limit Exceeded)</div>
+      <p style="font-size:13px;color:var(--i2);line-height:1.7">On LeetCode, every problem has a time limit (usually 1–2 seconds). If your code takes too long to run on the judge's test cases — you get <strong style="color:var(--hard)">TLE (Time Limit Exceeded)</strong>. This usually means your algorithm's complexity is too slow for the given input size. Example: if n = 100,000 and you write O(n²) code, that's 10 billion operations — definitely TLE. The fix: pick a faster pattern.</p>
+    </div>
+  </section>
+
   <!-- PATTERN BLOCKS -->
   <div id="patterns-container"></div>
-
-</main>
 
 <!-- ═══ FOOTER ═══ -->
 <footer id="site-footer">
@@ -414,7 +497,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="#D4900F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <div>
-          <div class="footer-name">DSA Master</div>
+          <div class="footer-name">Constitution of DSA</div>
           <div class="footer-tagline">Pattern-Based Interview Preparation</div>
         </div>
       </div>

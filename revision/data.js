@@ -54,6 +54,66 @@ const PATTERNS = [
     theory:'Interval problems mein sorting by start ya end time kaafi kaam aata hai. Do intervals overlap jab start1 <= end2 AND start2 <= end1. Greedy ka core: locally optimal choice = globally optimal.',
     when:'Merge overlapping intervals. Meeting rooms. Non-overlapping. Jump game. Activity selection. Gas station.',
     keywords:['merge','overlap','schedule','meeting rooms','jump game','greedy choice'] },
+
+  { id:'fast-slow-pointers',  num:'11', icon:'🐢', title:'Fast & Slow Pointers',
+    time:'O(n)', space:'O(1)',
+    theory:'Floyd\'s cycle detection — slow 1 step, fast 2 steps. Agar cycle hai → eventually milenge. Agar nahi → fast null pe pahuncha jayega. Middle find karna bhi simple: jab fast end pe ho, slow middle pe hoga.',
+    when:'Linked list cycle detection. Middle of linked list. Happy number. Duplicate in array using cycle.',
+    keywords:['cycle','linked list','middle','floyd','detect loop','duplicate'] },
+
+  { id:'prefix-sum',          num:'12', icon:'∑', title:'Prefix Sum',
+    time:'O(n)', space:'O(n)',
+    theory:'Prefix sum array banao: prefix[i] = sum of arr[0..i]. Phir kisi bhi range [l,r] ka sum = prefix[r] - prefix[l-1]. O(n²) range queries → O(1) per query after O(n) preprocessing.',
+    when:'Range sum queries. Subarray sum equals k. Contiguous subarray with target sum. 2D prefix sum.',
+    keywords:['subarray sum','range sum','cumulative','running sum','contiguous sum'] },
+
+  { id:'monotonic-stack',     num:'13', icon:'📚', title:'Monotonic Stack',
+    time:'O(n)', space:'O(n)',
+    theory:'Stack jisme elements increasing ya decreasing order mein hote hain. Naya element aane pe stack se sab bade/chote elements pop karo. Yeh "next greater element" type problems O(n) mein solve karta hai — bina nested loops ke.',
+    when:'Next greater element. Next smaller element. Largest rectangle in histogram. Daily temperatures. Trapping rain water (variant).',
+    keywords:['next greater','next smaller','histogram','temperatures','stock span','building'] },
+
+  { id:'kadane',              num:'14', icon:'⚡', title:"Kadane's Algorithm",
+    time:'O(n)', space:'O(1)',
+    theory:'Maximum subarray problem ka genius solution. Har position pe decide: kya current element se fresh start karna better hai ya pichle subarray ko extend karna? max_ending_here = max(arr[i], max_ending_here + arr[i]). Global max track karo.',
+    when:'Maximum subarray sum. Maximum product subarray. Circular array maximum. Any "best contiguous window" with reset option.',
+    keywords:['maximum subarray','max product','circular array','best sum','contiguous','max sum'] },
+
+  { id:'linked-list',         num:'15', icon:'🔗', title:'Linked List Manipulation',
+    time:'O(n)', space:'O(1)',
+    theory:'Linked list problems mostly in-place pointer manipulation se solve hote hain. Reverse karna: prev, curr, next track karo. Dummy node technique se edge cases simplify hote hain. Recursion bhi powerful tool hai — call stack implicitly stores nodes.',
+    when:'Reverse linked list. Merge two sorted lists. Remove nth node. Reorder list. Add two numbers.',
+    keywords:['reverse','linked list','dummy node','merge lists','nth node','reorder'] },
+
+  { id:'trie',                num:'16', icon:'🌲', title:'Trie (Prefix Tree)',
+    time:'O(L)', space:'O(N×L)',
+    theory:'Trie = tree where each path from root to leaf spells a word. Each node has 26 children (for lowercase letters). Insert/Search/StartsWith all O(L) where L = word length. Space-efficient for prefix queries compared to HashMap.',
+    when:'Word search. Autocomplete. Longest common prefix. Word dictionary. Replace words with prefix.',
+    keywords:['prefix','word search','autocomplete','dictionary','starts with','longest common'] },
+
+  { id:'monotonic-deque',     num:'17', icon:'⟺', title:'Queue & Monotonic Deque',
+    time:'O(n)', space:'O(k)',
+    theory:'Deque (double-ended queue) maintains a window of useful elements. For sliding window maximum: remove elements outside window from front, remove smaller elements from back. O(1) max query for any window position.',
+    when:'Sliding window maximum/minimum. First negative in window. Jump game with deque. Constrained subsets.',
+    keywords:['sliding window max','deque','window minimum','queue','first negative'] },
+
+  { id:'stack-problems',      num:'18', icon:'🥞', title:'Stack Patterns',
+    time:'O(n)', space:'O(n)',
+    theory:'Stack = LIFO. Matching problems (parentheses, brackets) → push open, pop on close. Expression evaluation → operator stack + operand stack. Design problems: use multiple stacks or augment with min/max tracking.',
+    when:'Valid parentheses. Evaluate expression. Min stack design. Largest rectangle. Remove k digits.',
+    keywords:['parentheses','brackets','valid','expression','stack design','min stack'] },
+
+  { id:'topological-sort',    num:'19', icon:'→', title:'Topological Sort & Graphs Advanced',
+    time:'O(V+E)', space:'O(V)',
+    theory:"Topological sort = linear ordering of DAG nodes where u comes before v if u→v edge exists. Kahn's algorithm: find in-degree 0 nodes → process → reduce neighbors' in-degree → repeat. DFS variant: finish time based ordering.",
+    when:'Course schedule. Build order. Alien dictionary. Task dependencies. Deadlock detection.',
+    keywords:['course schedule','dependency','prerequisite','alien dictionary','topological','in-degree'] },
+
+  { id:'bitwise',             num:'20', icon:'⊕', title:'Bit Manipulation',
+    time:'O(1) or O(n)', space:'O(1)',
+    theory:'XOR magic: a^a=0, a^0=a → find single number in O(n) time O(1) space. Bit masking for subsets: 2^n subsets, use bitmask i from 0 to 2^n-1. Brian Kernighan: n&(n-1) removes last set bit → count bits in O(log n).',
+    when:'Single number (XOR). Count bits. Power of 2. Subsets via bitmask. Missing number. Reverse bits.',
+    keywords:['xor','bit','single number','power of 2','missing','bitmask','subsets'] },
 ];
 
 const QUESTIONS = {
@@ -1527,3 +1587,717 @@ function mergeTwoLists(l1, l2) {
 }` },
 ],
 };
+
+// NEW PATTERN QUESTIONS
+QUESTIONS['fast-slow-pointers'] = [
+  { id:141, title:'Linked List Cycle', diff:'Easy',
+    desc:'Linked list mein cycle hai ya nahi — O(1) space mein detect karo.',
+    constraints:['0 ≤ n ≤ 10⁴','−10⁵ ≤ Node.val ≤ 10⁵'],
+    steps:['slow=head, fast=head initialize karo','slow 1 step, fast 2 steps move karo','slow===fast → cycle detected','fast===null ya fast.next===null → no cycle'],
+    solution:`function hasCycle(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) return true;
+  }
+  return false;
+}` },
+  { id:142, title:'Linked List Cycle II', diff:'Medium',
+    desc:'Cycle ka start node find karo.',
+    constraints:['0 ≤ n ≤ 10⁴','−10⁵ ≤ Node.val ≤ 10⁵'],
+    steps:['Fast/slow se meeting point find karo','Ek pointer head pe, ek meeting point pe','Dono 1-1 step move karo','Jab milein → cycle start'],
+    solution:`function detectCycle(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next; fast = fast.next.next;
+    if (slow === fast) {
+      slow = head;
+      while (slow !== fast) { slow = slow.next; fast = fast.next; }
+      return slow;
+    }
+  }
+  return null;
+}` },
+  { id:876, title:'Middle of Linked List', diff:'Easy',
+    desc:'Linked list ka middle node return karo.',
+    constraints:['1 ≤ n ≤ 100'],
+    steps:['slow=head, fast=head','fast && fast.next tak loop','slow one step, fast two steps','fast null → slow is middle'],
+    solution:`function middleNode(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+  return slow;
+}` },
+  { id:202, title:'Happy Number', diff:'Easy',
+    desc:'Number happy hai ya infinite cycle mein — cycle detection se check karo.',
+    constraints:['1 ≤ n ≤ 2³¹ − 1'],
+    steps:['sumSquares function banao','slow=n, fast=sumSquares(n)','slow===fast → cycle','1 pe reach → happy number'],
+    solution:`function isHappy(n) {
+  const sq = n => String(n).split('').reduce((s,d) => s + d*d, 0);
+  let slow = n, fast = sq(n);
+  while (fast !== 1 && slow !== fast) {
+    slow = sq(slow);
+    fast = sq(sq(fast));
+  }
+  return fast === 1;
+}` },
+  { id:287, title:'Find the Duplicate Number', diff:'Medium',
+    desc:'Array mein duplicate number find karo — Floyd cycle detection from array.',
+    constraints:['n+1 integers in range [1,n]','Only one repeated number','Must use O(1) space'],
+    steps:['Array as linked list treat karo: i → nums[i]','slow/fast pointer se cycle find karo','Phase 2: slow=0, fast=meeting','Milne pe = duplicate'],
+    solution:`function findDuplicate(nums) {
+  let slow = nums[0], fast = nums[0];
+  do { slow = nums[slow]; fast = nums[nums[fast]]; }
+  while (slow !== fast);
+  slow = nums[0];
+  while (slow !== fast) { slow = nums[slow]; fast = nums[fast]; }
+  return slow;
+}` },
+  { id:234, title:'Palindrome Linked List', diff:'Easy',
+    desc:'Linked list palindrome hai ya nahi — O(1) space.',
+    constraints:['1 ≤ n ≤ 10⁵','0 ≤ Node.val ≤ 9'],
+    steps:['Middle find karo (fast/slow)','Second half reverse karo','Both halves compare karo','Restore & return'],
+    solution:`function isPalindrome(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }
+  let prev = null, curr = slow;
+  while (curr) { let next = curr.next; curr.next = prev; prev = curr; curr = next; }
+  let l = head, r = prev;
+  while (r) { if (l.val !== r.val) return false; l = l.next; r = r.next; }
+  return true;
+}` },
+];
+
+QUESTIONS['prefix-sum'] = [
+  { id:560, title:'Subarray Sum Equals K', diff:'Medium',
+    desc:'Contiguous subarray find karo jiska sum K ho — count return karo.',
+    constraints:['1 ≤ nums.length ≤ 2×10⁴','−1000 ≤ nums[i] ≤ 1000','−10⁷ ≤ k ≤ 10⁷'],
+    steps:['prefix sum track karo with HashMap','map mein {0:1} se shuru karo','har sum ke liye: count += map[sum-k] || 0','map[sum]++ karo'],
+    solution:`function subarraySum(nums, k) {
+  const map = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const n of nums) {
+    sum += n;
+    count += map.get(sum - k) || 0;
+    map.set(sum, (map.get(sum) || 0) + 1);
+  }
+  return count;
+}` },
+  { id:303, title:'Range Sum Query - Immutable', diff:'Easy',
+    desc:'Array ka [l,r] range sum efficiently return karo.',
+    constraints:['1 ≤ nums.length ≤ 10⁴','−10⁵ ≤ nums[i] ≤ 10⁵','Up to 10⁴ queries'],
+    steps:['prefix[i] = prefix[i-1] + nums[i-1]','query(l,r) = prefix[r+1] - prefix[l]'],
+    solution:`class NumArray {
+  constructor(nums) {
+    this.pre = [0];
+    for (const n of nums) this.pre.push(this.pre.at(-1) + n);
+  }
+  sumRange(l, r) { return this.pre[r+1] - this.pre[l]; }
+}` },
+  { id:238, title:'Product of Array Except Self', diff:'Medium',
+    desc:'Kisi bhi element ko use kiye bina left aur right product multiply karo.',
+    constraints:['2 ≤ nums.length ≤ 10⁵','−30 ≤ nums[i] ≤ 30','No division allowed'],
+    steps:['Left prefix product array banao','Right suffix product on the fly multiply karo','O(n) time, O(1) extra space'],
+    solution:`function productExceptSelf(nums) {
+  const n = nums.length, res = new Array(n).fill(1);
+  let left = 1;
+  for (let i = 0; i < n; i++) { res[i] = left; left *= nums[i]; }
+  let right = 1;
+  for (let i = n-1; i >= 0; i--) { res[i] *= right; right *= nums[i]; }
+  return res;
+}` },
+  { id:525, title:'Contiguous Array', diff:'Medium',
+    desc:'Equal 0s and 1s wala longest subarray find karo.',
+    constraints:['1 ≤ nums.length ≤ 10⁵','nums[i] is 0 or 1'],
+    steps:['0 ko -1 maan lo','prefix sum track karo with HashMap','Same prefix sum twice → equal subarray between','max length update karo'],
+    solution:`function findMaxLength(nums) {
+  const map = new Map([[0, -1]]);
+  let sum = 0, max = 0;
+  for (let i = 0; i < nums.length; i++) {
+    sum += nums[i] === 0 ? -1 : 1;
+    if (map.has(sum)) max = Math.max(max, i - map.get(sum));
+    else map.set(sum, i);
+  }
+  return max;
+}` },
+  { id:974, title:'Subarray Sums Divisible by K', diff:'Medium',
+    desc:'K se divisible subarrays count karo.',
+    constraints:['1 ≤ nums.length ≤ 3×10⁴','−10⁴ ≤ nums[i] ≤ 10⁴','2 ≤ k ≤ 10⁴'],
+    steps:['prefix sum mod k track karo','Same remainder twice → subarray between is divisible','Count += map[remainder]'],
+    solution:`function subarraysDivByK(nums, k) {
+  const map = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const n of nums) {
+    sum = ((sum + n) % k + k) % k;
+    count += map.get(sum) || 0;
+    map.set(sum, (map.get(sum) || 0) + 1);
+  }
+  return count;
+}` },
+];
+
+QUESTIONS['monotonic-stack'] = [
+  { id:739, title:'Daily Temperatures', diff:'Medium',
+    desc:'Har din ke liye kitne din wait karna hai warmer temperature ke liye.',
+    constraints:['1 ≤ temps.length ≤ 10⁵','30 ≤ temps[i] ≤ 100'],
+    steps:['Stack of indices maintain karo','Har element: stack.top se chota ho tab pop karo','answer[popped] = current - popped','Current index push karo'],
+    solution:`function dailyTemperatures(t) {
+  const res = new Array(t.length).fill(0);
+  const stack = []; // indices
+  for (let i = 0; i < t.length; i++) {
+    while (stack.length && t[i] > t[stack.at(-1)]) {
+      const j = stack.pop();
+      res[j] = i - j;
+    }
+    stack.push(i);
+  }
+  return res;
+}` },
+  { id:496, title:'Next Greater Element I', diff:'Easy',
+    desc:'nums1 har element ka next greater element in nums2 find karo.',
+    constraints:['1 ≤ nums1.length ≤ nums2.length ≤ 1000','All unique elements'],
+    steps:['nums2 pe monotonic stack run karo','HashMap: element → next greater','nums1 elements ke liye lookup karo'],
+    solution:`function nextGreaterElement(nums1, nums2) {
+  const map = new Map(), stack = [];
+  for (const n of nums2) {
+    while (stack.length && stack.at(-1) < n) map.set(stack.pop(), n);
+    stack.push(n);
+  }
+  return nums1.map(n => map.get(n) ?? -1);
+}` },
+  { id:84, title:'Largest Rectangle in Histogram', diff:'Hard',
+    desc:'Histogram mein largest rectangle ka area find karo.',
+    constraints:['1 ≤ heights.length ≤ 10⁵','0 ≤ heights[i] ≤ 10⁴'],
+    steps:['Monotonic increasing stack maintain karo','Pop when shorter bar found','Width = current - stack.top - 1','Sentinel 0 at end to flush'],
+    solution:`function largestRectangleArea(h) {
+  h.push(0); // sentinel
+  const stack = [-1];
+  let max = 0;
+  for (let i = 0; i < h.length; i++) {
+    while (stack.at(-1) !== -1 && h[stack.at(-1)] >= h[i]) {
+      const height = h[stack.pop()];
+      const width  = i - stack.at(-1) - 1;
+      max = Math.max(max, height * width);
+    }
+    stack.push(i);
+  }
+  return max;
+}` },
+  { id:901, title:'Online Stock Span', diff:'Medium',
+    desc:'Consecutive days find karo jab stock price <= today.',
+    constraints:['1 ≤ calls ≤ 10⁴','1 ≤ price ≤ 10⁵'],
+    steps:['Stack of [price, span] pairs','Pop while stack.top.price <= current price','Accumulate spans','Push current with total span'],
+    solution:`class StockSpanner {
+  constructor() { this.stack = []; }
+  next(price) {
+    let span = 1;
+    while (this.stack.length && this.stack.at(-1)[0] <= price)
+      span += this.stack.pop()[1];
+    this.stack.push([price, span]);
+    return span;
+  }
+}` },
+  { id:503, title:'Next Greater Element II', diff:'Medium',
+    desc:'Circular array mein next greater element find karo.',
+    constraints:['1 ≤ nums.length ≤ 10⁴','−10⁹ ≤ nums[i] ≤ 10⁹'],
+    steps:['Array 2x simulate karo (i % n)','Monotonic stack with indices','Circular wrap handle karo'],
+    solution:`function nextGreaterElements(nums) {
+  const n = nums.length, res = new Array(n).fill(-1), stack = [];
+  for (let i = 0; i < 2 * n; i++) {
+    while (stack.length && nums[stack.at(-1)] < nums[i % n])
+      res[stack.pop()] = nums[i % n];
+    if (i < n) stack.push(i);
+  }
+  return res;
+}` },
+];
+
+QUESTIONS['kadane'] = [
+  { id:53, title:'Maximum Subarray', diff:'Medium',
+    desc:'Contiguous subarray with largest sum find karo — Kadane ka classic.',
+    constraints:['1 ≤ nums.length ≤ 10⁵','−10⁴ ≤ nums[i] ≤ 10⁴'],
+    steps:['maxEnd=nums[0], maxSoFar=nums[0]','Har element: maxEnd = max(nums[i], maxEnd+nums[i])','maxSoFar = max(maxSoFar, maxEnd)'],
+    solution:`function maxSubArray(nums) {
+  let maxEnd = nums[0], maxSoFar = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    maxEnd = Math.max(nums[i], maxEnd + nums[i]);
+    maxSoFar = Math.max(maxSoFar, maxEnd);
+  }
+  return maxSoFar;
+}` },
+  { id:152, title:'Maximum Product Subarray', diff:'Medium',
+    desc:'Maximum product contiguous subarray — negative numbers tricky hain.',
+    constraints:['1 ≤ nums.length ≤ 2×10⁴','−10 ≤ nums[i] ≤ 10'],
+    steps:['maxProd aur minProd dono track karo','Negative number → max/min swap ho jata hai','Global max update karo'],
+    solution:`function maxProduct(nums) {
+  let max = nums[0], min = nums[0], res = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    const [a, b] = [max * nums[i], min * nums[i]];
+    max = Math.max(nums[i], a, b);
+    min = Math.min(nums[i], a, b);
+    res = Math.max(res, max);
+  }
+  return res;
+}` },
+  { id:918, title:'Maximum Sum Circular Subarray', diff:'Medium',
+    desc:'Circular array mein maximum subarray sum.',
+    constraints:['1 ≤ nums.length ≤ 3×10⁴','−3×10⁴ ≤ nums[i] ≤ 3×10⁴'],
+    steps:['Normal Kadane for non-wrap case','Wrap case = totalSum - minimum subarray','Edge case: all negative → return normal Kadane'],
+    solution:`function maxSubarraySumCircular(nums) {
+  let maxSum=nums[0], minSum=nums[0], curMax=0, curMin=0, total=0;
+  for (const n of nums) {
+    curMax = Math.max(curMax + n, n); maxSum = Math.max(maxSum, curMax);
+    curMin = Math.min(curMin + n, n); minSum = Math.min(minSum, curMin);
+    total += n;
+  }
+  return maxSum > 0 ? Math.max(maxSum, total - minSum) : maxSum;
+}` },
+  { id:121, title:'Best Time to Buy and Sell Stock', diff:'Easy',
+    desc:'Ek baar buy, ek baar sell — max profit.',
+    constraints:['1 ≤ prices.length ≤ 10⁵','0 ≤ prices[i] ≤ 10⁴'],
+    steps:['minPrice=Infinity, maxProfit=0','Har day: minPrice update karo','profit = price - minPrice → maxProfit update'],
+    solution:`function maxProfit(prices) {
+  let minP = Infinity, maxP = 0;
+  for (const p of prices) {
+    minP = Math.min(minP, p);
+    maxP = Math.max(maxP, p - minP);
+  }
+  return maxP;
+}` },
+  { id:2560, title:'House Robber', diff:'Medium',
+    desc:'Adjacent houses rob nahi kar sakte — max amount find karo.',
+    constraints:['1 ≤ nums.length ≤ 100','0 ≤ nums[i] ≤ 400'],
+    steps:['prev2=0, prev1=0','Har house: curr = max(prev1, prev2 + nums[i])','Slide window forward'],
+    solution:`function rob(nums) {
+  let prev2 = 0, prev1 = 0;
+  for (const n of nums) {
+    const curr = Math.max(prev1, prev2 + n);
+    prev2 = prev1; prev1 = curr;
+  }
+  return prev1;
+}` },
+];
+
+QUESTIONS['linked-list'] = [
+  { id:206, title:'Reverse Linked List', diff:'Easy',
+    desc:'Linked list ko in-place reverse karo.',
+    constraints:['0 ≤ n ≤ 5000','−5000 ≤ Node.val ≤ 5000'],
+    steps:['prev=null, curr=head','next save karo, curr.next = prev','prev = curr, curr = next','prev return karo'],
+    solution:`function reverseList(head) {
+  let prev = null, curr = head;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  return prev;
+}` },
+  { id:21, title:'Merge Two Sorted Lists', diff:'Easy',
+    desc:'Do sorted linked lists ko ek mein merge karo.',
+    constraints:['0 ≤ n, m ≤ 50','−100 ≤ Node.val ≤ 100'],
+    steps:['Dummy node se shuru karo','Compare l1.val vs l2.val','Chote ko attach karo','Baaki append karo'],
+    solution:`function mergeTwoLists(l1, l2) {
+  const dummy = { next: null };
+  let cur = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }
+    else { cur.next = l2; l2 = l2.next; }
+    cur = cur.next;
+  }
+  cur.next = l1 || l2;
+  return dummy.next;
+}` },
+  { id:19, title:'Remove Nth Node From End', diff:'Medium',
+    desc:'End se n-th node remove karo — one pass mein.',
+    constraints:['1 ≤ sz ≤ 30','0 ≤ Node.val ≤ 100','1 ≤ n ≤ sz'],
+    steps:['Dummy node add karo','fast ko n+1 steps aage bhadao','fast/slow saath chalao','slow.next skip karo'],
+    solution:`function removeNthFromEnd(head, n) {
+  const dummy = { next: head };
+  let fast = dummy, slow = dummy;
+  for (let i = 0; i <= n; i++) fast = fast.next;
+  while (fast) { fast = fast.next; slow = slow.next; }
+  slow.next = slow.next.next;
+  return dummy.next;
+}` },
+  { id:143, title:'Reorder List', diff:'Medium',
+    desc:'L0→L1→…→Ln to L0→Ln→L1→Ln-1 reorder karo in-place.',
+    constraints:['1 ≤ n ≤ 5×10⁴','1 ≤ Node.val ≤ 1000'],
+    steps:['Middle find karo (fast/slow)','Second half reverse karo','Interleave both halves'],
+    solution:`function reorderList(head) {
+  let slow = head, fast = head;
+  while (fast.next && fast.next.next) { slow = slow.next; fast = fast.next.next; }
+  let prev = null, curr = slow.next; slow.next = null;
+  while (curr) { const next = curr.next; curr.next = prev; prev = curr; curr = next; }
+  let l1 = head, l2 = prev;
+  while (l2) {
+    const n1 = l1.next, n2 = l2.next;
+    l1.next = l2; l2.next = n1;
+    l1 = n1; l2 = n2;
+  }
+}` },
+  { id:2, title:'Add Two Numbers', diff:'Medium',
+    desc:'Do linked lists as numbers add karo — digit by digit.',
+    constraints:['1 ≤ n, m ≤ 100','No leading zeros except "0" itself'],
+    steps:['Dummy node + carry track karo','Dono lists traverse karo','sum = l1.val + l2.val + carry','New node banao, carry update karo'],
+    solution:`function addTwoNumbers(l1, l2) {
+  const dummy = { next: null }; let cur = dummy, carry = 0;
+  while (l1 || l2 || carry) {
+    const sum = (l1?.val || 0) + (l2?.val || 0) + carry;
+    carry = Math.floor(sum / 10);
+    cur.next = { val: sum % 10, next: null };
+    cur = cur.next; l1 = l1?.next; l2 = l2?.next;
+  }
+  return dummy.next;
+}` },
+];
+
+QUESTIONS['trie'] = [
+  { id:208, title:'Implement Trie (Prefix Tree)', diff:'Medium',
+    desc:'Trie data structure implement karo with insert, search, startsWith.',
+    constraints:['1 ≤ word.length ≤ 2000','Only lowercase letters','At most 3×10⁴ operations'],
+    steps:['TrieNode: children={}, isEnd=false','insert: char by char node banao','search: traverse + isEnd check','startsWith: traverse only'],
+    solution:`class Trie {
+  constructor() { this.root = {}; }
+  insert(w) {
+    let n = this.root;
+    for (const c of w) n = (n[c] ??= {});
+    n.$ = true; // end marker
+  }
+  search(w) {
+    let n = this.root;
+    for (const c of w) { if (!n[c]) return false; n = n[c]; }
+    return !!n.$;
+  }
+  startsWith(p) {
+    let n = this.root;
+    for (const c of p) { if (!n[c]) return false; n = n[c]; }
+    return true;
+  }
+}` },
+  { id:211, title:'Design Add and Search Words', diff:'Medium',
+    desc:'Trie with wildcard "." support — dot matches any character.',
+    constraints:['1 ≤ word.length ≤ 25','Words have lowercase letters or "."'],
+    steps:['Normal trie insert','search: dot pe DFS for all 26 children','Recursive search function'],
+    solution:`class WordDictionary {
+  constructor() { this.root = {}; }
+  addWord(w) {
+    let n = this.root;
+    for (const c of w) n = (n[c] ??= {});
+    n.$ = true;
+  }
+  search(w, n = this.root) {
+    for (let i = 0; i < w.length; i++) {
+      const c = w[i];
+      if (c === '.') return Object.keys(n).filter(k => k !== '$')
+          .some(k => this.search(w.slice(i+1), n[k]));
+      if (!n[c]) return false;
+      n = n[c];
+    }
+    return !!n.$;
+  }
+}` },
+  { id:212, title:'Word Search II', diff:'Hard',
+    desc:'Board mein multiple words find karo — Trie + DFS.',
+    constraints:['1 ≤ m,n ≤ 12','1 ≤ words.length ≤ 3×10⁴'],
+    steps:['Trie mein sab words insert karo','DFS from every cell','Trie traversal se prune karo','Found word → result mein add'],
+    solution:`function findWords(board, words) {
+  const trie = {}, res = [];
+  for (const w of words) {
+    let n = trie;
+    for (const c of w) n = (n[c] ??= {});
+    n.$ = w;
+  }
+  const m = board.length, n = board[0].length;
+  const dfs = (i, j, node) => {
+    if (i < 0||i >= m||j < 0||j >= n||!board[i][j]||!node[board[i][j]]) return;
+    const c = board[i][j]; const next = node[c];
+    if (next.$) { res.push(next.$); delete next.$; }
+    board[i][j] = '#';
+    dfs(i+1,j,next); dfs(i-1,j,next); dfs(i,j+1,next); dfs(i,j-1,next);
+    board[i][j] = c;
+  };
+  for (let i = 0; i < m; i++) for (let j = 0; j < n; j++) dfs(i,j,trie);
+  return res;
+}` },
+  { id:648, title:'Replace Words', diff:'Medium',
+    desc:'Sentence mein words ko shortest root se replace karo.',
+    constraints:['1 ≤ dictionary.length ≤ 1000','1 ≤ word.length ≤ 100'],
+    steps:['Dictionary words Trie mein insert karo','Har sentence word ke liye: Trie traverse','Pehla root.$ mila → replace karo'],
+    solution:`function replaceWords(dict, sentence) {
+  const trie = {};
+  for (const w of dict) {
+    let n = trie;
+    for (const c of w) n = (n[c] ??= {});
+    n.$ = w;
+  }
+  return sentence.split(' ').map(word => {
+    let n = trie;
+    for (const c of word) {
+      if (!n[c]) break; n = n[c];
+      if (n.$) return n.$;
+    }
+    return word;
+  }).join(' ');
+}` },
+];
+
+QUESTIONS['monotonic-deque'] = [
+  { id:239, title:'Sliding Window Maximum', diff:'Hard',
+    desc:'Sliding window of size k mein har position ka maximum find karo.',
+    constraints:['1 ≤ nums.length ≤ 10⁵','−10⁴ ≤ nums[i] ≤ 10⁴','1 ≤ k ≤ nums.length'],
+    steps:['Deque of indices maintain karo (stores decreasing values)','Front se window se bahar waale pop karo','Back se chote elements pop karo','Front = current window max'],
+    solution:`function maxSlidingWindow(nums, k) {
+  const deque = [], res = [];
+  for (let i = 0; i < nums.length; i++) {
+    while (deque.length && deque[0] < i - k + 1) deque.shift();
+    while (deque.length && nums[deque.at(-1)] < nums[i]) deque.pop();
+    deque.push(i);
+    if (i >= k - 1) res.push(nums[deque[0]]);
+  }
+  return res;
+}` },
+  { id:1425, title:'Constrained Subsequence Sum', diff:'Hard',
+    desc:'K distance ke andar maximum subsequence sum find karo.',
+    constraints:['1 ≤ nums.length ≤ 10⁵','−10⁴ ≤ nums[i] ≤ 10⁴','1 ≤ k ≤ nums.length'],
+    steps:['DP + monotonic deque combination','dp[i] = max sum ending at i','Deque max of last k dp values maintain karo'],
+    solution:`function constrainedSubsetSum(nums, k) {
+  const dp = [...nums], deque = [];
+  for (let i = 0; i < nums.length; i++) {
+    dp[i] += deque.length ? Math.max(0, dp[deque[0]]) : 0;
+    while (deque.length && dp[deque.at(-1)] <= dp[i]) deque.pop();
+    deque.push(i);
+    if (deque[0] < i - k + 1) deque.shift();
+  }
+  return Math.max(...dp);
+}` },
+  { id:862, title:'Shortest Subarray with Sum ≥ K', diff:'Hard',
+    desc:'Sum ≥ K wala shortest subarray find karo (negative numbers allowed).',
+    constraints:['1 ≤ nums.length ≤ 10⁵','−10⁵ ≤ nums[i] ≤ 10⁵','1 ≤ k ≤ 10⁹'],
+    steps:['Prefix sum banao','Monotonic deque of indices','prefix[i] - prefix[deque[0]] >= k → update ans'],
+    solution:`function shortestSubarray(nums, k) {
+  const pre = [0]; for (const n of nums) pre.push(pre.at(-1) + n);
+  const deque = []; let res = Infinity;
+  for (let i = 0; i < pre.length; i++) {
+    while (deque.length && pre[i] - pre[deque[0]] >= k)
+      res = Math.min(res, i - deque.shift());
+    while (deque.length && pre[deque.at(-1)] >= pre[i]) deque.pop();
+    deque.push(i);
+  }
+  return res === Infinity ? -1 : res;
+}` },
+];
+
+QUESTIONS['stack-problems'] = [
+  { id:20, title:'Valid Parentheses', diff:'Easy',
+    desc:'Brackets properly open aur close hain ya nahi.',
+    constraints:['1 ≤ s.length ≤ 10⁴','s has only ()[]{}'],
+    steps:['Open bracket → push karo','Close bracket → stack top match karo','Stack empty → false','Loop end + stack empty → true'],
+    solution:`function isValid(s) {
+  const map = { ')':'(', ']':'[', '}':'{' };
+  const stack = [];
+  for (const c of s) {
+    if (!map[c]) stack.push(c);
+    else if (stack.pop() !== map[c]) return false;
+  }
+  return stack.length === 0;
+}` },
+  { id:155, title:'Min Stack', diff:'Medium',
+    desc:'Stack design karo jo O(1) mein minimum bhi return kare.',
+    constraints:['At most 3×10⁴ operations','−2³¹ ≤ val ≤ 2³¹ − 1'],
+    steps:['Two stacks: main + minStack','Push: minStack pe current min push karo','Pop: dono se pop karo','getMin: minStack.top'],
+    solution:`class MinStack {
+  constructor() { this.s = []; this.m = []; }
+  push(v) {
+    this.s.push(v);
+    this.m.push(Math.min(v, this.m.at(-1) ?? v));
+  }
+  pop() { this.s.pop(); this.m.pop(); }
+  top() { return this.s.at(-1); }
+  getMin() { return this.m.at(-1); }
+}` },
+  { id:150, title:'Evaluate Reverse Polish Notation', diff:'Medium',
+    desc:'RPN expression evaluate karo using stack.',
+    constraints:['1 ≤ tokens.length ≤ 10⁴'],
+    steps:['Number → push','Operator → pop 2, compute, push result','Stack top = final answer'],
+    solution:`function evalRPN(tokens) {
+  const stack = [];
+  for (const t of tokens) {
+    if ('+-*/'.includes(t)) {
+      const b = stack.pop(), a = stack.pop();
+      stack.push(t==='+' ? a+b : t==='-' ? a-b : t==='*' ? a*b : Math.trunc(a/b));
+    } else stack.push(+t);
+  }
+  return stack[0];
+}` },
+  { id:32, title:'Longest Valid Parentheses', diff:'Hard',
+    desc:'Longest valid parentheses substring length find karo.',
+    constraints:['0 ≤ s.length ≤ 3×10⁴','Only ( and )'],
+    steps:['Stack of indices, [-1] se shuru karo','( → push index','): stack pop, length = i - stack.top'],
+    solution:`function longestValidParentheses(s) {
+  const stack = [-1]; let max = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') stack.push(i);
+    else {
+      stack.pop();
+      if (!stack.length) stack.push(i);
+      else max = Math.max(max, i - stack.at(-1));
+    }
+  }
+  return max;
+}` },
+  { id:402, title:'Remove K Digits', diff:'Medium',
+    desc:'K digits remove karke smallest possible number banao.',
+    constraints:['1 ≤ k ≤ num.length ≤ 10⁵','Only digits 0-9'],
+    steps:['Monotonic increasing stack maintain karo','Bade digit pe pop karo (count k)','Leading zeros remove karo'],
+    solution:`function removeKdigits(num, k) {
+  const stack = [];
+  for (const d of num) {
+    while (k && stack.length && stack.at(-1) > d) { stack.pop(); k--; }
+    stack.push(d);
+  }
+  while (k--) stack.pop();
+  const res = stack.join('').replace(/^0+/, '');
+  return res || '0';
+}` },
+];
+
+QUESTIONS['topological-sort'] = [
+  { id:207, title:'Course Schedule', diff:'Medium',
+    desc:'Sab courses finish kar sakte hain ya circular dependency hai?',
+    constraints:['1 ≤ numCourses ≤ 2000','0 ≤ prerequisites.length ≤ 5000'],
+    steps:['Build adjacency list + in-degree array','Queue mein in-degree 0 nodes','Process: neighbors ka in-degree decrease karo','Sab nodes processed → no cycle'],
+    solution:`function canFinish(n, pre) {
+  const adj = Array.from({length:n}, ()=>[]);
+  const ind = new Array(n).fill(0);
+  for (const [a,b] of pre) { adj[b].push(a); ind[a]++; }
+  const q = [];
+  for (let i = 0; i < n; i++) if (!ind[i]) q.push(i);
+  let done = 0;
+  while (q.length) {
+    const c = q.shift(); done++;
+    for (const nb of adj[c]) if (--ind[nb] === 0) q.push(nb);
+  }
+  return done === n;
+}` },
+  { id:210, title:'Course Schedule II', diff:'Medium',
+    desc:'Valid course order return karo (topological sort result).',
+    constraints:['1 ≤ numCourses ≤ 2000'],
+    steps:['Same as Course Schedule','Order collect karo while processing queue','If cycle → return []'],
+    solution:`function findOrder(n, pre) {
+  const adj = Array.from({length:n}, ()=>[]);
+  const ind = new Array(n).fill(0);
+  for (const [a,b] of pre) { adj[b].push(a); ind[a]++; }
+  const q = [], res = [];
+  for (let i = 0; i < n; i++) if (!ind[i]) q.push(i);
+  while (q.length) {
+    const c = q.shift(); res.push(c);
+    for (const nb of adj[c]) if (--ind[nb] === 0) q.push(nb);
+  }
+  return res.length === n ? res : [];
+}` },
+  { id:269, title:'Alien Dictionary', diff:'Hard',
+    desc:'Alien language ka alphabet order find karo from sorted word list.',
+    constraints:['1 ≤ words.length ≤ 100','1 ≤ words[i].length ≤ 100'],
+    steps:['Adjacent words compare karke edges build karo','Topological sort run karo','Cycle → invalid → return ""'],
+    solution:`function alienOrder(words) {
+  const adj = new Map(), ind = new Map();
+  for (const w of words) for (const c of w) { adj.set(c,[]); ind.set(c,0); }
+  for (let i = 0; i < words.length-1; i++) {
+    const [a,b] = [words[i], words[i+1]];
+    if (a.length > b.length && a.startsWith(b)) return '';
+    for (let j = 0; j < Math.min(a.length,b.length); j++) {
+      if (a[j] !== b[j]) { adj.get(a[j]).push(b[j]); ind.set(b[j], ind.get(b[j])+1); break; }
+    }
+  }
+  const q = [...ind.entries()].filter(([_,v])=>v===0).map(([k])=>k), res=[];
+  while (q.length) {
+    const c = q.shift(); res.push(c);
+    for (const nb of adj.get(c)) if (ind.set(nb, ind.get(nb)-1).get(nb)===0) q.push(nb);
+  }
+  return res.length === ind.size ? res.join('') : '';
+}` },
+  { id:444, title:'Sequence Reconstruction', diff:'Medium',
+    desc:'Original sequence uniquely reconstruct ho sakta hai?',
+    constraints:['1 ≤ n ≤ 10⁴','1 ≤ seqs.length ≤ 10⁴'],
+    steps:['Build graph from sequences','Topological sort — at every step exactly 1 node in queue','Otherwise ordering not unique'],
+    solution:`function sequenceReconstruction(nums, seqs) {
+  const n = nums.length, ind = new Array(n+1).fill(0);
+  const adj = Array.from({length:n+1},()=>[]);
+  for (const seq of seqs) for (let i=1; i<seq.length; i++) {
+    adj[seq[i-1]].push(seq[i]); ind[seq[i]]++;
+  }
+  const q = []; let pos = 0;
+  for (let i = 1; i <= n; i++) if (!ind[i]) q.push(i);
+  while (q.length === 1) {
+    const c = q.shift();
+    if (c !== nums[pos++]) return false;
+    for (const nb of adj[c]) if (--ind[nb] === 0) q.push(nb);
+  }
+  return q.length === 0 && pos === n;
+}` },
+];
+
+QUESTIONS['bitwise'] = [
+  { id:136, title:'Single Number', diff:'Easy',
+    desc:'Array mein ek element sirf ek baar hai — baaki sab do baar. XOR se find karo.',
+    constraints:['1 ≤ nums.length ≤ 3×10⁴','−3×10⁴ ≤ nums[i] ≤ 3×10⁴'],
+    steps:['XOR property: a^a=0, a^0=a','Sab elements XOR karo','Result = single element'],
+    solution:`function singleNumber(nums) {
+  return nums.reduce((xor, n) => xor ^ n, 0);
+}` },
+  { id:191, title:'Number of 1 Bits', diff:'Easy',
+    desc:'Integer ke binary representation mein kitne 1 bits hain.',
+    constraints:['32-bit unsigned integer'],
+    steps:['n & (n-1) removes last set bit','Har iteration ek 1 bit remove hota hai','Count karo'],
+    solution:`function hammingWeight(n) {
+  let count = 0;
+  while (n) { n &= n - 1; count++; }
+  return count;
+}` },
+  { id:338, title:'Counting Bits', diff:'Easy',
+    desc:'0 se n tak har number ke set bits count karo — O(n) mein.',
+    constraints:['0 ≤ n ≤ 10⁵'],
+    steps:['dp[i] = dp[i >> 1] + (i & 1)','Right shift = same number without last bit','Last bit = i & 1'],
+    solution:`function countBits(n) {
+  const dp = new Array(n+1).fill(0);
+  for (let i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
+  return dp;
+}` },
+  { id:268, title:'Missing Number', diff:'Easy',
+    desc:'0 to n range mein missing number find karo using XOR.',
+    constraints:['n+1 numbers in [0,n] range','Exactly one missing'],
+    steps:['XOR 0..n with XOR of all nums','Same numbers cancel out','Missing number bacha rahega'],
+    solution:`function missingNumber(nums) {
+  let xor = nums.length;
+  for (let i = 0; i < nums.length; i++) xor ^= i ^ nums[i];
+  return xor;
+}` },
+  { id:371, title:'Sum of Two Integers', diff:'Medium',
+    desc:'+ operator use kiye bina two integers add karo.',
+    constraints:['−1000 ≤ a, b ≤ 1000'],
+    steps:['XOR = sum without carry','AND << 1 = carry','Carry 0 hone tak repeat karo'],
+    solution:`function getSum(a, b) {
+  while (b) {
+    const carry = (a & b) << 1;
+    a = a ^ b;
+    b = carry;
+  }
+  return a;
+}` },
+  { id:190, title:'Reverse Bits', diff:'Easy',
+    desc:'32-bit integer ke bits reverse karo.',
+    constraints:['32-bit unsigned integer input'],
+    steps:['result = 0','32 iterations: result<<=1, result|=n&1, n>>=1'],
+    solution:`function reverseBits(n) {
+  let res = 0;
+  for (let i = 0; i < 32; i++) {
+    res = (res << 1) | (n & 1);
+    n >>>= 1;
+  }
+  return res >>> 0;
+}` },
+];

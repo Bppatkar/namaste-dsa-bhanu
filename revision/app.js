@@ -160,9 +160,8 @@ function applyDiffFilter() {
     card.style.display = (activeDiff === 'all' || d === activeDiff) ? '' : 'none';
   });
   // Update counts in sidebar
-  document.querySelectorAll('.nav-item[id^="nav-"]').forEach(item => {
-    const idx = item.id.replace('nav-','');
-    const pat = PATTERNS[idx];
+  document.querySelectorAll('.nav-item[data-patid]').forEach(item => {
+    const pat = PATTERNS.find(p => p.id === item.dataset.patid);
     if (!pat) return;
     const qs = QUESTIONS[pat.id] || [];
     const count = activeDiff === 'all' ? qs.length : qs.filter(q => q.diff === activeDiff).length;
@@ -193,7 +192,7 @@ function buildPatternNav() {
         <span class="nav-label" style="font-size:12px">${item.label}</span>
       </a>`;
     return `
-      <a class="nav-item" href="${item.href}" id="nav-${item.idx}" onclick="setActive(${item.idx})">
+      <a class="nav-item" href="${item.href}" id="nav-${item.idx}" data-patid="${PATTERNS[item.idx].id}" onclick="setActive(${item.idx})">
         <span class="nav-icon">${item.icon}</span>
         <span class="nav-label">${item.label}</span>
         <span class="nav-count">${item.count}</span>
@@ -280,11 +279,13 @@ function filterNav(q) {
 
   if (activeSbTab !== 'patterns') return;
   q = q.toLowerCase().trim();
-  document.querySelectorAll('#nav-list .nav-item').forEach((el, i) => {
-    const p = PATTERNS[i - 3]; // offset by special items + divider
+  // Only filter pattern items (have data-patid), not special section links
+  document.querySelectorAll('#nav-list .nav-item[data-patid]').forEach(el => {
+    const patId = el.dataset.patid;
+    const p = PATTERNS.find(x => x.id === patId);
     if (!p) return;
     const match = !q || p.title.toLowerCase().includes(q) ||
-      p.keywords.some(k => k.includes(q)) ||
+      p.keywords.some(k => k.toLowerCase().includes(q)) ||
       (QUESTIONS[p.id] || []).some(qs => qs.title.toLowerCase().includes(q));
     el.style.display = match ? '' : 'none';
   });
