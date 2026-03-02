@@ -164,5 +164,23 @@ var postorderTraversal = function (root) {
   return ans;
 }
 
-
+//* other method
 //! solving again with 1 stack but solving same as inorder
+var postorderTraversal = function (root) {
+
+  if (!root) return [];
+  let stack = [], ans = [], curr = root, visited;
+  while (stack.length || curr) {
+    while (curr) {
+      stack.push(curr)
+      curr = curr.left;
+    }
+    let peekedNode = stack[stack.length - 1];
+    if (peekedNode.right || peekedNode.right != visited) curr = peekNode.right;
+    else {
+      ans.push(peekedNode.val);
+      visited = stack.pop();
+    }
+  }
+  return ans;
+}
