@@ -12,6 +12,10 @@
 //? Level-order Traversal: Visit nodes level by level, starting from the root and moving down to the leaves, typically implemented using a queue. (Level by Level)
 
 //!---------------------------------------------------
+//TODO: Recursive Approach
+//!---------------------------------------------------
+
+//!---------------------------------------------------
 //! Leetcode 144. Binary Tree Preorder Traversal
 //!---------------------------------------------------
 
@@ -74,3 +78,91 @@ var postorderTraversal = function (root) {
 }
 // console.log(postorderTraversal(root = [1, null, 2, 3])) // Output: [3, 2, 1]
 // console.log(postorderTraversal(root = [1, 2, 3, 4, 5, null, 8, null, null, 6, 7, 9])) // Output: [4, 6, 7, 5, 2, 9, 8, 3, 1]
+
+// TODO:-------------------------------------------------------------------------------
+
+//!---------------------------------------------------
+//TODO: Iterative Approach
+//!---------------------------------------------------
+
+//!---------------------------------------------------
+//! Leetcode 144. Binary Tree Preorder Traversal
+//!---------------------------------------------------
+var preorderTraversal = function (root) {
+  // root -> left -> right
+  if (!root) return [];
+  let stack = [root], ans = [];
+  while (stack.length) {
+    let curr = stack.pop();
+    ans.push(curr.val);
+    curr.right && stack.push(curr.right);
+    curr.left && stack.push(curr.left);
+  }
+  return ans;
+}
+
+
+//!---------------------------------------------------
+//! Leetcode 94. Binary Tree Inorder Traversal
+//!---------------------------------------------------
+var inorderTraversal = function (root) {
+  // left -> root -> right
+  if (!root) return []
+  let ans = [], stack = [], curr = root;
+  while (stack.length || curr) {
+    while (curr) {
+      stack.push(curr);
+      curr = curr.left;
+    }
+    curr = stack.pop();
+    ans.push(curr.val);
+    curr = curr.right;
+  }
+  return ans;
+}
+
+
+//!---------------------------------------------------
+//! Leetcode 145. Binary Tree Postorder Traversal
+//!--------------------------------------------------
+var postorderTraversal = function (root) {
+  // left -> right -> root
+  if (!root) return [];
+  let ans = [], stack = [root], s2 = [];
+  while (stack.length) {
+    let curr = stack.pop();
+    s2.push(curr);
+    curr.left && stack.push(curr.left);
+    curr.right && stack.push(curr.right);
+  }
+  while (s2.length) {
+    ans.push(s2.pop().val)
+  }
+  return ans;
+}
+
+//!---------------------------------------------------
+//! Leetcode 145. Binary Tree Postorder Traversal
+//!--------------------------------------------------
+//! Using single stack
+var postorderTraversal = function (root) {
+  if (!root) return [];
+  let ans = [], stack = [[root, false]];
+  while (stack.length) {
+    let [curr, visited] = stack.pop();
+    if (visited) {
+      // Agar already visited hai, matlab iske children process ho chuke
+      ans.push(curr.val);
+    } else {
+      // Pehle is node ko visited mark karke dubara daalo
+      // Phir right aur left child daalo (unvisited)
+      stack.push([curr, true])
+      curr.right && stack.push([curr.right, false]);
+      curr.left && stack.push([curr.left, false]);
+    }
+  }
+  return ans;
+}
+
+
+//! solving again with 1 stack but solving same as inorder
