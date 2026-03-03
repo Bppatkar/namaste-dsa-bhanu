@@ -184,3 +184,35 @@ var postorderTraversal = function (root) {
   }
   return ans;
 }
+
+//*--------------------------------------------
+//! DFS vs BFS [in tree] (but that DFS , BFS can use in tree graphs etc)
+//*--------------------------------------------
+//! 1) Depth First Search
+//? DFS explore a tree by going as deep as possible along a branch before backtracking
+
+//! 2) Breadth First Search
+//? Explore the tree level by level, explore all the nodes at current level before moving deeper.
+
+//!---------------------------------------------------
+//! Leetcode 102. Binary Tree Level Order Traversal
+//!--------------------------------------------------
+//* Iteration approch
+var levelOrder = function (root) {
+  if (!root) return [];
+  let q = [root], ans = [], level = q.length;
+  while (q.length) {
+    let currLevel = [];
+    while (level) {
+      let curr = q.shift();
+      currLevel.push(curr.val);
+      curr.left && q.push(curr.left);
+      curr.right && q.push(curr.right);
+      --level;
+    }
+    ans.push(currLevel);
+    level = q.length;
+  }
+  return ans;
+};
+
