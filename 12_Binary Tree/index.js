@@ -12,9 +12,9 @@
 //? Level-order Traversal: Visit nodes level by level, starting from the root and moving down to the leaves, typically implemented using a queue. (Level by Level)
 
 //!---------------------------------------------------
-//TODO: Recursive Approach
+//TODO: Recurssive Approach
 //!---------------------------------------------------
-
+//* Recurssive Approch
 //!---------------------------------------------------
 //! Leetcode 144. Binary Tree Preorder Traversal
 //!---------------------------------------------------
@@ -79,12 +79,30 @@ var postorderTraversal = function (root) {
 // console.log(postorderTraversal(root = [1, null, 2, 3])) // Output: [3, 2, 1]
 // console.log(postorderTraversal(root = [1, 2, 3, 4, 5, null, 8, null, null, 6, 7, 9])) // Output: [4, 6, 7, 5, 2, 9, 8, 3, 1]
 
+
+//!---------------------------------------------------
+//! Leetcode 102. Binary Tree Level Order Traversal
+//!--------------------------------------------------
+var levelOrder = function (root) {
+  let ans = [];
+  function traverse(curr, level) {
+    if (!curr) return [];
+    if (!ans[level]) ans[level] = [];
+    ans[level].push(curr.val);
+    traverse(curr.left, level + 1);
+    traverse(curr.right, level + 1);
+  }
+  traverse(root, 0);
+  return ans;
+}
+
+
 // TODO:-------------------------------------------------------------------------------
 
 //!---------------------------------------------------
 //TODO: Iterative Approach
 //!---------------------------------------------------
-
+//* Iterative Approch
 //!---------------------------------------------------
 //! Leetcode 144. Binary Tree Preorder Traversal
 //!---------------------------------------------------
