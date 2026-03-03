@@ -234,3 +234,21 @@ var levelOrder = function (root) {
   return ans;
 };
 
+
+//!--------------------------------------------------
+//! Leetcode 104. Maximum Depth of Binary Tree
+//!--------------------------------------------------
+var maxDepth = function (root) {
+  if (!root) return 0;
+  let q = [root], count = 0;
+  while (q.length) {
+    let level = q.length;
+    for (let i = 0; i < level; i++) {
+      let curr = q.shift();
+      curr.left && q.push(curr.left);
+      curr.rightt && q.push(curr.right);
+    }
+    count++;
+  }
+  return count;
+};
