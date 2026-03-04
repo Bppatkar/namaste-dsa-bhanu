@@ -238,6 +238,7 @@ var levelOrder = function (root) {
 //!--------------------------------------------------
 //! Leetcode 104. Maximum Depth of Binary Tree
 //!--------------------------------------------------
+//* top to bottom approach
 var maxDepth = function (root) {
   if (!root) return 0;
   let q = [root], count = 0;
@@ -252,3 +253,63 @@ var maxDepth = function (root) {
   }
   return count;
 };
+
+//* using recurssion
+var maxDepth = function (root) {
+  let maxDepth = 0;
+  let traverse = (curr, depth) => {
+    maxDepth = Math.max(depth, maxDepth);
+    curr.left && traverse(curr.left, depth + 1);
+    curr.right && traverse(curr.right, depth + 1);
+  }
+  traverse(root, 1)
+  return maxDepth;
+}
+
+//* Bottom to top approch
+var maxDepth = function (root) {
+
+  if (!root) return 0;
+  let leftMax = maxDepth(root.left);
+  let rightMax = maxDepth(root.right);
+  return (1 + Math.max(leftMax, rightMax));
+}
+
+//!--------------------------------------------------
+//! Leetcode 112. Path Sum
+//!--------------------------------------------------
+//* Top to Bottom Approach
+var hasPathSum = function (root, targetSum) {
+  if (!root) return false;
+  let ans = false;
+
+  let traverse = (curr, sum) => {
+    if (ans) return;
+    let newSum = sum + curr.val;
+
+    // base case
+    if (!curr.left && !curr.right) {
+      if (newSum === targetSum) ans = true;
+    }
+
+    curr.left && traverse(curr.left, newSum);
+    curr.right && traverse(curr.right, newSum);
+  }
+  traverse(root, 0);
+  return ans;
+};
+
+//* Bottom Up Approach
+var hasPathSum = function (root, targetSum) {
+  if (!root) return false;
+
+  if (!root.left || !root.right) {
+    return root.val === targetSum;
+  }
+
+  let leftSubTreeHasPathSum = hasPathSum(root.left, targetSum - root.val);
+  let righttSubTreeHasPathSum = hasPathSum(root.right, targetSum - root.val);
+
+  return leftSubTreeHasPathSum || righttSubTreeHasPathSum;
+}
+
