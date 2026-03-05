@@ -346,7 +346,7 @@ var isSymmetric = function (root) {
     if (!p1 && !p2) continue;
     // if (p1 === null || p2 === null) return false;
     if (!p1 || !p2) return false;
-    
+
     if (p1.val !== p2.val) return false;
 
     q.push(p1.left, p2.right);
@@ -355,3 +355,37 @@ var isSymmetric = function (root) {
   return true;
 };
 
+//!--------------------------------------------------
+//! Leetcode 226. Invert Binary Tree
+//!--------------------------------------------------
+//* Recurssive solution
+var invertTree = function (root) {
+  if (!root) return root;
+
+  let temp = root.left;
+  root.left = root.right;
+  root.right = temp;
+
+  invertTree(root.left);
+  invertTree(root.right);
+
+  return root;
+}
+
+//* Iterative solution
+var invertTree = function (root) {
+  let q = [root];
+  if (!root) return root;
+
+  while (q.length) {
+    let curr = q.shift();
+    let temp = curr.left;
+    curr.left = curr.right;
+    curr.right = temp;
+
+    curr.left && q.push(curr.left);
+    curr.right && q.push(curr.right);
+  }
+
+  return root;
+}
