@@ -389,3 +389,43 @@ var invertTree = function (root) {
 
   return root;
 }
+
+//!--------------------------------------------------
+//! Leetcode 100. same tree
+//!--------------------------------------------------
+//* Recurssive solution
+var isSameTree = function (p, q) {
+  if (!p && !q) return true;
+
+  if (!p || !q) return false;
+
+  if (p.val !== q.val) return false;
+
+  let leftSame = isSameTree(p.left, q.left);
+  let rightSame = isSameTree(p.right, q.right);
+
+  return leftSame && rightSame;
+}
+
+//* Iterative solution
+var isSameTree = function (p, q) {
+  if (!p && !q) return true;
+  if (!p || !q) return false;
+
+  let queue = [p, q];
+  while (queue.length) {
+    let currP = queue.shift();
+    let currQ = queue.shift();
+
+    if (!currP && !currQ) continue;
+    if (!currP || !currQ) return false;
+    if (currP.val != currQ.val) return false;
+
+    queue.push(currP.left);
+    queue.push(currQ.left);
+    queue.push(currP.right);
+    queue.push(currQ.right);
+
+  }
+  return true;
+}
