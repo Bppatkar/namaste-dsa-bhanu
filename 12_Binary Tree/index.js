@@ -483,7 +483,7 @@ var diameterOfBinaryTree = function (root) {
 //!--------------------------------------------------
 //! Leetcode 103. Binary Tree ZigZag Level Order
 //!--------------------------------------------------
-
+//* Iterative
 var zigzagLevelOrder = function (root) {
   if (!root) return [];
   let q = [root], ans = [], level = 0;
@@ -505,4 +505,27 @@ var zigzagLevelOrder = function (root) {
     ++level;
   }
   return ans;
+}
+
+//* Recurssive
+var zigzagLevelOrder = function (root) {
+  let ans = [];
+
+  let zigzag = (curr, level) => {
+    if (!curr) return [];
+
+    if (!ans[level]) ans[level] = [];
+
+    if (level % 2 === 0)
+      ans[level].push(curr.val)
+    else
+      ans[level].unshift(curr.val)
+
+    zigzag(curr.left, level + 1);
+    zigzag(curr.right, level + 1);
+  }
+
+  zigzag(root, 0);
+  return ans;
+
 }
