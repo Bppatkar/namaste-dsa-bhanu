@@ -1,5 +1,6 @@
-//! Tree -[ Binary Search Tree ]
+//! Tree - [ Binary Tree ]
 //? Tree is a non-linear, hierarchical data structure consisting of nodes connected by edges, organized in a top-down parent-child relationship. Starting from a single root node, it branches downward to represent data hierarchically (e.g., file systems), with no cycles
+
 //* Binary Search Tree (BST) is a specialized type of binary tree that maintains a specific ordering property: for any given node, all values in its left subtree are less than the node's value, and all values in its right subtree are greater. This structure allows for efficient searching, insertion, and deletion operations, making it a fundamental data structure in computer science for tasks like sorting and searching.
 
 //! Types of Tree Traversal
@@ -391,7 +392,7 @@ var invertTree = function (root) {
 }
 
 //!--------------------------------------------------
-//! Leetcode 100. same tree
+//! Leetcode 100. Same Tree
 //!--------------------------------------------------
 //* Recurssive solution
 var isSameTree = function (p, q) {
@@ -428,4 +429,80 @@ var isSameTree = function (p, q) {
 
   }
   return true;
+}
+
+//!--------------------------------------------------
+//! Leetcode 110. Balanced Binary Tree
+//!--------------------------------------------------
+
+var isBalanced = function (root) {
+
+  let ans = true;
+
+  let calculateHeight = (curr) => {
+
+    if (!curr) return 0;
+
+    let leftSame = calculateHeight(curr.left);
+    let rightSame = calculateHeight(curr.right);
+
+    if (Math.abs(leftSame - rightSame) > 1) { ans = ans && false; }
+    return 1 + Math.max(leftSame, rightSame);
+
+  };
+  calculateHeight(root);
+
+  return ans;
+};
+
+//!--------------------------------------------------
+//! Leetcode 543. Diameter of Binary Tree
+//!--------------------------------------------------
+
+var diameterOfBinaryTree = function (root) {
+
+  let maxDiameter = 0;
+
+  let findDepth = (curr) => {
+    if (!curr) return 0;
+
+    let depthL = findDepth(curr.left);
+    let depthR = findDepth(curr.right);
+
+    let currDiameter = depthL + depthR;
+    maxDiameter = Math.max(currDiameter, maxDiameter);
+
+    return 1 + Math.max(depthL, depthR);
+  };
+
+  findDepth(root);
+
+  return maxDiameter;
+};
+
+//!--------------------------------------------------
+//! Leetcode 103. Binary Tree ZigZag Level Order
+//!--------------------------------------------------
+
+var zigzagLevelOrder = function (root) {
+  if (!root) return [];
+  let q = [root], ans = [], level = 0;
+  while (q.length) {
+    let currLevel = [], levelSize = q.length;
+
+    for (let i = 0; i < levelSize; i++) {
+      let curr = q.shift();
+
+      if (level % 2 === 0)
+        currLevel.push(curr.val);
+      else
+        currLevel.unshift(curr.val);
+
+      curr.left && q.push(curr.left);
+      curr.right && q.push(curr.right);
+    }
+    ans.push(currLevel)
+    ++level;
+  }
+  return ans;
 }
