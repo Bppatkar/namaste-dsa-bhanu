@@ -641,5 +641,39 @@ var lowestCommonAncestor = function (root, p, q) {
 };
 
 //!--------------------------------------------------
-//! Leetcode
+//! Leetcode 199. Binary Tree Right Side View 
 //!--------------------------------------------------
+// * Iterative
+
+var rightSideView = function (root) {
+  if (!root) return [];
+
+  let ans = [], q = [root];
+  while (q.length) {
+    let levelSize = q.length;
+
+    for (let i = 0; i < levelSize; i++) {
+      let curr = q.shift();
+
+      i == 0 && ans.push(curr.val);
+
+      curr.right && q.push(curr.right);
+      curr.left && q.push(curr.left);
+    }
+  }
+  return ans;
+};
+
+//* Recurssive
+var rightSideView = function (root) {
+  let ans = [];
+  let traversal = (curr, level) => {
+    if (!curr) return;
+    if (ans.length == level) ans.push(curr.val);
+
+    traversal(curr.right, level + 1);
+    traversal(curr.left, level + 1);
+  }
+  traversal(root, 0);
+  return ans;
+}
