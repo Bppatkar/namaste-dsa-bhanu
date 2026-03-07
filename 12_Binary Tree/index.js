@@ -529,3 +529,37 @@ var zigzagLevelOrder = function (root) {
   return ans;
 
 }
+
+//!--------------------------------------------------
+//! Leetcode 572. Subtree of Another Tree
+//!--------------------------------------------------
+
+var isSubtree = function (root, subRoot) {
+  let hashRoot = serialize(root);
+  let hashSubRoot = serialize(subRoot);
+
+  // console.log(hashRoot)
+  // console.log(hashSubRoot)
+
+  // now we only have to search a substring inside a string 
+  // we can use KMP algorithm here but it takes too much time
+  // that's why we are using built in method here
+  return hashRoot.includes(hashSubRoot);
+};
+
+const serialize = function (root) {
+  let hash = '';
+
+  let traversal = (curr) => {
+    if (!curr) {
+      hash += '#-'; return;
+    }
+    hash = hash + '-' + curr.val;
+    traversal(curr.left);
+    traversal(curr.right);
+  }
+
+  traversal(root);
+  return hash;
+}
+
