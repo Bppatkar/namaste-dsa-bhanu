@@ -552,7 +552,7 @@ const serialize = function (root) {
 
   let traversal = (curr) => {
     if (!curr) {
-      hash += '#-'; return;
+      hash += '-#'; return;
     }
     hash = hash + '-' + curr.val;
     traversal(curr.left);
@@ -563,3 +563,56 @@ const serialize = function (root) {
   return hash;
 }
 
+//! With KMP Algorithm
+
+var isSubtree = function (root, subRoot) {
+  let hashRoot = serializee(root);
+  let hashSubRoot = serializee(subRoot);
+
+  // now we have to search substring in main string so we can use KMP algorithm but
+  // it takes too much time so we using built in method here
+
+
+  // return hashRoot.includes(hashSubRoot);
+
+
+  return strStr(hashRoot, hashSubRoot) !== -1;
+
+};
+
+const serializee = function (root) {
+  if (!root) return '#';
+  return `#${root.val}#,${serialize(root.left)},${serialize(root.right)};`;
+}
+
+const calculateLPS = function (needle) {
+  let lps = new Array(needle.length).fill(0)
+  let i = 0, j = 1;
+  while (j < needle.length) {
+    if (needle[i] === needle[j]) {
+      lps[j] = i + 1; j++; i++;
+    }
+    else {
+      if (i !== 0) i = lps[i - 1];
+      else j++;
+    }
+  }
+  return lps;
+}
+
+var strStr = function (haystack, needle) {
+  let hl = haystack.length, nl = needle.length, lps = calculateLPS(needle);
+  if (nl === 0) return 0;
+  let i = 0, j = 0;
+  while (i < hl) {
+    if (haystack[i] === needle[j]) {
+      i++; j++;
+    }
+    else {
+      if (j !== 0) { j = lps[j - 1] }
+      else i++;
+    }
+    if (j === nl) return i - nl;
+  }
+  return -1;
+}
