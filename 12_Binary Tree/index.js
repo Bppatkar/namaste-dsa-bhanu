@@ -677,3 +677,47 @@ var rightSideView = function (root) {
   traversal(root, 0);
   return ans;
 }
+//!--------------------------------------------------
+//! Leetcode 1448. Count Good Nodes in Binary Tree
+//!--------------------------------------------------
+var goodNodes = function (root) {
+
+  let ans = 0;
+  let check = (curr, maxSeenSoFar) => {
+    if (curr.val >= maxSeenSoFar) ++ans;
+
+    let currMax = Math.max(maxSeenSoFar, curr.val);
+
+    curr.left && check(curr.left, currMax);
+    curr.right && check(curr.right, currMax);
+  }
+  check(root, -Infinity)
+  return ans;
+};
+
+//!--------------------------------------------------
+//! Leetcode 116. Populating Next Right Pointers in Each Node
+//!--------------------------------------------------
+
+var connect = function (root) {
+  if (!root) return root;
+  let check = (curr) => {
+    if (curr.left) curr.left.next = curr.right;
+
+    if (curr.right && curr.next) {
+      curr.right.next = curr.next.left;
+    }
+
+    curr.left && check(curr.left);
+    curr.right && check(curr.right);
+  }
+  check(root);
+  return root;
+};
+
+//!--------------------------------------------------
+//! Leetcode 124. Binary Tree Maximum Path Sum
+//!--------------------------------------------------
+var maxPathSum = function (root) {
+
+};
