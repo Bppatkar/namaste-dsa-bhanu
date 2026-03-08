@@ -719,5 +719,19 @@ var connect = function (root) {
 //! Leetcode 124. Binary Tree Maximum Path Sum
 //!--------------------------------------------------
 var maxPathSum = function (root) {
+  let maxPathSum = -Infinity;
 
+  let check = (curr) => {
+    if (!curr) return 0;
+    let maxLeft = Math.max(0, check(curr.left));
+    let maxRight = Math.max(0, check(curr.right));
+
+    let currMax = curr.val + maxLeft + maxRight;
+
+    maxPathSum = Math.max(maxPathSum, currMax);
+
+    return curr.val + Math.max(maxLeft, maxRight);
+  }
+  check(root);
+  return maxPathSum;
 };
