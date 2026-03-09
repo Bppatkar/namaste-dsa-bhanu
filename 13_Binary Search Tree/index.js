@@ -114,10 +114,52 @@ var searchBST = function (root, val) {
     : searchBST(root.right, val);
 };
 
-///? Iterative
+//? Iterative
 var searchBST = function (root, val) {
   while (root && root.val != val) {
     root = val < root.val ? root.left : root.right;
   }
   return root;
 }
+
+//!--------------------------------------------------
+//! Leetcode 701. Insert into a Binary Search Tree
+//!--------------------------------------------------
+//? Iterative
+var insertIntoBST = function (root, val) {
+  if (!root) return new TreeNode(val);
+
+  if (val < root.val) root.left = insertIntoBST(root.left, val);
+  else root.right = insertIntoBST(root.right, val);
+  return root;
+};
+
+//? Recurssive
+var insertIntoBST = function (root, val) {
+  if (!root) return new TreeNode(val);
+  let node = root;
+  while (true) {
+    if (val < node.val) {
+      if (!node.left) {
+        node.left = new TreeNode(val);;
+        break;
+      }
+      node = node.left;
+    }
+    else {
+      if (!node.right) {
+        node.right = new TreeNode(val);;
+        break;
+      }
+      node = node.right;
+    }
+  }
+  return root;
+}
+
+//!--------------------------------------------------
+//! Leetcode 230. Kth Smallest Element in a BST
+//!--------------------------------------------------
+var kthSmallest = function (root, k) {
+
+};
