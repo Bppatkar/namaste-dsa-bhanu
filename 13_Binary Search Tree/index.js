@@ -160,6 +160,21 @@ var insertIntoBST = function (root, val) {
 //!--------------------------------------------------
 //! Leetcode 230. Kth Smallest Element in a BST
 //!--------------------------------------------------
+//* Hint - InOrder Traversal gives us sorted order of elements
 var kthSmallest = function (root, k) {
 
+  let ans = null, count = k;
+  let check = (curr, k) => {
+    if (ans != null) return;
+    
+    curr.left && check(curr.left, k);
+    --count;
+    if (count === 0) {
+      ans = curr.val;
+    }
+
+    curr.right && check(curr.right, k);
+  }
+  check(root);
+  return ans;
 };
