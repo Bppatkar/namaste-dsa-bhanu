@@ -552,3 +552,64 @@ Array: `[-, 1, 2, 3, 4, 5, 7, 8]`
 ---
 
 ## Heap
+
+Heap ek **complete binary tree** hai. Agar tree complete binary tree nahi hai, to woh heap bhi nahi hai. Heap ek binary tree hai jo ya to **max heap** hota hai ya **min heap**.
+
+### Max Heap
+Max heap mein, har node ki value uske children ki values se hamesha badi ya barabar (`>=`) hoti hai.
+
+**Example (Max Heap):**
+Parent ki value hamesha apne dono children se badi ya barabar hoti hai.
+```
+        10
+      /    \
+     9      8
+    / \    / \
+   7   6  5   4
+```
+**Guarantee:** Max heap mein, sabse badi value hamesha root node par hoti hai. Isliye, hum heap se maximum value `O(1)` time complexity mein nikal sakte hain.
+
+### Min Heap
+Min heap mein, har node ki value uske children ki values se hamesha chhoti ya barabar (`<=`) hoti hai. Heap ka use Priority Queue implement karne ke liye hota hai.
+
+**Example (Min Heap):**
+Parent ki value hamesha apne dono children se chhoti ya barabar hoti hai.
+```
+         1
+       /    \
+      2      3
+     / \    / \
+    4   5  6   7
+```
+**Guarantee:** Min heap mein, sabse chhoti value hamesha root node par hoti hai.
+
+### Summary
+1.  Heap ek complete binary tree hai.
+2.  Min heap mein, parent node ki value apne children se chhoti ya barabar hoti hai.
+3.  Max heap mein, parent node ki value apne children se badi ya barabar hoti hai.
+
+**Note:** Jin problems ko aap heap se solve kar sakte hain, unhe dusre data structures se bhi solve kiya ja sakta hai. Lekin, heap ka use aksar problem ki time complexity ko kam karne ke liye hota hai.
+
+Kuch problems jo heap se solve ho sakti hain:
+*   Kth largest, Kth smallest, Kth minimum, Kth maximum
+*   Top K values, Bottom K values
+*   Median of a stream of data
+*   Merge K sorted arrays
+*   Merge K sorted linked lists
+
+## Heap Sort
+Hum Heap Sort bhi seekh sakte hain, jahan time complexity `O(n log n)` aur space complexity `O(1)` hoti hai, kyunki hum array ko in-place sort karte hain.
+
+---
+
+## Heap ke Fayde (Advantages)
+
+### Max Heap
+1.  Agar hamare paas Max heap hai, aur humein maximum element nikalna hai, to hum use `O(1)` time complexity mein nikal sakte hain kyunki maximum element hamesha root node par hota hai.
+2.  Agar humein heap mein ek element insert karna hai, to hum `O(log n)` time complexity mein kar sakte hain, kyunki element insert karne ke baad humein heap property ko maintain karna padta hai.
+3.  Agar humein heap se maximum element delete karna hai, to hum `O(log n)` time complexity mein kar sakte hain, kyunki element delete karne ke baad bhi humein heap property ko maintain karna padta hai.
+
+### Min Heap
+1.  Agar hamare paas Min heap hai, aur humein minimum element nikalna hai, to hum use `O(1)` time complexity mein nikal sakte hain kyunki minimum element hamesha root node par hota hai.
+2.  Agar humein heap mein ek element insert karna hai, to hum `O(log n)` time complexity mein kar sakte hain.
+3.  Agar humein heap se minimum element delete karna hai, to hum `O(log n)` time complexity mein kar sakte hain.
