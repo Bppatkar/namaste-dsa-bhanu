@@ -166,7 +166,7 @@ var kthSmallest = function (root, k) {
   let ans = null, count = k;
   let check = (curr, k) => {
     if (ans != null) return;
-    
+
     curr.left && check(curr.left, k);
     --count;
     if (count === 0) {
@@ -177,4 +177,17 @@ var kthSmallest = function (root, k) {
   }
   check(root);
   return ans;
+};
+
+//!--------------------------------------------------
+//! Leetcode 235. Lowest Common Ancestor of a Binary Search Tree
+//!--------------------------------------------------
+var lowestCommonAncestor = function (root, p, q) {
+  if (p.val < root.val && q.val < root.val) {
+    return lowestCommonAncestor(root.left, p, q);
+  } else if (p.val > root.val && q.val > root.val) {
+    return lowestCommonAncestor(root.right, p, q);
+  } else {
+    return root;
+  }
 };
