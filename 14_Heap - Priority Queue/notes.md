@@ -613,3 +613,80 @@ Hum Heap Sort bhi seekh sakte hain, jahan time complexity `O(n log n)` aur space
 1.  Agar hamare paas Min heap hai, aur humein minimum element nikalna hai, to hum use `O(1)` time complexity mein nikal sakte hain kyunki minimum element hamesha root node par hota hai.
 2.  Agar humein heap mein ek element insert karna hai, to hum `O(log n)` time complexity mein kar sakte hain.
 3.  Agar humein heap se minimum element delete karna hai, to hum `O(log n)` time complexity mein kar sakte hain.
+
+### Heap ke Nuksan (Disadvantages)
+1.  **Search karna slow hai:** Heap mein kisi specific element (jo min/max na ho) ko search karne mein `O(n)` time lagta hai. Aisa isliye hai kyunki heap ek sorted data structure nahi hai, aur aapko har node ko check karna pad sakta hai.
+2.  **Sorted nahi hota:** Heap aapko sirf minimum ya maximum element `O(1)` time mein deta hai. Baaki ke elements sorted order mein nahi hote.
+3.  **Sorted order mein print karna slow hai:** Agar aapko saare elements ko sorted order mein print karna hai, to aapko ek-ek karke saare elements nikalne padenge, jismein total `O(n log n)` time lagta hai.
+
+---
+
+## 🚀 Diving Deep into Heaps
+
+### 📌 Array Representation of a Heap (Heap ko Array mein represent karna)
+
+Tree ya BST mein hum pointers use karte hain (`.left`, `.right`) nodes tak pahunchne ke liye.
+Par Heap mein hum **Array** use karte hain.
+
+**Kyun?**
+Taaki index ki madad se parent aur child nodes ko easily dhund sakein. Array use karne se life easy ho jati hai! (Aisa nahi hai ki pointers use nahi kar sakte, par array zyada efficient hai yahan).
+
+### 📝 How to store Tree Like Structure in Array?
+
+Level Order Traversal ka use karke hum tree ko array mein dalte hain.
+Matlab: **Level-by-level, left-to-right** nodes ko array mein bharte jao.
+
+**💡 Example:**
+
+```text
+        10        <-- Level 0
+      /    \
+     9       8     <-- Level 1
+   /   \    /
+  7     6  5       <-- Level 2
+```
+
+**Iska Array Representation:** `[10, 9, 8, 7, 6, 5]`
+
+### 📐 Formula to find Nodes (0-based indexing)
+
+Agar parent ka index `i` hai:
+
+- **Left Child** = `2 * i + 1`
+- **Right Child** = `2 * i + 2`
+- **Parent Node** = `Math.floor((i - 1) / 2)`
+
+**Important Note:**
+Agar hum heap use kar rahe hain, to hum 100% sure hain ki beech mein koi empty nodes nahi honge, kyunki **Heap ek Complete Binary Tree hai**. Isliye hum directly nodes ko array mein put kar sakte hain bina gaps (`#`) ki chinta kiye.
+
+### Max Heap Example
+
+```text
+        50
+      /    \
+     30     20
+   /   \   /  \
+  10   15  8   9
+  / \
+  5   3
+```
+
+**Array Representation of Max Heap:** `[50, 30, 20, 10, 15, 8, 9, 5, 3]`
+
+**Finding Max Element:**
+Max element (root) hamesha index `0` par hota hai.
+`maxElem = heap[0]` -> **Time Complexity: O(1)**
+
+### ⚠️ 0-based vs 1-based Indexing
+
+Internet par aksar Heaps mein indexing `1` se start hoti hai, lekin JavaScript (aur most programming languages) mein hum `0`-based indexing use karte hain. Formulas mein bas thoda sa change hota hai:
+
+**For 1-based indexing:**
+- Left Child = `2 * i`
+- Right Child = `2 * i + 1`
+- Parent Node = `Math.floor(i / 2)`
+
+**For 0-based indexing (Hum ye use karenge):**
+- Left Child = `2 * i + 1`
+- Right Child = `2 * i + 2`
+- Parent Node = `Math.floor((i - 1) / 2)`
