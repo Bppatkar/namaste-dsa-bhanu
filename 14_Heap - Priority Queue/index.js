@@ -1,17 +1,257 @@
-//! Operation in Heap
+//! Insert Inside the Heap
 
-//? Like in Stack we have push and pop, in Heap we have insert and remove and peek
-//? Like in Queue we have enqueue and dequeue means insert by push and remove by shift because we can't use pop in queue
+// We are having Min heap and we want to insert 1 in the heap
+// to ham kaha insert karenge 1 ko, 10 ke right me, because order hmesha left side s fill hota hai, to ham 1 ko 10 ke right me insert karenge, but 1 is less than 10, so we will swap 1 and 10, then we will compare 1 with its parent which is 5, and since 1 is less than 5, we will swap 1 and 5, now the heap will be like this:
+
+//     5
+//   /   \
+//  10     20
+//  /
+// 30
+
+//? After inserting 1, and swapping it with 10 and then with 5, the heap will be like this:
+//     1
+//   /   \
+//  5     20
+// /  \
+// 30  10
+
+//* This process is called "heapify up" or "bubble up", where we compare the inserted element with its parent and swap if it is less than the parent, and we continue this process until we find the correct position for the inserted element.
+//TODO: Remeber Formullas = 
+//TODO: for going to left child, we do 2*i + 1 and 
+//TODO: for going to right child, we do 2*i + 2, and 
+//TODO: for going to parent, we do Math.floor((i-1)/2) [that is for 0 based indexing]
+
+//TODO: for 1 Indexing, for going to left child, we do 2*i and
+//TODO: for going to right child, we do 2*i + 1, and
+//TODO: for going to parent, we do Math.floor(i/2)
+
+//! In code we do like this [we are creating Min Heap]
+
+// ham ek class banayege MinHeap ke naam se, jiske andar ek constructor hoga, constructor matlab jab bhi hum MinHeap ka object banayege, to wo cosntructor call hoga, 
+// Javascript classes mein constructor ek special method hota hai, jo automatically call hota hai jab bhi hum class ka object banate hain, with the help of new keyword, to jab bhi hum new MinHeap() likhenge, to wo constructor call hoga, 
 
 
-//* Same there is some restriction in Heap , we can't perform random things in heap , we can only insert and remove the root node in heap and we can't remove any random node in heap because it will break the structure of heap and also the property of heap
+class MinHeap {
+  constructor() {
+    // this.heap = [];  //? jab hamre pass heap khali ho 
+    //? but upar jo example tha wo bhara hua to hm usi example s smjhte h
+    this.heap = [5, 10, 20, 30]; //? jab hamre pass heap bhara hua ho
+  }
 
-//* We only allow to insert element in the heap [but in correct position according to the property of heap]
-//* We only allow to remove/extract element in the heap
-//TODO: whenever we remove/extract element from the heap we always remove the root node because it is the highest priority element in max heap and lowest priority element in min heap and after removing the root node we need to maintain the structure of heap and also the property of heap by performing heapify down operation in simple words hme sabse last element ko root node pe leke aana hai aur phir heapify down karna hai taki heap ka structure aur property dono maintain rahe
+  //? ab kuch helper functions banayege , like we have to find left child, right child etc, so we will create some helper functions for that, and ye sare functions class ke andar honge
 
-//? mein tumhe heapify down or up dono samjhata hu ok
-//? heapify down means jab hum root node ko remove karte hai to hum sabse last element ko root node pe leke aate hai aur phir usko remove karte hai taki heap ka structure aur property dono maintain rahe
-//? heapify up means jab hum new element ko insert karte hai to hum usko sabse last position pe insert karte hai aur phir usko parent node ke sath compare karte hai agar new element ka value parent node se zyada hai to hum usko parent node ke sath swap karte hai aur phir usko parent node ke sath compare karte hai jab tak new element ka value parent node se zyada nahi hota hai ya phir hum root node tak nahi pahuch jate hai
+  // we are using 0 based indexing ok
+  getLeftChildIndex(i) {
+    return (2 * i) + 1;
+  }
+  getRightChildIndex(i) {
+    return (2 * i) + 2;
+  }
+  getParentIndex(i) {
+    return Math.floor((i - 1) / 2);
+  }
 
-//* We only allow to peek element in the heap
+  //? now we create insert helper function, 
+  insert(val) {
+    //? first we will insert the value at the end of the heap,
+    //? then we will heapify up the value to maintain the heap property
+    this.heap.push(val);
+    // calling helper function heapify up with the index of the last element which is the newly inserted element
+    let lastIndex = this.heap.length - 1;
+    this.heapifyUp(lastIndex);
+  }
+  heapifyUp(index) {
+    // ham index par value ko uske parent ke sath compare karenge, agar wo chhota hai to swap karenge, aur phir uske parent ke index par jaake fir se compare karenge, jab tak hum root tak nahi pahuch jate ya fir jab tak hum correct position nahi mil jata
+    //  we will start heapify process form the last index which is the index of the newly inserted element
+
+    while (index > 0) {
+      // finding parent index
+      let parentIndex = this.getParentIndex(index);
+      // comparing the value at index with the value at parent index , if the value at index is less than the value at parent index, then we will swap them, and update the index to parent index, so that we can continue the process until we find the correct position for the inserted element
+      if (this.heap[index] < this.heap[parentIndex]) {
+        // swap
+        /* let temp = this.heap[index];
+        this.heap[index] = this.heap[parentIndex];
+        this.heap[parentIndex] = temp; */
+        [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[index]];
+        // update index to parent index
+        index = parentIndex;
+
+        //? if the parent value is less than or equal to the current value, then we have found the correct position for the inserted element, so we can break the loop by else condition
+      } else {
+        break;
+      }
+    }
+  }
+}
+
+
+//! Writtin the whole code in one place without comments
+class MinHeap1 {
+  constructor(i) {
+    this.heap = [];
+  }
+
+  getLeftChildIndex(i) {
+    return (2 + i) + 1;
+  }
+  getRightChildIndex(i) {
+    return (2 * i) + 2;
+  }
+
+  getParentIndex(i) {
+    return Math.floor((i - 1) / 2)
+  }
+
+  insert(val) {
+    this.heap.push(val);
+    let lastIndex = this.heap.length - 1
+    this.heapifyUp(lastIndex);
+  }
+
+  heapifyUp(i) {
+    while (i > 0) {
+      let parentIndex = this.getParentIndex(i);
+      if (this.heap[i] < this.heap[parentIndex]) {
+        [this.heap[i], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[i]];
+        i = parentIndex
+      } else { break; }
+    }
+  }
+}
+
+// for checking the code
+let minHeap = new MinHeap1();
+minHeap.insert(5);
+minHeap.insert(10);
+minHeap.insert(20);
+minHeap.insert(30);
+minHeap.insert(1);
+console.log(minHeap.heap);
+
+let heap1 = new MinHeap1();
+heap1.insert(12);
+heap1.insert(7);
+heap1.insert(23);
+heap1.insert(34);
+heap1.insert(3);
+console.log(heap1.getLeftChildIndex(0));
+console.log(heap1.getRightChildIndex(2));
+console.log(heap1.heap);
+
+//!----------------------------------------------------------
+
+//! Deleting/Extracting Elements from a heap
+
+// we are having a min heap theek hai, aur hme minimum element ko delete karna hai, to minimum element hamesha root par hota hai, to ham root par jo element hai usko delete karenge, but agar ham root par jo element hai usko delete karenge to heap ka structure kharab ho jayega, to hm heap ke sabse last element ko delete karenge,
+
+// kaise, dekho ham replace karege heap ki last value ko root se, and delete that last element , par ab hamara heap structure kharab ho jayega, to ham heapify down karenge, heapify down matlab ham root se start karenge, aur usko uske left child aur right child ke sath compare karenge, aur jo bhi chhota hoga uske sath swap karenge, aur phir uske index par jaake fir se compare karenge, jab tak hum leaf node tak nahi pahuch jate ya fir jab tak hum correct position nahi mil jata
+
+// ? for example, hamare pass min heap hai, 1,4,5, 10 ,20 aur hme minimum element ko delete karna hai, to minimum element hai 1, to ham 1 ko delete karenge, aur ham heap ke last element ko root par le aayenge, to ham 20 ko root par le aayenge, aur phir ham heapify down karenge, to ham 20 ko uske left child 4 aur right child 5 ke sath compare karenge, jo bhi jyada chota hoga uske sath process karege, to 4 chhota hai to ham 20 aur 4 ko swap karenge, to ab hamara heap kuch is tarah dikhega:
+
+//     4
+//   /   \
+//  20     5
+// /
+// 10
+
+//? ab ham 20 ko uske left child 10 ke sath compare karenge, aur since 10 is less than 20, to ham 20 aur 10 ko swap karenge, to ab hamara heap kuch is tarah dikhega:
+
+//     4
+//   /   \
+//  10     5
+// /
+// 20
+
+//* Code for deleting minimum element from the heap [we use same above code for creating the heap and inserting elements in the heap, we will add a new helper function for deleting minimum element from the heap]
+
+class MinHeap2 {
+  constructor(i) {
+    this.heap = [];
+  }
+
+  getLeftChildIndex(i) {
+    return (2 * i) + 1;
+  }
+
+  getRightChildIndex(i) {
+    return (2 * i) + 2;
+  }
+
+  getParentIndex(i) {
+    return Math.floor((i - 1) / 2);
+  }
+
+  insert(val) {
+    this.heap.push(val);
+    let lastIndex = this.heap.length - 1;
+    this.heapifyUp(lastIndex);
+  }
+
+  heapifyUp(i) {
+    while (i > 0) {
+      let parentIndex = this.getParentIndex(i);
+      if (this.heap[i] < this.heap[parentIndex]) {
+        [this.heap[i], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[i]];
+        i = parentIndex;
+      }
+      else { break; }
+    }
+  }
+
+  deleteMin(i) {
+    if (this.heap.length === 0) {
+      return null; //? if heap is empty, then we cannot delete minimum element
+    } else if (this.heap.length === 1) {
+      return this.heap.pop(); //? if heap has only one element, then we can simply pop that element and return it
+    } else {
+      let min = this.heap[0]; //? minimum element is at root [because we are having min heap theek hai], so we will store that minimum element in a variable, so that we can return it at the end of the function
+      //* now we replace the last element of the heap with the root element, and then we will use heapify down to maintain the heap property
+      let lastIndex = this.heap.length - 1; //? finding the index of the last element in the heap
+      [this.heap[0], this.heap[lastIndex]] = [this.heap[lastIndex], this.heap[0]]; //? swapping the last element with the root element
+      this.heap.pop(); //? remove the last element (which is now the minimum element)
+
+      this.heapifyDown(0); //? heapify down from root to maintain heap property
+      // we are sending 0 not i because we want to start heapify down from root not from any other index
+      return min; //? return the minimum element that we deleted
+    }
+  }
+
+  heapifyDown(i) {
+    //? now we have to compare the value at index i ,and ham usko uske left child aur right child ke sath compare karenge, aur jo bhi chhota hoga uske sath swap karenge, aur phir uske index par jaake fir se compare karenge, jab tak hum leaf node tak nahi pahuch jate ya fir jab tak hum correct position nahi mil jata
+    let leftChildIndex = this.getLeftChildIndex(i);
+    let rightChildIndex = this.getRightChildIndex(i);
+
+    //? lets assume that the smallest element is at index i, ab hum compare karenge value at index i with the value at left child index and right child index, 
+    let smallest = i;
+
+    //! hme ye comparision and swapping heap ki length tak hi rakhni h wrna undefined store hone lagega heap me,
+    let heapLength = this.heap.length;
+
+    if (leftChildIndex < heapLength && this.heap[leftChildIndex] < this.heap[smallest]) {
+      //? agar left child value i se chhota hai to ham smallest ko left child index se update karenge
+      smallest = leftChildIndex;
+    }
+    if (this.heap[rightChildIndex] < this.heap[smallest]) {
+      //? agar right child value i se chhota hai to ham smallest ko right child index se update karenge
+      smallest = rightChildIndex;
+    }
+    //? ab ham compare karenge smallest index with the current index i, agar smallest index i se different hai to ham swap karenge, aur phir ham heapify down ko recursively call karenge smallest index par, taki hum correct position tak pahuch jaye
+    if (smallest !== i) {
+      [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
+      this.heapifyDown(smallest);
+    }
+  }
+}
+
+// for checking the code
+let minHeap2 = new MinHeap2();
+minHeap2.insert(5);
+minHeap2.insert(22);
+minHeap2.insert(10);
+minHeap2.insert(20);
+minHeap2.insert(30);
+console.log(minHeap2.heap);
+console.log(minHeap2.deleteMin());
+console.log(minHeap2.heap);

@@ -675,6 +675,8 @@ Parent index `i` ke liye:
 
 ---
 
+
+
 ## <span style="color:#FF6347">🔥 Heap</span>
 
 <div style="background-color:#2d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF6347;">
@@ -887,5 +889,73 @@ Internet par aksar Heaps mein indexing `1` se start hoti hai, lekin JavaScript (
 - ⬅️ Left Child = `2 * i + 1`
 - ➡️ Right Child = `2 * i + 2`
 - ⬆️ Parent Node = `Math.floor((i - 1) / 2)`
+
+</div>
+
+---
+
+## <span style="color:#FF6347">🔥 HEAP OPERATIONS - INSERT, REMOVE, PEEK</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+
+Jaise Stack mein `push` aur `pop` hota hai, aur Queue mein `enqueue` aur `dequeue`, waise hi Heap ke apne specific operations hain: `insert`, `remove`, aur `peek`. Heap mein hum randomly kahin se bhi element remove nahi kar sakte, kyunki isse Heap ka structure (Complete Binary Tree) aur property (Min/Max Heap) dono break ho jayenge.
+
+</div>
+
+### <span style="color:#32CD32">✅ INSERT Operation (Heapify Up)</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+Jab bhi hum naya element insert karte hain, hum usko hamesha tree ke **sabse last position** par daalte hain (taaki Complete Binary Tree ki property bani rahe). Iske baad, hum **Heapify Up** (ya sift-up) karte hain.
+
+Is process mein, hum naye node ko uske **parent node** se compare karte hain. Agar new node parent se bada hai (Max Heap mein), to hum unhe **swap** kar dete hain. Yeh process tab tak chalta hai jab tak new node apni sahi jagah par na aa jaye ya root na ban jaye.
+
+</div>
+
+### <span style="color:#FF4500">❌ REMOVE Operation (Heapify Down)</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+Jab hum root node ko remove karte hain, toh tree ka structure maintain karne ke liye hum **sabse last element** ko utha kar root par rakh dete hain. Ab Heap property (Min/Max) bigad sakti hai, isliye hum **Heapify Down** (ya sift-down) karte hain.
+
+Is process mein, hum root ko uske **children** se compare karte hain. Agar root apne children se chota hai (Max Heap mein), to hum usko **sabse bade child** ke sath swap kar dete hain. Yeh process tab tak chalta rehta hai jab tak node apni sahi jagah par na aa jaye ya leaf node na ban jaye.
+
+</div>
+
+### <span style="color:#00BFFF">👀 PEEK Operation</span>
+
+<div style="background-color:#0d1a3d; padding:15px; border-radius:10px; border-left:5px solid #00BFFF;">
+
+`peek()` operation se hum sirf **root element** ko dekh sakte hain. Max Heap mein yeh sabse bada element hota hai aur Min Heap mein sabse chota. Iski time complexity **O(1)** hoti hai. Hum kisi random element ko access nahi kar sakte.
+
+</div>
+
+---
+
+### <span style="color:#FFD700">📜 HARD BOUND RULES</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32; margin-bottom: 10px;">
+
+1.  🔥 **INSERT:** Hamesha **last position** par insert karo aur phir **Heapify Up** karo.
+
+</div>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+2.  🔥 **REMOVE:** Hamesha **root node** ko remove karo, **last element** ko root par lao, aur phir **Heapify Down** karo.
+
+</div>
+
+---
+
+## <span style="color:#9370DB">📝 HEAPIFY SUMMARY (Hinglish)</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+
+**⬆️ Heapify Up:**
+Jab hum new element ko insert karte hai to hum usko sabse last position pe insert karte hai aur phir usko parent node ke sath compare karte hai. Agar new element ka value parent node se zyada hai to hum usko parent node ke sath swap karte hai aur phir usko parent node ke sath compare karte hai jab tak new element ka value parent node se zyada nahi hota hai ya phir hum root node tak nahi pahuch jate hai.
+
+**⬇️ Heapify Down:**
+Jab hum root node ko remove karte hain, to hum sabse last element ko root node par le aate hain. Phir, hum usko uske children (left aur right) se compare karte hain. Agar parent apne children se chota hai (Max Heap ke case mein), to hum uske sabse bade child ke sath swap karte hain. Yeh process tab tak chalta rehta hai jab tak node apni sahi jagah par na aa jaye ya leaf node na ban jaye.
 
 </div>
