@@ -466,3 +466,32 @@ function heapifyDown(arr, i, n) {
 
 let ans = heapSort(arr)
 console.log(ans)
+
+//* How to find leaf nodes
+//? just count the nodes in binary tree -> 'n' and then divide by 2 and u get parent
+// means jo bhi result aaya wo parent and jo bhi bacha wo leaf
+//? Example
+
+
+//          1                 => Node count 1
+//       /      \
+//      5          7          => Node count 1 + 2= 3
+//    /  \       /   \
+//   4    3     2     8       => Node count 3 + 4 = 7
+//  / \  / \    /
+// 0  20 21 23  0             => Node count 7 + 5 = 12
+
+// n = 12 just do n/2  ==> 12/2 means 6 [always take math.floor value] so there are 6 parent and rest of are children
+//! [Optimisation for big length of array] 
+//* so in above function heap sort - we are creating maxHeap by running loop . so we can use n/2 formulla means only for parents, because rest of them are leafs, and hmne already ,mention kiya h leaf ko ignore karo bcz unke left/right child h hi nahi to unko kisse compare karoge
+//? to use this
+for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+  // we have to hepify each and every value
+  heapifyDown(arr, i, n); // heapify the array, and the ith value
+}
+
+//? instead of this
+for (let i = n - 1; i >= 0; i--) {
+  // we have to hepify each and every value
+  heapifyDown(arr, i, n); // heapify the array, and the ith value
+}
