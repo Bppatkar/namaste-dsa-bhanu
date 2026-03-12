@@ -128,7 +128,7 @@ minHeap.insert(10);
 minHeap.insert(20);
 minHeap.insert(30);
 minHeap.insert(1);
-console.log(minHeap.heap);
+// console.log(minHeap.heap);
 
 let heap1 = new MinHeap1();
 heap1.insert(12);
@@ -136,9 +136,9 @@ heap1.insert(7);
 heap1.insert(23);
 heap1.insert(34);
 heap1.insert(3);
-console.log(heap1.getLeftChildIndex(0));
-console.log(heap1.getRightChildIndex(2));
-console.log(heap1.heap);
+// console.log(heap1.getLeftChildIndex(0));
+// console.log(heap1.getRightChildIndex(2));
+// console.log(heap1.heap);
 
 //!----------------------------------------------------------
 
@@ -252,9 +252,9 @@ minHeap2.insert(22);
 minHeap2.insert(10);
 minHeap2.insert(20);
 minHeap2.insert(30);
-console.log(minHeap2.heap);
-console.log(minHeap2.deleteMin());
-console.log(minHeap2.heap);
+// console.log(minHeap2.heap);
+// console.log(minHeap2.deleteMin());
+// console.log(minHeap2.heap);
 
 
 //! One more Operation in heap is 'Peek' operation, jisme hum minimum element ko dekh sakte hain bina usko delete kiye, to peek operation me hum simply root element ko return karenge, kyuki minimum element hamesha root par hota hai, to ham ek helper function banayege peek ke naam se, jisme hum simply root element ko return karenge
@@ -338,9 +338,9 @@ minHeap3.insert(22);
 minHeap3.insert(10);
 minHeap3.insert(20);
 minHeap3.insert(30);
-console.log(minHeap3.heap);
-console.log(minHeap3.peek());
-console.log(minHeap3.heap);
+// console.log(minHeap3.heap);
+// console.log(minHeap3.peek());
+// console.log(minHeap3.heap);
 
 
 //?-------------------------------------------------------------
@@ -417,3 +417,52 @@ console.log(minHeap3.heap);
 // we reduce the heap/array length by 1 because from end one elem is already sorted and we reduced it from end 
 //? step 4 - heapify down process
 // looping the whole things till we found the sorted array  = Final - [1, 3, 4, 5, 10]
+
+
+//! code
+// we are any unsorted array
+console.log('----------Heap Sort-------------')
+
+let arr = [1, 4, 10, 5, 3, 7, 9, 2]
+
+function heapSort(arr) {
+
+  let n = arr.length;
+  // create a max heap
+  // run a loop from end to front and heapify down for getting maxHeap array 
+  for (let i = n - 1; i >= 0; i--) {
+    // we have to hepify each and every value
+    heapifyDown(arr, i, n); // heapify the array, and the ith value
+  }
+  // sort the array 
+  // again
+  // run a loop from end to front and heapify down for getting final sorted array
+  // when the single node left in heap or single value left in array stop loop so we run loop till 0 not = to 0
+  for (let i = n - 1; i > 0; i--) {
+    // swap first node from last
+    // heapify process and reduce the heap size and continue
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapifyDown(arr, 0, i);
+  }
+  return arr;
+}
+
+// this takes log n time 
+function heapifyDown(arr, i, n) {
+  // let assume i is our largest value, and we have to compare it with left and right whatever big is
+  let largest = i;
+  let left = (2 * i) + 1;
+  let right = (2 * i) + 2;
+
+  // making sure that left/right child in the range, not undefined
+  if (left < n && arr[left] > arr[largest]) largest = left;
+  if (right < n && arr[right] > arr[largest]) largest = right;
+  if (largest != i) {
+    [arr[i], arr[largest]] = [arr[largest], arr[i]];
+    heapifyDown(arr, largest, n);
+  }
+}
+
+
+let ans = heapSort(arr)
+console.log(ans)
