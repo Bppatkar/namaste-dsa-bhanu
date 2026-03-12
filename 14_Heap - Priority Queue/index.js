@@ -255,3 +255,165 @@ minHeap2.insert(30);
 console.log(minHeap2.heap);
 console.log(minHeap2.deleteMin());
 console.log(minHeap2.heap);
+
+
+//! One more Operation in heap is 'Peek' operation, jisme hum minimum element ko dekh sakte hain bina usko delete kiye, to peek operation me hum simply root element ko return karenge, kyuki minimum element hamesha root par hota hai, to ham ek helper function banayege peek ke naam se, jisme hum simply root element ko return karenge
+
+class MinHeap3 {
+  constructor(i) {
+    this.heap = [];
+  }
+
+  getLeftChildIndex(i) {
+    return (2 * i) + 1;
+  }
+  getRightChildIndex(i) {
+    return (2 * i) + 2;
+  }
+  getParentIndex(i) {
+    return Math.floor((i - 1) / 2);
+  }
+
+  insert(val) {
+    this.heap.push(val);
+    let lastIndex = this.heap.length - 1;
+    this.heapifyUp(lastIndex);
+  }
+
+  heapifyUp(i) {
+    while (i > 0) {
+      let parentIndex = this.getParentIndex(i);
+      if (this.heap[i] < this.heap[parentIndex]) {
+        [this.heap[i], this.heap[parentIndex]] = [this.heap[parentIndex], this.heap[i]];
+        i = parentIndex;
+      } else { break; }
+    }
+  }
+
+  deleteMin() {
+    if (this.heap.length === 0) {
+      return null;
+    } else if (this.heap.length === 1) {
+      return this.heap.pop();
+    } else {
+      let min = this.heap[0];
+      let lastIndex = this.heap.length - 1;
+      [this.heap[0], this.heap[lastIndex]] = [this.heap[lastIndex], this.heap[0]];
+      this.heap.pop();
+      this.heapifyDown(0);
+      return min;
+    }
+  }
+
+  heapifyDown(i) {
+    let leftChildIndex = this.getLeftChildIndex(i);
+    let rightChildIndex = this.getRightChildIndex(i);
+    let smallest = i;
+    let heapLength = this.heap.length;
+    if (leftChildIndex < heapLength && this.heap[leftChildIndex] < this.heap[smallest]) {
+      smallest = leftChildIndex;
+    }
+    if (rightChildIndex < heapLength && this.heap[rightChildIndex] < this.heap[smallest]) {
+      smallest = rightChildIndex;
+    }
+    if (smallest !== i) {
+      [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
+      this.heapifyDown(smallest);
+    }
+  }
+
+  peek() {
+    if (this.heap.length === 0) {
+      return null; //? if heap is empty, then we cannot peek minimum element
+    }
+    return this.heap[0];
+  }
+}
+
+// for checking the code
+let minHeap3 = new MinHeap3();
+console.log("Peeking")
+minHeap3.insert(5);
+minHeap3.insert(22);
+minHeap3.insert(10);
+minHeap3.insert(20);
+minHeap3.insert(30);
+console.log(minHeap3.heap);
+console.log(minHeap3.peek());
+console.log(minHeap3.heap);
+
+
+//?-------------------------------------------------------------
+//*-----------------
+//! Heap Sort
+//*-----------------
+
+// Heap sort ek comparison based sorting algorithm hai, jisme hum heap data structure ka use karte hain to sort an array,
+//? man lo hamare pass ek array hai, [5, 22, 10, 20, 30], aur hme is array ko sort karna hai, agar ham ise minheap ke form me convert kar dete hain, to hamara heap kuch is tarah dikhega:
+
+//     5
+//   /   \
+//  22     10
+// /  \
+//20   30
+
+//? agar ham is max heap ke form me convert kar dete hain, to hamara heap kuch is tarah dikhega:
+
+//     30
+//   /   \
+//  22     10
+// /  \
+//20   5
+
+// to hme array/heap ko pehle min heap ya max heap me change krna h according to our need
+// array ke last mein badi value chahiye to asceding order, choti value chahiye to descending order
+//TODO:  to fir before sort array we have to create max Heap or min Heap
+
+//! steps -
+//? 1. Create Max/Min Heap from Arr
+// now if we have to sort this array in ascending order so where this maximum value go, in the end
+//? 2. swap the first and last value
+// ab right most value means the last value is in corrected place to uske aage s hme check krna hoga mtlb pichla reduce
+// matalb hm same space use kr rhe h to sort the array bs ab array ki length mein hm last value count nahi karege bs
+//? 3. reduce the size of heap
+// ab hm heapify krege because small value start m to h, pr baki ki values arranged nahi h, order maintain nahi ho rha h
+//* jab hm heap se delete/extract kr rhe the upar , same wahi concept/ wahi algorithm yaha lagega
+//? 4. heapify down process
+// delete last node , swap with root node and use heapify down
+// mean now after that process , we got our maxHeap so we again swap first value with the second last , because last one is already in correct order and we will continue from step 2
+//? 5. Keep repeating steps [step 2 to step 4] until full array is sorted
+
+
+//! Now the main condition is we have to create min/max heap
+//TODO: Create a maxHeap outof array
+// how we create it lets see
+// we have this arr [4,10,5,3,1] and we have to create a max heap for this
+
+// for that array we create heap and do heapify and again put into array
+//? so array mein rakhne ke liye extra space chahiye hoga wo bhi S-O(n) beacause we dont know the length of array
+//* Now , the challenge it , can we perform same thing without using extra array
+//TODO: Create a maxHeap outof array without using extra space S-O(1) [and we already know how to add/insert elem in heap]
+
+// heapify not work here, so what we do -  we use algorithm , in that
+// - we will start from end of the heap , and we will heapify down every node
+// on which leaf nodes do not have any childern mean it is already a maxHeap and on which leaf nodes heapify do not makes any changes, just ignore those leaf nodes and goes up and comparing from their left and right child that, is that big or not if big ignore, if not swap because we are using maxheap na, if we are using minheap to min value check krte while comparing - any u got maxHeap
+
+//? Reason why we start from end  - when we are starting from end , we are making sure that the right side element are alreay max heap
+
+
+//! --------------------------------------
+
+//! Heap sort code
+// array - [4,10,3,5,1] sorting this array using heap sort without using the extra space
+
+//* 4 step
+//? step 1 - create min/max heap
+// for creating maxheap - we run a loop from last to start , and make sure each of the subtree that we'll encounter already a max heap. [meap making sure that each and every subtree is maxheap]
+// in array i take last elem and try to heapify down and make sure that become the max heap, make sure each tree and subtree becoming the max heap, we omit/leave the leaf node
+// [10, 5, 3, 4, 1]
+//? step 2 - sort
+// extract max elem one by one and store at the end [means replace with last elem]  -  [1, 5, 3, 4, 10], now i have to heapify down also so it become - [5, 4, 3, 1 ,10] now this is a maxheap , so we put again first elem in the last and heapify down and 
+//? step 3 - reduce the size of heap
+// we reduce the heap/array length by 1 because from end one elem is already sorted and we reduced it from end 
+//? step 4 - heapify down process
+// looping the whole things till we found the sorted array  = Final - [1, 3, 4, 5, 10]
