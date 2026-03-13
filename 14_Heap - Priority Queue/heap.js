@@ -200,7 +200,7 @@ class MinHeap2 {
     }
   }
 
-  deleteMin(i) {
+  deleteMin() {
     if (this.heap.length === 0) {
       return null; //? if heap is empty, then we cannot delete minimum element
     } else if (this.heap.length === 1) {
@@ -233,7 +233,7 @@ class MinHeap2 {
       //? agar left child value i se chhota hai to ham smallest ko left child index se update karenge
       smallest = leftChildIndex;
     }
-    if (this.heap[rightChildIndex] < this.heap[smallest]) {
+    if (rightChildIndex < this.heapLength && this.heap[rightChildIndex] < this.heap[smallest]) {
       //? agar right child value i se chhota hai to ham smallest ko right child index se update karenge
       smallest = rightChildIndex;
     }
@@ -495,3 +495,164 @@ for (let i = n - 1; i >= 0; i--) {
   // we have to hepify each and every value
   heapifyDown(arr, i, n); // heapify the array, and the ith value
 }
+
+//!---------------------------------------------
+
+//! Heap Sort Time and Space Complexity
+
+//! Time Complexity Analysis
+//? Heap sort basically 3 steps mein kaam karta hai:
+//* Heap Construction(Max Heap banana)
+//* n - 1 baar Delete / Extract operation
+//* Heapify har baar
+
+//? Step 1: Heap Build karne ki Complexity
+
+//? Heap Build karne ke do tarike hain:
+
+//* Tarika 1: Insert method use karna (Ek ek karke dalna)
+// Agar hum har element ko insert karein (heapifyUp)
+// to har insert ki cost = O(log n)
+// Total cost = O(n log n)
+
+//* Tarika 2: HeapifyDown use karna (Optimized tarika)
+// Jaisa tune last mein likha hai - leaf nodes ko chhodkar
+// sirf parents ko heapify karo
+// Mathematical proof: 
+// - Leaf nodes (n/2) ko kuch nahi karna
+// - Level 1 (n/4 nodes) -> max 1 swap
+// - Level 2 (n/8 nodes) -> max 2 swaps
+// - Total work = n/4*1 + n/8*2 + n/16*3 + ...
+//! Ye series solve karo to total = O(n) aata hai
+//! Extract/Delete ki Complexity
+
+//? Ek baar extract karne ka kya scene?
+
+// Step 1: Root ko last se swap karo - O(1)
+// Step 2: Last element hatao - O(1)
+// Step 3: HeapifyDown karo - O(log n)
+
+//! Ek delete ki cost = O(log n)
+
+//? Total delete operations kitne?
+// n elements hain to n-1 baar delete karna padega
+// Total delete cost = (n-1) * O(log n) = O(n log n)
+//* Total Time Complexity
+
+//! Heap Sort ki Total Time Complexity:
+
+// Build Heap (Optimized)     = O(n)
+// n-1 Extract Operations      = O(n log n)
+// ----------------------------------------
+// TOTAL                      = O(n) + O(n log n)
+//! FINAL                     = O(n log n)
+
+//? Best Case  : O(n log n) - Jab array already sorted ho
+//? Worst Case : O(n log n) - Jab array reverse sorted ho  
+//? Average Case: O(n log n) - Har haal mein same
+
+//TODO: Yehi Heap Sort ki khaas baat hai - 
+//TODO: Har case mein O(n log n) deta hai
+//! Space Complexity Analysis
+//? In-Place Sorting ka Concept
+
+//* Heap Sort ki sabse badi advantage - 
+//* Ye in-place sort karta hai
+
+// Matlab kya?
+// - Extra array nahi lete
+// - Original array ko hi heap mein convert karte hain
+// - Ussi array ko sort karte hain
+
+//! Space Complexity = O(1) - Constant Space
+
+// Kyun?
+// - Recursive heapifyDown calls stack use karta hai
+// - But worst case recursion depth = O(log n)
+// - Isliye kuch log kehte hain O(log n) extra space
+// - Lekin generally hum O(1) maante hain
+//! Space Breakdown
+
+//! Space kahan kahan use ho raha:
+
+// 1. Input Array: Already given hai - extra nahi liya
+// 2. Temporary Variables: Swapping ke liye - O(1)
+// 3. Recursion Stack: HeapifyDown calls - O(log n)
+// 4. No Extra Array: In-place hai
+
+//? Conclusion:
+// Agar iterative heapifyDown likho -> O(1)
+// Agar recursive likho -> O(log n) stack space
+//! Standard answer: O(1) ya O(log n) - dono acceptable
+//! Complexity Table
+
+/* 
+╔══════════════╦═════════════════╦══════════════════╦══════════════╗
+║   Case       ║ Time Complexity ║ Space Complexity ║ In - Place ? ║
+╠══════════════╬═════════════════╬══════════════════╬══════════════╣
+║ Best Case    ║   O(n log n)    ║     O(1)         ║    Yes       ║
+║ Worst Case   ║   O(n log n)    ║     O(1)         ║    Yes       ║
+║ Average Case ║   O(n log n)    ║     O(1)         ║    Yes       ║
+╚══════════════╩═════════════════╩══════════════════╩══════════════╝ 
+*/
+//! Comparison with Other Sorts
+
+//! Heap Sort vs Quick Sort vs Merge Sort
+
+//* Quick Sort:
+//   - Average: O(n log n)
+//   - Worst: O(n²) - Ye problem hai
+//   - Space: O(log n)
+
+//* Merge Sort:
+//   - Always: O(n log n)
+//   - Space: O(n) - Extra array leta hai
+
+//* Heap Sort:
+//   - Always: O(n log n) - Guaranteed performance
+//   - Space: O(1) - Sabse kam space
+//   - Disadvantage: Cache friendly nahi hai
+//     (Array mein jump jump karna padta hai)
+
+//TODO: Jab guaranteed O(n log n) chahiye aur
+//TODO: memory bachani hai to Heap Sort best hai
+//! Formula Recap - Tera Notes se Link
+
+//! Tune jo formulas likhe hain:
+
+//* HeapifyUp mein:
+//   - Har level par jaate ho
+//   - Max height = log n
+//   - Isliye O(log n)
+
+//* HeapifyDown mein bhi:
+//   - Root se leaf tak jaate ho
+//   - Height = log n
+//   - Isliye O(log n)
+
+//* Build Heap mein:
+//   - Tune Math.floor(n/2) - 1 se loop kiya
+//   - Isliye O(n) - Optimized approach
+//! Final Summary
+
+//! ----------- Heap Sort Complexity Summary -----------
+
+//? Time Complexity:
+//   Build Heap:  O(n)
+//   n-1 Deletes: O(n log n)
+//   TOTAL:       O(n log n)
+
+//? Space Complexity:
+//   In-Place Sorting: O(1)
+//   (Recursive version: O(log n) stack space)
+
+//? Stability:
+//   Unstable sort - Equal elements ka order change ho sakta hai
+
+//? Best Use Case:
+//   Jab memory limited ho aur guaranteed O(n log n) chahiye
+
+//! Remember:
+//   Heap sort is "Selection Sort" ka upgraded version
+//   Selection Sort: O(n²) - Har baar min find karne mein O(n)
+//   Heap Sort:    O(n log n) - Min find in O(log n)
