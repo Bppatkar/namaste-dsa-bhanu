@@ -203,7 +203,7 @@ var topKFrequent = function (nums, k) {
   return pq.toArray() // O(k log k) - sorting internally
     .map(el => Number(el.val));  // O(k)
 }
-/* 
+/*
 Reason Behind using of MinPQ - Min Heap smallest frequency element ko top pe rakhta hai , Isliye jab size > k hota hai, smallest frequency automatically remove ho jata hai
 
 Problem:
@@ -218,3 +218,27 @@ k = given parameter (heap size)
 m unique elements ≤ n
  */
 
+
+//!---------------------------------------
+//! 378. Kth Smallest Element in a Sorted Matrix
+//!---------------------------------------
+
+var kthSmallest = function (matrix, k) {
+  // all the elements in first column into the Minpq
+  let heap = new MinPriorityQueue(el => el.val);
+  let n = matrix[0].length;
+  for (let i = 0; i < n; i++) {
+    heap.push({ val: matrix[i][0], row: i, col: 0 });
+  }
+
+
+  // one by one find the min value is PQ and increase count till k
+  for (let count = 0; count < k - 1; count++) {
+    let { val, row, col } = heap.pop();
+    // when we take out one elem means pop , we have to add next elem if it is present
+    if (col + 1 < n)
+      heap.push({ val: matrix[row][col + 1], row: row, col: col + 1 })
+
+  }
+  return heap.pop().val;
+};
