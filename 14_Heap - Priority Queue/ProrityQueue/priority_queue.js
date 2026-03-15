@@ -53,5 +53,100 @@ KthLargest.prototype.add = function (val) {  // for add function T-Complexity is
 };
 
 //!---------------------------------------
-//! 
+//! 1046. Last Stone Weight
 //!---------------------------------------
+//? Brute force approch
+var lastStoneWeight = function (stones) {
+  // O(1) - Spread operator creates a new array of length n
+  // making copy to avoid modifying the original array
+  let stonesCopy = [...stones];
+
+  // continue until we have 0 or 1 stone left
+  while (stonesCopy.length > 1) { // O(n) iterations in worst case (n-1 times)
+
+    // find the 2 heavist stones
+    stonesCopy.sort((a, b) => b - a);  // O(n log n) sorting
+
+    // O(1) - Array access is constant time
+    let firstHeavy = stonesCopy[0];
+    let secondHeavy = stonesCopy[1];
+
+    // O(n) - splice shifts remaining elements (re-indexing)
+    // now remove the largest stones
+    stonesCopy.splice(0, 2)
+
+    // question condition
+    // if they are not equal , add the result of subtraction back
+    if (firstHeavy != secondHeavy) { // O(1) - Comparison
+      // O(1) amortized - push to end of array
+      stonesCopy.push(firstHeavy - secondHeavy);
+    }
+    // if equal, both destroyed
+  }
+
+  // O(1) - Return statement with ternary check
+  // returning the last stone weight , or 0 if no remain
+  return stonesCopy.length === 1 ? stonesCopy[0] : 0;
+};
+
+// TOTAL TIME COMPLEXITY:
+// = O(n * (n log n + n))
+// = O(n * n log n) [dominant term]
+// = O(n² log n)
+
+// BREAKDOWN:
+// - While loop runs O(n) times (n-1 iterations max)
+// - Each iteration:
+//   * sort: O(n log n)
+//   * splice: O(n)
+// - Combined per iteration: O(n log n + n) = O(n log n)
+// - Final: O(n * n log n) = O(n² log n)
+
+//! ------------------------------------------------------------
+
+//* Optimise solution
+// https://datastructures-js.info/docs/priority-queue
+//? [Optimized solution for "Last Stone Weight" using a MaxPriorityQueue. This approach reduces the time complexity from O(n² log n) (brute force with repeated sorting) to O(n log n).]
+// we use MaxPriorityQueue because MaxPriorityQueue is perfect for this because it keeps the largest element at the top, ready to be retrieved.
+var lastStoneWeight = function (stones) {
+  let pq = new MaxPriorityQueue.fromArray(stones);
+
+  while (pq.size() > 1) {
+
+    let fHeavy = pq.dequeue();
+    let sHeavy = pq.dequeue();
+
+    if (fHeavy != sHeavy) {
+      pq.enqueue(fHeavy - sHeavy);
+    }
+
+  }
+  return pq.size() === 1 ? pq.front() : 0;
+}
+
+
+var lastStoneWeight = function (stones) {
+  // MaxPriorityQueue.fromArray: O(n) - heap build
+  let pq = MaxPriorityQueue.fromArray(stones);
+
+  // while loop: maximum n-1 baar chalega
+  while (pq.size() > 1) {
+
+    // do baar dequeue: dono O(log n) each
+    let fHeavy = pq.dequeue(); // sabse bhari patthar
+    let sHeavy = pq.dequeue(); // dusra sabse bhari
+
+    // agar barabar nahi hai to substraction result wapas daalo
+    if (fHeavy != sHeavy) {
+      pq.enqueue(fHeavy - sHeavy); // O(log n)
+    }
+    // agar barabar hai to dono khatam (kuch nahi daalna)
+  }
+
+  // last bacha patthar ya 0 return
+  return pq.size() === 1 ? pq.front() : 0;
+};
+
+// Total Time Complexity: O(n log n)
+// Reason: n elements * O(log n) operations (dequeue/enqueue)
+// Better than brute force ka O(n² log n)
