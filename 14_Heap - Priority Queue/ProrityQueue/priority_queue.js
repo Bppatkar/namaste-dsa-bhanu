@@ -227,7 +227,7 @@ var kthSmallest = function (matrix, k) {
   // all the elements in first column into the Minpq
   let heap = new MinPriorityQueue(el => el.val);
   let n = matrix[0].length;
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < Math.min(n, k); i++) {
     heap.push({ val: matrix[i][0], row: i, col: 0 });
   }
 
