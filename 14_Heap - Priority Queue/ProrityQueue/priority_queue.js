@@ -35,9 +35,23 @@ var findKthLargest = function (nums, k) {
 //! 703. Kth Largest Element in a Stream
 //!---------------------------------------
 var KthLargest = function (k, nums) {
-
+  this.heap = new MinPriorityQueue();
+  this.k = k;
+  for (let i = 0; i < nums.length; i++) {
+    this.add(nums[i]);
+  }
+  return null;
 };
 
-KthLargest.prototype.add = function (val) {
-
+KthLargest.prototype.add = function (val) {  // for add function T-Complexity is O(log K) beacause max size of the heap is k
+  // and adding a element log * number of elem
+  this.heap.enqueue(val);
+  if (this.heap.size() > this.k) {
+    this.heap.dequeue();
+  }
+  return this.heap.front();
 };
+
+//!---------------------------------------
+//! 
+//!---------------------------------------

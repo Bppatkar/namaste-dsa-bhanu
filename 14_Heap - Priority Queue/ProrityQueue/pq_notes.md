@@ -158,6 +158,18 @@ Same concept PQ me apply hota hai. Heap internal mechanism hai, par bahar se hum
 
 ---
 
+---
+**Iska seedha sa matalb hai :** 
+ we can use heap data structure as an pq 
+ 
+  simple matlab hme poora sb kuch scratch s nahi likhna padega ki heap ka code scratch s banana pade, hme bane banaye method mil jayege bs use kro simple) 
+  
+  -  bharosha na h to is website par jao  https://support.leetcode.com/hc/en-us/articles/360011833974-What-are-the-environments-for-the-programming-languages 
+  - isme javascript mein - simple likha h ki leetcode particular datastrcture k liye ye cheez use kr rha h wo b bana banaya to bs use krlo simple  https://datastructures-js.info/docs/priority-queue
+---
+
+
+
 ## <span style="color:#00CED1">8️⃣ Types of Priority Queue</span>
 
 ### ⬆️ Max Priority Queue
