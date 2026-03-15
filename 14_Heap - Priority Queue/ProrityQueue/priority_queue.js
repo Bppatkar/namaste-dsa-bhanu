@@ -150,3 +150,71 @@ var lastStoneWeight = function (stones) {
 // Total Time Complexity: O(n log n)
 // Reason: n elements * O(log n) operations (dequeue/enqueue)
 // Better than brute force ka O(n² log n)
+
+
+//!---------------------------------------
+//! 347. Top K Frequent Elements
+//!---------------------------------------
+var topKFrequent = function (nums, k) {
+  let map = {}  //O(1)
+  for (let val of nums) { // O(n) ->  n = nums.length
+    map[val] = (map[val] || 0) + 1; // O(1) per iteration
+  }
+  let sortedArr = Object.entries(map) // O(m) -> m = unique elements (≤ n)
+    .sort((a, b) => b[1] - a[1]) // descending order - High to low  // O(m log m) - sorting
+    .map(el => Number(el[0]));  // returning only keys not [key, value] pair // O(m) - mapping
+
+  return sortedArr.slice(0, k) // O(k) ≤ O(m)
+};
+
+/*
+ O(n log n) - Jab saare elements unique honge (m = n)
+    Then: O(n + n log n) = O(n log n)
+*/
+
+//! Optimise solution using heap [reason to avoid sorting]  Total: O(n log k)
+var topKFrequent = function (nums, k) {
+  // Step 1: Frequency map banayo - O(n)
+  let map = {};
+  for (let val of nums) {              // O(n) times
+    map[val] = (map[val] || 0) + 1;     // O(1)
+  }
+
+  // adding element in MinPriorityQueue and restrict size to k
+  // we make sure that create my minpq based on frequency
+
+  let pq = new MinPriorityQueue(el => el.freq);  // O(1)
+
+
+  for (let key in map) {  // O(m) times, m = unique elements
+    // pushing object [in key value pair] with value and frequency both
+    pq.enqueue({ val: key, freq: map[key] }) // O(log k)
+    // restricting size to k
+    if (pq.size() > k) {    // O(1)
+      pq.dequeue();     // O(log k)
+    }
+  }
+  // Loop complexity: O(m log k) where m ≤ n
+
+  // now loop end - and minPQ has only value with heighest freq but in object, so convert back into array using 'toArray'
+  // and now we have to return only value not frequency and that value is in string not number because earlier it was obj
+  // so change string to num
+
+  return pq.toArray() // O(k log k) - sorting internally
+    .map(el => Number(el.val));  // O(k)
+}
+/* 
+Reason Behind using of MinPQ - Min Heap smallest frequency element ko top pe rakhta hai , Isliye jab size > k hota hai, smallest frequency automatically remove ho jata hai
+
+Problem:
+- Max Heap top pe sabse BADA freq element rakhta hai (6:6)
+- Hume smallest remove karna hai, lekin smallest bottom mein hai
+- Smallest tak pahuchne ke liye poora heap traverse karna padega ❌
+- Isliye Max Heap se "smallest remove" karna mushkil hai
+
+Final Time Complexity: O(n log k) 🎯
+n = array length (for frequency map)
+k = given parameter (heap size)
+m unique elements ≤ n
+ */
+
