@@ -108,15 +108,70 @@ var getIntersectionNode = function (headA, headB) {
 }
 
 //* using two pointer approch
-var getInetsectionNode = function (headA, headB) {
+var getIntesectionNode = function (headA, headB) {
   let p1 = headA, p2 = headB;
-  while (p1 != p2) {
-    if (p1 == null) p1 = headB;
-    else p1 = p1.next;
+  // while (p1 != p2) {
+  //   if (p1 == null) p1 = headB;
+  //   else p1 = p1.next;
 
-    if (p2 == null) p2 = headA;
-    else p2 = p2.next;
-  }
+  //   if (p2 == null) p2 = headA;
+  //   else p2 = p2.next;
+  // }
   // return p1
+  while (p1 != p2) {
+    p1 = p1 == null ? headB : p1.next;
+    p2 = p2 == null ? headB : p2.next;
+  }
+
   return p2;
 }
+
+//* other method
+var getIntersectionNode = function (headA, headB) {
+  let n = 0, m = 0, pA = headA, pB = headB;
+  while (pA) {
+    ++n;
+    pA = pA.next;
+  }
+  while (pB) {
+    ++m;
+    pB = pB.next;
+  }
+
+  // i want my firstlist is small, second is large
+  let diff = Math.abs(n - m);
+  if (n > m) {
+    let temp = headA;
+    headA = headB;
+    headB = temp;
+  }
+  for (let i = 0; i < diff; i++) {
+    headB = headB.next;
+  }
+
+  pA = headA;
+  pB = headB;
+
+  while (pA != pB) {
+    pA = pA.next;
+    pB = pB.next;
+  }
+  // return pA
+  return pB;
+}
+
+
+//! Leetcode - 83. Remove Duplicates from Sorted List
+
+var deleteDuplicates = function (head) {
+  let curr = head;
+
+  while (curr && curr.next) {
+    if (curr.val === curr.next.val) {
+      curr.next = curr.next.next;
+    } else {
+      curr = curr.next;
+    }
+  }
+  return head;
+};
