@@ -77,7 +77,7 @@ var isPalindrome = function (head) {
     prev = curr;
     curr = temp;
   }
-  
+
   //? curr targeting null and prev targeting last value
   // checking for palindrome
 
@@ -91,4 +91,32 @@ var isPalindrome = function (head) {
     lastNode = lastNode.next;
   }
   return true
+}
+
+//! Leetcode 160.  Intersection of Two Linked Lists
+var getIntersectionNode = function (headA, headB) {
+  let set = new Set();
+  while (headB) {
+    set.add(headB);
+    headB = headB.next;
+  }
+  while (headA) {
+    if (set.has(headA)) return headA;
+    headA = headA.next;
+  }
+  return null;
+}
+
+//* using two pointer approch
+var getInetsectionNode = function (headA, headB) {
+  let p1 = headA, p2 = headB;
+  while (p1 != p2) {
+    if (p1 == null) p1 = headB;
+    else p1 = p1.next;
+
+    if (p2 == null) p2 = headA;
+    else p2 = p2.next;
+  }
+  // return p1
+  return p2;
 }

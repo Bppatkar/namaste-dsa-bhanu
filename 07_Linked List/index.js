@@ -50,10 +50,6 @@ MyLinkedList.prototype.get = function (index) {
   return current.val;
 };
 
-/**
- * @param {number} val
- * @return {void}
- */
 MyLinkedList.prototype.addAtHead = function (val) {
   let newNode = new Node(val);
 
@@ -62,10 +58,6 @@ MyLinkedList.prototype.addAtHead = function (val) {
   this.size++;
 };
 
-/**
- * @param {number} val
- * @return {void}
- */
 MyLinkedList.prototype.addAtTail = function (val) {
   let newNode = new Node(val);
   let current = this.head;
@@ -79,11 +71,7 @@ MyLinkedList.prototype.addAtTail = function (val) {
   this.size++;
 };
 
-/**
- * @param {number} index
- * @param {number} val
- * @return {void}
- */
+
 MyLinkedList.prototype.addAtIndex = function (index, val) {
   if (index < 0 || index > this.size) return;
   let newNode = new Node(val);
@@ -104,10 +92,7 @@ MyLinkedList.prototype.addAtIndex = function (index, val) {
   }
 };
 
-/**
- * @param {number} index
- * @return {void}
- */
+
 MyLinkedList.prototype.deleteAtIndex = function (index) {
   if (index < 0 || index >= this.size) return;
   if (index === 0) {
@@ -227,10 +212,7 @@ var hasCycle1 = function (head) {
 };
 
 //! Leetcode 234. Palindrome Linked List
-/*
- * @param {ListNode} head
- * @return {boolean}
- */
+
 //* approch 1 - conver linked list to an array and check it is palindrome
 //? Time complexity: O(n)
 //? Space complexity: O(n) (due to the array storage)
@@ -291,11 +273,7 @@ var isPalindrome1 = function (head) {
 };
 
 //! Leetcode 160. Intersection of Two Linked Lists
-/**
- * @param {ListNode} headA
- * @param {ListNode} headB
- * @return {ListNode}
- */
+
 var getIntersectionNode = function (headA, headB) {
   let newSet = new Set();
   while (headB) {
@@ -310,18 +288,7 @@ var getIntersectionNode = function (headA, headB) {
 };
 
 //! 203. Remove Linked List Elements
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} val
- * @return {ListNode}
- */
+
 var removeElements = function (head, val) {
   //? sentinel - a soldier or guard whose job is to stand and keep watch.
   let sentinel = new ListNode();
@@ -340,18 +307,7 @@ var removeElements = function (head, val) {
 };
 
 //! 19. Remove Nth Node From End of List
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} n
- * @return {ListNode}
- */
+
 //* Approch 1
 var removeNthFromEnd = function (head, n) {
   let sentinel = new ListNode();
@@ -394,17 +350,7 @@ var removeElements1 = function (head, n) {
 };
 
 //! Leetcode - 83. Remove Duplicates from Sorted List
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
+
 var deleteDuplicates = function (head) {
   let curr = head;
 
