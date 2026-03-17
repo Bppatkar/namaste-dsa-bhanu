@@ -296,3 +296,69 @@ var maxFreqSum1 = function (s) {
   }
   return vMax + cMax;
 }
+
+//? [Fixed Size Array (Constant Space) Approach]
+/* 
+ we are using a fixed size frequency array of length 26 since the input contains only lowercase English letters. This gives us constant space complexity O(1) and linear time O(n).
+*/
+
+var maxFreqSum2 = function (s) {
+  let freqArr = new Array(26).fill(0);
+
+  let vMax = 0, cMax = 0;
+
+  // frequency count
+  for (let i = 0; i < s.length; i++) {
+    let index = s.charCodeAt(i) - 97; // 'a' = 97 so 'a' ka index 0
+    freqArr[index]++;
+  }
+  // now checking frequency of every letter
+  for (let i = 0; i < 26; i++) {
+
+    if (freqArr[i] === 0) continue; // a letter is not in string
+
+    let char = String.fromCharCode(i + 97);
+
+    // check vowel or consonants
+    if (char === 'a' || char === 'e' || char === 'i' || char === 'o' || char === 'u') {
+      vMax = Math.max(vMax, freqArr[i]);
+    }
+    else {
+      cMax = Math.max(cMax, freqArr[i]);
+    }
+  }
+  return vMax + cMax;
+}
+
+/*
+Time & Space Complexity Comparison
+
+Approach              | Time Complexity | Space Complexity | Efficiency
+----------------------|-----------------|------------------|------------------
+maxFreqSum (Nested)   | O(n * 26) ≈ O(n)| O(k) [unique]    | ❌ Least Efficient
+maxFreqSum1 (includes)| O(n + u*5) ≈ O(n)| O(u) [unique]   | ✅ Better
+maxFreqSum2 (Fixed)   | O(n + 26) = O(n) | O(26) = O(1)     | 🏆 Most Efficient
+
+n = string length
+k = number of unique chars in nested approach
+u = number of unique chars in includes approach
+
+✅ maxFreqSum2 sabse efficient hai because:
+   1. Fixed array size (26) → Constant space O(1)
+   2. No nested loops → Fast execution
+   3. Direct index access → No includes() check overhead
+*/
+
+//! Leetcode 125. Valid Palindrome
+var isPalindrome = function (s) {
+  s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  let left = 0, right = s.length - 1;
+  for (let i = 0; i < s.length; i++) {
+    if (s[left] !== s[right]) {
+      return false;
+    }
+    left++;
+    right--;
+  }
+  return true;
+}
