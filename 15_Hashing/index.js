@@ -203,3 +203,96 @@ var findWordsContaining = function (words, x) {
   }
   return arr;
 };
+
+//! Leetcode - 771.  Jewels and Stones
+//? using builtin method
+var numJewelsInStones = function (jewels, stones) {
+  let count = 0;
+  for (let i = 0; i < stones.length; i++) {
+    if (jewels.includes(stones[i])) count++;
+  }
+  return count;
+};
+
+//? without usign builtin method
+var numJewelsInStones = function (jewels, stones) {
+  let count = 0;
+  for (let i = 0; i < stones.length; i++) {
+    for (let j = 0; j < jewels.length; j++) {
+      if (stones[i] === jewels[j]) count++;
+    }
+  }
+  return count;
+}
+
+//? using hashing
+var numJewelsInStones = function (jewels, stones) {
+  let set = new Set(jewels);
+  console.log(set)
+  let count = 0;
+  for (let i = 0; i < stones.length; i++) {
+    if (set.has(stones[i])) count++;
+  }
+  return count;
+}
+
+//! Leetcode 3541. Find Most Frequent Vowel and Consonant
+var maxFreqSum = function (s) {
+  let vowels = ['a', 'e', 'i', 'o', 'u'];
+  let consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',];
+
+  let vCount = {}, cCount = {}, vMax = 0, cMax = 0;
+
+  for (let i = 0; i < s.length; i++) {
+    let flag = false;
+
+
+    for (let j = 0; j < vowels.length; j++) {
+      if (vowels[j] === s[i]) {
+        vCount[s[i]] = (vCount[s[i]] || 0) + 1;
+        // console.log('vCount hash and vCount[s[i]]',vCount,vCount[s[i]]);
+        // finding maximum
+        if (vCount[s[i]] > vMax) vMax = vCount[s[i]];
+        flag = true;
+        break;
+      }
+    }
+
+    // flag flase means 'nothing in vowels'
+    if (!flag) {
+      for (let k = 0; k < consonants.length; k++) {
+        if (consonants[k] == s[i]) {
+          cCount[s[k]] = (cCount[s[k]] || 0) + 1;
+          // console.log('cCount Hash cCount[s[i]]',cCount, cCount[s[i]]);
+          if (cCount[s[k]] > cMax) cMax = cCount[s[k]];
+          break;
+        }
+      }
+    }
+  }
+
+  console.log('vmax', vMax)
+  console.log('cmax', cMax)
+  return vMax + cMax
+};
+
+//? using builtIn method [includes, math.min()]
+var maxFreqSum1 = function (s) {
+  let map = {}, vowels = ['a', 'e', 'i', 'o', 'u'], vMax = 0, cMax = 0;
+
+  for (let i = 0; i < s.length; i++) {
+    map[s[i]] = (map[s[i]] || 0) + 1;
+  }
+
+  let mapKeys = Object.keys(map)
+  // running loop on keys not the whole string
+
+  for (let i = 0; i < mapKeys.length; i++) {
+    if (vowels.includes(mapKeys[i])) {
+      vMax = Math.max(map[mapKeys[i]], vMax);
+    } else {
+      cMax = Math.max(map[mapKeys[i]], cMax);
+    }
+  }
+  return vMax + cMax;
+}

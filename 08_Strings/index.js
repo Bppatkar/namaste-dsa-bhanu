@@ -84,13 +84,15 @@ var findWordsContaining2 = function (words, x) {
 
 //! Leetcode 771. Jewels and Stones
 //! Using Built In Method
-// var numJewelsInStones = function (jewels, stones) {
-//   let count = 0;
-//   for (let i = 0; i < stones.length; i++) {
-//     if (jewels.includes(stones[i])) count++;
-//   }
-//   return count;
-// };
+var numJewelsInStones = function (jewels, stones) {
+  let count = 0;
+  for (let i = 0; i < stones.length; i++) {
+    if (jewels.includes(stones[i])) count++;
+  }
+  return count;
+};
+
+
 //! Without Built In Method
 var numJewelsInStones = function (jewels, stones) {
   let count = 0;
@@ -101,6 +103,7 @@ var numJewelsInStones = function (jewels, stones) {
   }
   return count;
 };
+
 //! More Optimise Approch using - HashMap or Set()
 var numJewelsInStones = function (jewels, stones) {
   let jSet = new Set();
@@ -122,29 +125,7 @@ var numJewelsInStones = function (jewels, stones) {
 //! Leetcode 3541. Find Most Frequent Vowel and Consonant
 var maxFreqSum = function (s) {
   let vowels = ['a', 'e', 'i', 'o', 'u'];
-  let consonants = [
-    'b',
-    'c',
-    'd',
-    'f',
-    'g',
-    'h',
-    'j',
-    'k',
-    'l',
-    'm',
-    'n',
-    'p',
-    'q',
-    'r',
-    's',
-    't',
-    'v',
-    'w',
-    'x',
-    'y',
-    'z',
-  ];
+  let consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',];
 
   let vCount = {},
     cCount = {},
