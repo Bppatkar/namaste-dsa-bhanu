@@ -363,4 +363,149 @@ var isPalindrome = function (s) {
   return true;
 }
 
-//! Leetcode 125. Valid Palindrome
+//! Leetcode 242. Valid Anagram
+var isAnagram = function (s, t) {
+  if (s.length != t.length) return false;
+  let obj = {};
+
+  for (let i = 0; i < s.length; i++) {
+    obj[s[i]] = (obj[s[i]] || 0) + 1;
+  }
+  for (let i = 0; i < t.length; i++) {
+    if (!obj[t[i]]) return false;
+    --obj[s[i]];
+  }
+  // checking if all counts are zero
+  for (let char in obj) {
+    // console.log(char)
+    // console.log(obj[char])
+    if (obj[char] != 0) return false;
+  }
+  return true;
+}
+
+//? using hash
+var isAnagram1 = function (s, t) {
+  if (s.length != t.length) return false;
+  let map = new Map();
+  for (let ch of s) map.set(ch, (map.get(ch) || 0) + 1);
+  for (let ch of t) {
+    if (!map.get(ch)) return false;
+    map.set(ch, map.get(ch) - 1);
+  }
+  return true;
+  /* 
+  if (s.length != t.length) return false;
+    let map = new Map();
+
+    for (let i = 0; i < s.length; i++) {
+        let ch = s[i]
+        map.set(ch, (map.get(ch) || 0) + 1);
+    }
+    console.log('after s', map);
+    for (let i = 0; i < t.length; i++) {
+        let char = t[i];
+        if (!map.has(char)) return false;
+
+        let count = map.get(char);
+        if (count === 1) {
+            map.delete(char);
+        } else {
+            map.set(char, count - 1);
+        }
+    }
+    console.log('after t', map);
+
+    return map.size === 0;
+  */
+}
+
+//? using fixed size array
+var isAnagram2 = function (s, t) {
+  if (s.length !== t.length) return false;
+
+  let count = new Array(26).fill(0);
+
+  // Count characters in s, decrement using t
+  for (let i = 0; i < s.length; i++) {
+    count[s.charCodeAt(i) - 97]++;
+    count[t.charCodeAt(i) - 97]--;
+  }
+
+  // Check all zeros
+  for (let i = 0; i < 26; i++) {
+    if (count[i] !== 0) return false;
+  }
+
+  return true;
+};
+
+//? Built in method
+var isAnagram3 = function (s, t) {
+  if (s.length != t.length) return false;
+  // sort is array method , so convert into array, sort -> string 
+  return s.split('').sort().join('') === t.split('').sort().join('')
+};
+
+/*
+Time & Space Complexity Comparison
+
+Approach              | Time Complexity | Space Complexity | Efficiency
+----------------------|-----------------|------------------|------------------
+isAnagram (Object)    | O(n)            | O(n) [unique]    | ✅ Better
+isAnagram1 (Map)      | O(n)            | O(n) [unique]    | ✅ Better
+isAnagram2 (Fixed)    | O(n)            | O(26) = O(1)     | 🏆 Most Efficient
+isAnagram3 (Sort)     | O(n log n)      | O(n)             | ❌ Least Efficient
+
+n = string length
+
+🏆 isAnagram2 sabse efficient hai:
+   - Time: O(n) - ek hi loop mein count and decrement
+   - Space: O(1) - fixed array of 26 characters
+   
+❌ isAnagram3 sabse slow hai:
+   - Time: O(n log n) - sorting ki wajah se
+   - Space: O(n) - new arrays create hote hain
+*/
+
+//! Leetcode 205. Isomorphic Strings
+var isIsomorphic = function (s, t) {
+  if (s.length != t.length) return false;
+
+  let charS = new Map(), charT = new Map();
+  for (let i = 0; i < s.length; i++) {
+    let chS = s[i], chT = t[i];
+
+    if (charS.has(chS)) {
+      if (charS.get(chS) != chT) return false;
+    }
+    else charS.set(chS, chT)
+
+    if (charT.has(chT)) {
+      if (charT.get(chT) != chS) return false;
+    }
+    else charT.set(chT, chS)
+  }
+  return true;
+}
+
+
+var isIsomorphic = function (s, t) {
+  let mapStoT = {}
+  let mapTtoS = {}
+  for (let i = 0; i < s.length; i++) {
+    if (!mapStoT[s[i]] && !mapTtoS[t[i]]) {
+      mapStoT[s[i]] = t[i];
+      mapTtoS[t[i]] = s[i];
+    } else if (mapTtoS[t[i]] !== s[i] || mapStoT[s[i]] !== t[i]) return false;
+  }
+  return true;
+};
+
+// let s = "egg", t = "add" // true
+// let s = "f11", t = "b23" // false
+// let s = "paper", t = "title" // true
+// console.log(isIsomorphic(s, t))
+
+
+
