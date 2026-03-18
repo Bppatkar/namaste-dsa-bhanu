@@ -362,3 +362,5 @@ var isPalindrome = function (s) {
   }
   return true;
 }
+
+//! Leetcode 125. Valid Palindrome
