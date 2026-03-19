@@ -406,7 +406,7 @@ var isIsomorphic = function (s, t) {
 //     // if (!obj[sortedStrs]) obj[sortedStrs] = [strs[i]];
 //     // else obj[sortedStrs].push(strs[i])
 //   }
-//   return [...Object.values(obj)]
+//   return Object.values(obj)
 // };
 
 //! More Optimise solution  T -[O(n * m)] S - [O(n*m)]

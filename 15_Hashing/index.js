@@ -473,6 +473,7 @@ var isIsomorphic = function (s, t) {
   if (s.length != t.length) return false;
 
   let charS = new Map(), charT = new Map();
+
   for (let i = 0; i < s.length; i++) {
     let chS = s[i], chT = t[i];
 
@@ -491,6 +492,8 @@ var isIsomorphic = function (s, t) {
 
 
 var isIsomorphic = function (s, t) {
+  if (s.length != t.length) return false;
+
   let mapStoT = {}
   let mapTtoS = {}
   for (let i = 0; i < s.length; i++) {
@@ -502,10 +505,63 @@ var isIsomorphic = function (s, t) {
   return true;
 };
 
-// let s = "egg", t = "add" // true
-// let s = "f11", t = "b23" // false
-// let s = "paper", t = "title" // true
-// console.log(isIsomorphic(s, t))
+//? more optimise one - T- O(n) and S- o(1)
+var isIsomorphic = function (s, t) {
+  if (s.length != t.length) return false;
+
+  let arrS = new Array(256).fill(0);
+  let arrT = new Array(256).fill(0);
+
+  for (let i = 0; i < s.length; i++) {
+    let chS = s.charCodeAt(i);
+    let chT = t.charCodeAt(i);
+
+    if (arrS[chS] != arrT[chT]) return false;
+
+    arrS[chS]++;
+    arrT[chT]++;
+  }
+  return true;
+}
+
+//! Leetcode 49. Group Anagrams
+var groupAnagrams = function (strs) {
+
+  let obj = {};
+
+  for (let i = 0; i < strs.length; i++) { // T-O(n)
+    let sortedStr = strs[i].split('').sort().join(''); // T-O(mlogm)
+    if (!obj[sortedStr]) {
+      obj[sortedStr] = [strs[i]];
+    } else {
+      obj[sortedStr].push(strs[i])
+    }
+  }
+  return Object.values(obj)
+}; // T-O(n*mlogm) S-O(n*m)
+
+//! More Optimise solution  T -[O(n * m)] S - [O(n*m)]
+// only remove sorting
+var groupAnagrams1 = function (strs) {
+  let obj = {};
+  for (let i = 0; i < strs.length; i++) {
+    let freqArr = new Array(26).fill(0);
+    let s = strs[i];
 
 
+    for (let j = 0; j < s.length; j++) {
+      let index = s[j].charCodeAt() - 97;
+      ++freqArr[index]
+    }
 
+    let key = '';
+
+    for (let k = 0; k < 26; k++) {
+      key += String.fromCharCode(k) + freqArr[k];
+      // console.log(String.fromCharCode(k) , freqArr[k])
+    }
+    if (!obj[key]) obj[key] = [s];
+    else obj[key].push(s)
+  }
+  return Object.values(obj)
+}
