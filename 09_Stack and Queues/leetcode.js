@@ -531,7 +531,6 @@ var nextGreaterElement = function (nums1, nums2) {
     }
     stack.push(nums2[i]);
   }
-
   return nums1.map(e => ngE[e]);
 }
 //! More Short

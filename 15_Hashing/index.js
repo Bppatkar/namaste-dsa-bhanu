@@ -558,10 +558,112 @@ var groupAnagrams1 = function (strs) {
 
     for (let k = 0; k < 26; k++) {
       key += String.fromCharCode(k) + freqArr[k];
-      // console.log(String.fromCharCode(k) , freqArr[k])
+      console.log(String.fromCharCode(k), freqArr[k])
     }
     if (!obj[key]) obj[key] = [s];
     else obj[key].push(s)
   }
   return Object.values(obj)
 }
+
+
+//! Leetcode 496. Next Greater Element I
+var nextGreaterElement = function (nums1, nums2) {
+  // my thinking
+  // firstly we find the NGE of each in nums2 
+  // jo bhi nums1 mein value h uska ans nums2 m find krke array m put krke nums1 ki length ka array return
+
+  // step 1
+  let map = {};
+  for (let i = 0; i < nums2.length; i++) {
+    let found = false;
+    for (let j = i + 1; j < nums2.length; j++) {
+      if (nums2[i] < nums2[j]) {
+        map[nums2[i]] = nums2[j];
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      map[nums2[i]] = -1
+    }
+  }
+
+  // step 2
+  let arr = [];
+  for (let i = 0; i < nums1.length; i++) {
+    arr.push(map[nums1[i]])
+  }
+
+  return arr;
+}
+//! just optimized one  
+var nextGreaterElement1 = function (nums1, nums2) {
+  let stack = [], map = {};
+  let n = nums2.length - 1;
+
+  stack.push(nums2[n]);
+  map[nums2[n]] = -1;
+
+  for (let i = n - 1; i >= 0; i--) {
+    let top = stack[stack.length - 1];
+
+    if (nums2[i] < top) map[nums2[i]] = top;
+    else {
+      while (stack.length) {
+        if (top < nums2[i]) stack.pop();
+        else {
+          map[nums2[i]] = top;
+          break;
+        }
+      }
+      if (stack.length === 0) map[nums2[i]] = -1;
+    }
+    stack.push(nums2[i])
+  }
+
+  let ans = [];
+  for (let i = 0; i < nums1.length; i++) {
+    ans.push(map[nums1[i]])
+  }
+  return ans
+}
+
+//! [we are checking same condition two times 1-[if] 2- inside while [if] , so removing some extra code]
+var nextGreaterElement2 = function (nums1, nums2) {
+  let stack = [], map = {};
+  let n = nums2.length - 1;
+
+  stack.push(nums2[n]);
+  map[nums2[n]] = -1;
+
+  for (let i = n - 1; i >= 0; i--) {
+    while (stack.length) {
+      if (stack[stack.length - 1] < nums2[i]) stack.pop();
+      else {
+        map[nums2[i]] = stack[stack.length - 1];
+        break;
+      }
+      if (stack.length === 0) map[nums2[i]] = -1;
+    }
+    stack.push(nums2[i]);
+  }
+  return nums1.map(e => map[e])
+}
+
+//! more sort
+var nextGreaterElement2 = function (nums1, nums2) {
+  let stack = [], map = {};
+  for (let i = nums2.length - 1; i >= 0; i--) {
+    while (stack.length && stack[stack.length - 1] < nums2[i]) stack.pop();
+    map[nums2[i]] = stack.length ? stack[stack.length - 1] : -1;
+    stack.push(nums2[i]);
+  }
+  return nums1.map(e => map[e]);
+}
+
+
+// let nums1 = [2, 4], nums2 = [1, 2, 3, 4] //  [3,-1]
+let nums1 = [4, 1, 2], nums2 = [1, 3, 4, 2] // [-1,3,-1]
+// let nums1 = [4, 1, 2], nums2 = [1, 5, 0, 3, 4, 9, 2, 6, 8]
+console.log(nextGreaterElement2(nums1, nums2))
