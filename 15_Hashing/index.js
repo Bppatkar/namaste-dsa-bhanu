@@ -662,8 +662,13 @@ var nextGreaterElement2 = function (nums1, nums2) {
   return nums1.map(e => map[e]);
 }
 
-
-// let nums1 = [2, 4], nums2 = [1, 2, 3, 4] //  [3,-1]
-let nums1 = [4, 1, 2], nums2 = [1, 3, 4, 2] // [-1,3,-1]
-// let nums1 = [4, 1, 2], nums2 = [1, 5, 0, 3, 4, 9, 2, 6, 8]
-console.log(nextGreaterElement2(nums1, nums2))
+//! Leetcode 167. Two sum II - Input array is sorted
+var twoSum = function (nums, target) {
+  let left = 0, right = nums.length - 1;
+  while (left != right) {
+    let sum = nums[left] + nums[right]
+    if (sum < target) ++left;
+    else if (sum > target) --right;
+    else { return [left + 1, right + 1] }
+  }
+}
