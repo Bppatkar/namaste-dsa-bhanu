@@ -675,7 +675,7 @@ var twoSum = function (nums, target) {
 
 //! Leetcode 28. Find the Index of the First Occurrence in a String
 //* T- O(n*m) S- O(1)
-var strStr = function (haystack, needle) {
+var strSt = function (haystack, needle) {
   let i, j, hl = haystack.length, nl = needle.length;
   for (i = 0; i < hl - nl; i++) {
     for (j = 0; j < nl; j++) {
@@ -690,20 +690,48 @@ var strStr = function (haystack, needle) {
 //TODO - It is a String search algorithm [search string in big string]
 //? Concept: LPS (Longest Proper Prefix which is also Suffix)
 /* 
-Proper prefix: Prefix jo poora string nahi hai
+Proper prefix: Prefix jo poora string nahi hai - means same wahi string jo given h wahi ka wahi prefix nahi ho skta
 Suffix: Ending part
  */
+const strStr = function (haystack, needle) {
+  let i = 0, j = 0, hl = haystack.length, nl = needle.length, lps = calculateLPS(needle);
+  if (nl === 0) return 0;
+  while (i < hl) {
+    if (haystack[i] === needle[j]) {
+      i++, j++;
+    } else {
+      if (j != 0) j = lps[j - 1];
+      else i++;
+    }
+    if (j === nl) return i - nl;
+  }
+  return -1;
+}
 
+
+const calculateLPS = function (needle) {
+  let i = 1, j = 0;
+  let lps = new Array(needle.length).fill(0);
+  while (i < needle.length) {
+    if (needle[j] === needle[i]) {
+      lps[i] = j + 1;
+      i++, j++;
+    } else {
+      if (j != 0) j = lps[j - 1]
+      else i++;
+    }
+  }
+  return lps;
+}
 
 // console.log(calculateLPS('aabaaac'))
 // console.log(calculateLPS('onions'))
-/*
 
+/*
 i:     0  1  2  3  4  5  6
 char:  a  a  b  a  a  a  c
 LPS:   0  1  0  1  2  2  0
  */
-
 
 console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
 console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
