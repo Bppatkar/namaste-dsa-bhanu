@@ -672,3 +672,39 @@ var twoSum = function (nums, target) {
     else { return [left + 1, right + 1] }
   }
 }
+
+//! Leetcode 28. Find the Index of the First Occurrence in a String
+//* T- O(n*m) S- O(1)
+var strStr = function (haystack, needle) {
+  let i, j, hl = haystack.length, nl = needle.length;
+  for (i = 0; i < hl - nl; i++) {
+    for (j = 0; j < nl; j++) {
+      if (haystack[i + j] !== needle[j]) break;
+    }
+    if (j === nl) return i;
+  }
+  return -1;
+}
+
+//! KMP-[Knuth Morris Pratt Algorithm] Approch for better time and space complexity
+//TODO - It is a String search algorithm [search string in big string]
+//? Concept: LPS (Longest Proper Prefix which is also Suffix)
+/* 
+Proper prefix: Prefix jo poora string nahi hai
+Suffix: Ending part
+ */
+
+
+// console.log(calculateLPS('aabaaac'))
+// console.log(calculateLPS('onions'))
+/*
+
+i:     0  1  2  3  4  5  6
+char:  a  a  b  a  a  a  c
+LPS:   0  1  0  1  2  2  0
+ */
+
+
+console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
+console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
+console.log(strStr(haystack = "hello", needle = "ll")); // 2
