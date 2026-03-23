@@ -182,7 +182,7 @@ n = 1,000,000 → log₂(10^6) ≈ 20 steps!
 
 ---
 
-## 2.3 Tین Subtypes — Templates Ke Saath
+## 2.3 - 3 Subtypes — Templates Ke Saath
 
 ### Subtype 1: Classic — Exact Value Dhundho
 

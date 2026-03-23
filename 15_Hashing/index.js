@@ -766,25 +766,25 @@ const findPermutations = (str) => {
   for (let i = 0; i < str.length; i++) {
     let char = str[i];
     let remainingChar = str.slice(0, i) + str.slice(i + 1, str.length);
-    // console.log(remainingChar)
+    console.log('remanining char',remainingChar)
 
     // Recursively get permutations of remaining characters
     let remainingPermutations = findPermutations(remainingChar);
-    console.log(remainingPermutations)
+    console.log('remaining permutations',remainingPermutations)
 
     for (let perm of remainingPermutations) {
       permutationArray.push(char + perm)
     }
-    // console.log(permutationArray)
+    console.log('array created',permutationArray)
   }
   return permutationArray;
 }
 
-// console.log(findPermutations('abc'))
+console.log(findPermutations('abc'))
 
-console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
-console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
-console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+// console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
 
 
 //! Leetcode 3. Longest Substring Without Repeating Characters 
