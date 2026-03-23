@@ -308,3 +308,168 @@ var trap = function (height) {
 
 console.log(trap(height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])) // Output: 6
 console.log(trap(height = [4, 2, 0, 3, 2, 5])) // Output: 9
+
+
+// ----------------------------------------------------
+//! Leetcode 3. Longest Substring Without Repeating Characters 
+// ----------------------------------------------------
+//! We use Sliding window concept for 
+//* subarray/substring?
+//*   ├─ Continuous elements
+
+var lengthOfLongestSubstring = function (s) {
+  let map = {};
+  let i = 0, max = 0, j = 0;
+  while (j < s.length) {
+    // If char is inside map and inside the current window , move i pointer
+    if (map[s[j]] != undefined && map[s[j]] >= i) i = map[s[j]] + 1;
+    map[s[j]] = j; // Update index of current char
+    max = Math.max(max, j - i + 1);
+    j++;
+  }
+  return max;
+};
+// console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+// console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+
+// ----------------------------------------------------
+//! Leetcode 424. Longest Repeating Character Replacement
+// ----------------------------------------------------
+
+var characterReplacement = function (s, k) {
+  let i = 0, j = 0, maxWindow = 0;
+  let map = {};
+  map[s[0]] = 1;
+  while (j < s.length) {
+    if (iswindowValid(map, k)) {
+      // update the map means add in the map and inrease the window on right
+      // finding the max value before moving window on right
+      maxWindow = Math.max(maxWindow, j - i + 1);
+      // update the pointer first
+      ++j;
+      // then updating the map
+      map[s[j]] = !map[s[j]] ? 1 : ++map[s[j]];
+    }
+    else {
+      // decrease window from left and update the map
+      // here firstly update the map then move the pointer
+      --map[s[i]];
+      i++;
+    }
+  }
+  return maxWindow;
+};
+
+var iswindowValid = function (map, k) {
+  // in constraints  - mentioned that s contains only english uppercase character means only 26 char
+  let totalCount = 0;
+  let maxCount = 0;
+  for (let i = 0; i < 26; i++) {
+    let char = String.fromCharCode(i + 65);
+    if (map[char]) {
+      totalCount += map[char];
+      maxCount = Math.max(maxCount, map[char])
+    }
+  }
+  return (totalCount - maxCount <= k);
+}
+//! We can do same thing using array without using map
+var characterReplacement = function (s, k) {
+  let i = 0, j = 0, maxWin = 0;
+  let map = new Array(26).fill(0);
+  map[s.charCodeAt(0) - 65] = 1;
+  console.log(map);
+  while (j < s.length) {
+    if (isValidWin(map, k)) {
+      maxWin = Math.max(maxWin, j - i + 1)
+      j++;
+      ++map[s.charCodeAt(j) - 65];
+    }
+    else {
+      --map[s.charCodeAt(i) - 65];
+      i++;
+    }
+  }
+  return maxWin;
+};
+
+var isValidWin = function (map, k) {
+  let maxCount = 0, totalCount = 0;
+  for (let i = 0; i < 26; i++) {
+    totalCount += map[i];
+    maxCount = Math.max(maxCount, map[i]);
+  }
+  return (totalCount - maxCount <= k)
+}
+
+
+// console.log(characterReplacement(s = "ABAB", k = 2)) //Output: 4
+// console.log(characterReplacement(s = "AABABBA", k = 1)) //Output: 4
+// console.log(characterReplacement(s = "AABEAFAABEAFA", k = 2)) //Output: 5
+
+// ----------------------------------------------------
+//! Leetcode 567. Permutation in String
+// ----------------------------------------------------
+var checkInclusion = function (s1, s2) {
+  let hashS = Array(26).fill(0)
+  let hashW = Array(26).fill(0);
+
+  let windowLength = s1.length;
+
+  for (let i = 0; i < windowLength; i++) {
+    ++hashS[s1.charCodeAt(i) - 97];
+    ++hashW[s2.charCodeAt(i) - 97];
+  }
+
+  let i = 0, j = windowLength - 1;
+
+  while (j < s2.length) {
+    if (hashSame(hashS, hashW)) { return true; }
+    else {
+      --hashW[s2.charCodeAt(i) - 97]
+      ++i;
+      ++j;
+      ++hashW[s2.charCodeAt(j) - 97]
+    }
+  }
+  return false;
+};
+
+var hashSame = function (hashW, hashS) {
+  for (let i = 0; i < 26; i++) {
+    if (hashS[i] !== hashW[i]) return false
+  }
+  return true;
+}
+
+console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: tru
+
+
+// ----------------------------------------------------
+//! Leetcode 239. Sliding Window Maximum
+// ----------------------------------------------------
+var maxSlidingWindow = function (nums, k) {
+  let i = j = 0;
+  let result = [], q = [];
+  while (j < nums.length) {
+    while (q.length && nums[j] > q[q.length - 1]) {
+      q.pop();
+    }
+
+    q.push(nums[j]);
+
+    if (j >= k - 1) {
+      result.push(q[0]);
+      nums[i] === q[0] && q.shift();
+      ++i;
+    }
+    j++;
+  }
+  return result;
+};
+
+// console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
+// console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]

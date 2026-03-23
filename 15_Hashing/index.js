@@ -733,6 +733,69 @@ char:  a  a  b  a  a  a  c
 LPS:   0  1  0  1  2  2  0
  */
 
-console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
-console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
-console.log(strStr(haystack = "hello", needle = "ll")); // 2
+// console.log(strStr(haystack = "sadbutsad", needle = "sad")); // 0
+// console.log(strStr(haystack = "leetcode", needle = "leeto")); // -1
+// console.log(strStr(haystack = "hello", needle = "ll")); // 2
+
+//! Leetcode 567. Permutation in string
+//* whenever see any question regarding subarray/substring always try to think about sliding window 
+//? 3 approaches:
+//? 1) Brute Force - har window pe permutation generate karke check karna [O(n! × m)] - very bad
+//? 2) Sorting - har window ko sort karke compare karna [O((n-m+1) × m log m)] - decent but slow
+//? 3) Frequency Array - 26 size ka array, sliding window se maintain karke compare [O(n)] - best
+
+var checkInclusion = function (s1, s2) {
+  // s1 k all permutation generate krna and s2 mein indexof s search krna
+  // mila to true , else false
+  if (s1.length > s2.length) return false;
+
+  // generating s1 all permutation
+  let perm = findPermutations(s1);
+  // s2 m checking
+  for (let p of perm) {
+    if (s2.includes(p)) return true;
+  }
+
+  return false
+}
+const findPermutations = (str) => {
+  if (str.length === 0) return [''];
+
+  let permutationArray = [];
+
+  for (let i = 0; i < str.length; i++) {
+    let char = str[i];
+    let remainingChar = str.slice(0, i) + str.slice(i + 1, str.length);
+    // console.log(remainingChar)
+
+    // Recursively get permutations of remaining characters
+    let remainingPermutations = findPermutations(remainingChar);
+    console.log(remainingPermutations)
+
+    for (let perm of remainingPermutations) {
+      permutationArray.push(char + perm)
+    }
+    // console.log(permutationArray)
+  }
+  return permutationArray;
+}
+
+// console.log(findPermutations('abc'))
+
+console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+
+
+//! Leetcode 3. Longest Substring Without Repeating Characters 
+var lengthOfLongestSubstring = function (s) {
+
+}
+// console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+// console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+
+//! Leetcode 239. Sliding Window Maximum
+var maxSlidingWindow = function (nums, k) { }
+// console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
+// console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
