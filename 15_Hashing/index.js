@@ -744,7 +744,7 @@ LPS:   0  1  0  1  2  2  0
 //? 2) Sorting - har window ko sort karke compare karna [O((n-m+1) × m log m)] - decent but slow
 //? 3) Frequency Array - 26 size ka array, sliding window se maintain karke compare [O(n)] - best
 
-var checkInclusion1 = function (s1, s2) {
+var checkInclusion = function (s1, s2) {
   // s1 k all permutation generate krna and s2 mein indexof s search krna
   // mila to true , else false
   if (s1.length > s2.length) return false;
@@ -802,6 +802,44 @@ var checkInclusion = function (s1, s2) {
     if (sortedWindow === sortedS1) return true;
   }
   return false;
+}
+
+//? Frequency Array
+var checkInclusion = function (s1, s2) {
+  if (s1.length > s2.length) return false;
+
+  // 26 size k 2 array for s1 and s2
+  let arrS1 = new Array(26).fill(0);
+  let arrS2 = new Array(26).fill(0);
+  let winSize = s1.length;
+
+
+  const getIndex = (ch) => ch.charCodeAt() - 97;
+
+  // s1 ka frequency count aur s2 ka pehla window ka freq count ek saath 
+  for (let i = 0; i < winSize; i++) {
+    arrS1[getIndex(s1[i])]++;
+    arrS2[getIndex(s2[i])]++;
+  }
+
+  // check first window
+  if (isEqual(arrS1, arrS2)) return true;
+  
+  // window slide
+  for (let i = winSize; i < s2.length; i++) {
+    arrS2[getIndex(s2[i])]++;
+    arrS2[getIndex(s2[i - winSize])]--;
+    if (isEqual(arrS1, arrS2)) return true;
+  }
+
+  return false;
+}
+
+function isEqual(arr1, arr2) {
+  for (let i = 0; i < 26; i++) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
 }
 
 console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
