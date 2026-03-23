@@ -744,7 +744,7 @@ LPS:   0  1  0  1  2  2  0
 //? 2) Sorting - har window ko sort karke compare karna [O((n-m+1) × m log m)] - decent but slow
 //? 3) Frequency Array - 26 size ka array, sliding window se maintain karke compare [O(n)] - best
 
-var checkInclusion = function (s1, s2) {
+var checkInclusion1 = function (s1, s2) {
   // s1 k all permutation generate krna and s2 mein indexof s search krna
   // mila to true , else false
   if (s1.length > s2.length) return false;
@@ -766,25 +766,47 @@ const findPermutations = (str) => {
   for (let i = 0; i < str.length; i++) {
     let char = str[i];
     let remainingChar = str.slice(0, i) + str.slice(i + 1, str.length);
-    console.log('remanining char',remainingChar)
+    console.log('remanining char', remainingChar)
 
     // Recursively get permutations of remaining characters
     let remainingPermutations = findPermutations(remainingChar);
-    console.log('remaining permutations',remainingPermutations)
+    console.log('remaining permutations', remainingPermutations)
 
     for (let perm of remainingPermutations) {
       permutationArray.push(char + perm)
     }
-    console.log('array created',permutationArray)
+    console.log('array created', permutationArray)
   }
   return permutationArray;
 }
 
-console.log(findPermutations('abc'))
+// console.log(findPermutations('abc'));
 
-// console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
-// console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
-// console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+//? sorting
+var checkInclusion = function (s1, s2) {
+  if (s1.length > s2.length) return false;
+
+  let sortedS1 = s1.split('').sort().join('');
+  let win_size = s1.length;
+
+  // looping for every window
+  for (let i = 0; i <= s2.length - win_size; i++) {
+    // current window 
+    let window = s2.substring(i, i + win_size);
+    // console.log(window)
+    // now sorting window
+    let sortedWindow = window.split('').sort().join('');
+    // console.log(sortedWindow)
+
+    // now compare with s1
+    if (sortedWindow === sortedS1) return true;
+  }
+  return false;
+}
+
+console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
 
 
 //! Leetcode 3. Longest Substring Without Repeating Characters 
