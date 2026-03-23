@@ -49,7 +49,7 @@ var twoSum2 = function (nums, target) {
 //! Leetcode 392. Is Subsequence
 // ----------------------------------------------------
 var isSubsequence = function (s, t) {
-  let i = j = 0;
+  let i = 0, j = 0;
   while (i < s.length && j < t.length) {
     if (s[i] === t[j]) i++;
     else j++;
@@ -323,6 +323,7 @@ var lengthOfLongestSubstring = function (s) {
   while (j < s.length) {
     // If char is inside map and inside the current window , move i pointer
     if (map[s[j]] != undefined && map[s[j]] >= i) i = map[s[j]] + 1;
+    // otherwise just update the map
     map[s[j]] = j; // Update index of current char
     max = Math.max(max, j - i + 1);
     j++;

@@ -824,7 +824,7 @@ var checkInclusion = function (s1, s2) {
 
   // check first window
   if (isEqual(arrS1, arrS2)) return true;
-  
+
   // window slide
   for (let i = winSize; i < s2.length; i++) {
     arrS2[getIndex(s2[i])]++;
@@ -842,18 +842,31 @@ function isEqual(arr1, arr2) {
   return true;
 }
 
-console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
-console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
-console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidbaooo")); // Output: true
+// console.log(checkInclusion(s1 = "ab", s2 = "eidboaoo")); // Output: false
+// console.log(checkInclusion(s1 = "gef", s2 = "abcdefghij")); // Output: true
 
 
 //! Leetcode 3. Longest Substring Without Repeating Characters 
 var lengthOfLongestSubstring = function (s) {
+  let map = {}, i = 0, j = 0, maxCount = 0;
 
+  while (j < s.length) {
+    // if present in map and present in window
+    if (map[s[j]] !== undefined && map[s[j]] >= i) {
+      i = map[s[j]] + 1
+    }
+    // update the map
+    map[s[j]] = j; // update the index of curr char
+    let currWin_size = j - i + 1;
+    maxCount = Math.max(maxCount, currWin_size);
+    j++;
+  }
+  return maxCount;
 }
-// console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
-// console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
-// console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
 
 //! Leetcode 239. Sliding Window Maximum
 var maxSlidingWindow = function (nums, k) { }
