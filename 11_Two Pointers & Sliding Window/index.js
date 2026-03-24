@@ -456,15 +456,15 @@ var maxSlidingWindow = function (nums, k) {
   let i = j = 0;
   let result = [], q = [];
   while (j < nums.length) {
-    while (q.length && nums[j] > q[q.length - 1]) {
+    while (q.length && nums[j] > nums[q[q.length - 1]]) {
       q.pop();
     }
 
-    q.push(nums[j]);
+    q.push(j);
 
     if (j >= k - 1) {
-      result.push(q[0]);
-      nums[i] === q[0] && q.shift();
+      result.push(nums[q[0]]);
+      i === q[0] && q.shift();
       ++i;
     }
     j++;

@@ -892,16 +892,35 @@ Rule Book bana le:
 */
 
 //! Leetcode 239. Sliding Window Maximum
+//* Monotonic Decreasing Dequeue
+
+var maxSlidingWindow = function (nums, k) {
+    let arr = [], i = 0, j = 0, q = [];
+    while (j < nums.length) {
+        while (q.length && nums[j] > q[q.length - 1]) q.pop();
+        q.push(nums[j]);
+
+        if (j >= k - 1) {
+            arr.push(q[0]);
+            nums[i] === q[0] && q.shift();
+            i++;
+        }
+        j++;
+    }
+    return arr;
+};
+
+// storing index not value
 var maxSlidingWindow = function (nums, k) {
   let i = 0, j = 0, q = [], result = [];
 
   while (j < nums.length) {
-    while (q.length && nums[j] > q[q.length - 1]) q.pop();
-    q.push(nums[j]);
+    while (q.length && nums[j] > nums[q[q.length - 1]]) q.pop();
+    q.push(j);
 
     if (j >= k - 1) {
-      result.push(q[0]);
-      nums[i] === q[0] && q.shift()
+       result.push(nums[q[0]]);
+      i === q[0] && q.shift()
       ++i;
     }
     j++;
@@ -909,5 +928,5 @@ var maxSlidingWindow = function (nums, k) {
 
   return result;
 }
-console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
-console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
+// console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
+// console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
