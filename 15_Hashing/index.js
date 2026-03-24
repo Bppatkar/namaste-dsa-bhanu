@@ -868,6 +868,29 @@ var lengthOfLongestSubstring = function (s) {
 // console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
 // console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
 
+
+/* 
+Pehle pattern pehchan
+Tu jab bhi kisi problem mein dekhe:
+
+      Keyword               	      Pattern
+ "Subarray" + "window"	        Sliding Window
+ "Substring" + "window"	        Sliding Window
+ "Maximum" + "window"	          Sliding Window + Deque
+ "Minimum" + "window"	          Sliding Window + Deque
+*/
+
+/* 
+Rule Book bana le:
+
+    Problem Type	                 Pattern
+  Array + window + max/min	      Sliding Window + Deque
+  Array + window + sum	          Sliding Window + Prefix Sum
+  Array + window + substring	    Sliding Window + HashMap
+  Array + next greater	          Monotonic Stack
+  Array + previous smaller	      Monotonic Stack
+*/
+
 //! Leetcode 239. Sliding Window Maximum
 var maxSlidingWindow = function (nums, k) {
   let i = 0, j = 0, q = [], result = [];
@@ -886,5 +909,5 @@ var maxSlidingWindow = function (nums, k) {
 
   return result;
 }
-// console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
-// console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
+console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
+console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
