@@ -864,11 +864,27 @@ var lengthOfLongestSubstring = function (s) {
   }
   return maxCount;
 }
-console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
-console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
-console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "abcabcbb")) // Output: 3
+// console.log(lengthOfLongestSubstring(s = "bbbbb")) // Output: 1
+// console.log(lengthOfLongestSubstring(s = "pwwkew")) // Output: 3
 
 //! Leetcode 239. Sliding Window Maximum
-var maxSlidingWindow = function (nums, k) { }
+var maxSlidingWindow = function (nums, k) {
+  let i = 0, j = 0, q = [], result = [];
+
+  while (j < nums.length) {
+    while (q.length && nums[j] > q[q.length - 1]) q.pop();
+    q.push(nums[j]);
+
+    if (j >= k - 1) {
+      result.push(q[0]);
+      nums[i] === q[0] && q.shift()
+      ++i;
+    }
+    j++;
+  }
+
+  return result;
+}
 // console.log(maxSlidingWindow(nums = [1, 3, -1, -3, 5, 3, 6, 7], k = 3)) //Output: [3,3,5,5,6,7]
 // console.log(maxSlidingWindow(nums = [1], k = 1)) // Output: [1]
