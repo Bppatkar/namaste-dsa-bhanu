@@ -62,6 +62,7 @@ var permute = function (nums) {
 
 //! Leetcode 90. Subsets II
 var subsetsWithDup = function (nums) {
+  nums = nums.sort();
   let result = [];
   const backtrack = (path, start) => {
     result.push([...path]);
@@ -78,4 +79,5 @@ var subsetsWithDup = function (nums) {
 };
 // console.log(subsetsWithDup(nums = [1, 2, 2])) // [[],[1],[1,2],[1,2,2],[2],[2,2]]
 // console.log(subsetsWithDup(nums = [1, 2, 2, 3])) // [[],[1],[1,2],[1,2,2],[1,2,2,3],[1,2,3],[1,3],[2],[2,2],[2,2,3],[2,3],[3]]
+// console.log(subsetsWithDup(nums = [4, 4, 4, 1, 4])) // [[],[1],[1,4],[1,4,4],[1,4,4,4],[1,4,4,4,4],[4],[4,4],[4,4,4],[4,4,4,4]]
 // console.log(subsetsWithDup(nums = [0])) // [[],[0]]
