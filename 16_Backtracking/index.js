@@ -56,6 +56,26 @@ var permute = function (nums) {
   return result;
 };
 
-console.log(permute(nums = [1, 2, 3])) // Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
-console.log(permute(nums = [0, 1])) // Output: [[0, 1], [1, 0]]
-console.log(permute(nums = [1])) // Output: [[1]]
+// console.log(permute(nums = [1, 2, 3])) // Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+// console.log(permute(nums = [0, 1])) // Output: [[0, 1], [1, 0]]
+// console.log(permute(nums = [1])) // Output: [[1]]
+
+//! Leetcode 90. Subsets II
+var subsetsWithDup = function (nums) {
+  let result = [];
+  const backtrack = (path, start) => {
+    result.push([...path]);
+    for (let i = start; i < nums.length; i++) {
+      if (i > start && nums[i - 1] === nums[i]) continue;
+
+      path.push(nums[i]);
+      backtrack(path, i + 1);
+      path.pop();
+    }
+  }
+  backtrack([], 0);
+  return result;
+};
+// console.log(subsetsWithDup(nums = [1, 2, 2])) // [[],[1],[1,2],[1,2,2],[2],[2,2]]
+// console.log(subsetsWithDup(nums = [1, 2, 2, 3])) // [[],[1],[1,2],[1,2,2],[1,2,2,3],[1,2,3],[1,3],[2],[2,2],[2,2,3],[2,3],[3]]
+// console.log(subsetsWithDup(nums = [0])) // [[],[0]]
