@@ -35,5 +35,27 @@ var combine = function (n, k) {
   return result;
 };
 
-console.log(combine(n = 4, k = 2)) //output - [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
-console.log(combine(n = 1, k = 1)) //output - [[1]]
+// console.log(combine(n = 4, k = 2)) //output - [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]
+// console.log(combine(n = 1, k = 1)) //output - [[1]]
+
+//! Leetcode 46. Permutations
+var permute = function (nums) {
+  let result = [];
+  let backtrack = function (path) {
+    if (path.length === nums.length) result.push([...path])
+    // we got ans in leaf nodes, so when we reach on leaf nodes then we have to fill the result arr
+    for (let i = 0; i < nums.length; i++) {
+      if (!path.includes(nums[i])) {
+        path.push(nums[i]);
+        backtrack(path);
+        path.pop()
+      }
+    }
+  }
+  backtrack([]);
+  return result;
+};
+
+console.log(permute(nums = [1, 2, 3])) // Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+console.log(permute(nums = [0, 1])) // Output: [[0, 1], [1, 0]]
+console.log(permute(nums = [1])) // Output: [[1]]
