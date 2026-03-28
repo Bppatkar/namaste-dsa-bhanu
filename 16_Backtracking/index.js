@@ -83,8 +83,21 @@ var subsetsWithDup = function (nums) {
 // console.log(subsetsWithDup(nums = [0])) // [[],[0]]
 
 //! Leetcode 39. Combination sum
-var combinationSum = function (candidates, target) { }
+var combinationSum = function (candidates, target) {
+  let ans = [];
+  const backtrack = (start, path, target) => {
+    if (target === 0) return ans.push([...path]);
+    if (target < 0) return;
+    for (let i = start; i < candidates.length; i++) {
+      path.push(candidates[i]);
+      backtrack(i, path, target - candidates[i]);
+      path.pop();
+    }
+  }
+  backtrack(0, [], target);
+  return ans;
+}
 
-combinationSum(candidates = [2, 3, 6, 7], target = 7) // output: [[2, 2, 3], [7]]
-combinationSum(candidates = [2, 3, 5], target = 8) // Output: [[2,2,2,2],[2,3,3],[3,5]]
-combinationSum(candidates = [2], target = 1) // output: []
+console.log(combinationSum(candidates = [2, 3, 6, 7], target = 7)) // output: [[2, 2, 3], [7]]
+console.log(combinationSum(candidates = [2, 3, 5], target = 8)) // Output: [[2,2,2,2],[2,3,3],[3,5]]
+console.log(combinationSum(candidates = [2], target = 1)) // output: []
