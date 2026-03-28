@@ -98,6 +98,31 @@ var combinationSum = function (candidates, target) {
   return ans;
 }
 
-console.log(combinationSum(candidates = [2, 3, 6, 7], target = 7)) // output: [[2, 2, 3], [7]]
-console.log(combinationSum(candidates = [2, 3, 5], target = 8)) // Output: [[2,2,2,2],[2,3,3],[3,5]]
-console.log(combinationSum(candidates = [2], target = 1)) // output: []
+// console.log(combinationSum(candidates = [2, 3, 6, 7], target = 7)) // output: [[2, 2, 3], [7]]
+// console.log(combinationSum(candidates = [2, 3, 5], target = 8)) // Output: [[2,2,2,2],[2,3,3],[3,5]]
+// console.log(combinationSum(candidates = [2], target = 1)) // output: []
+
+
+//! Leetcode 40. Combination sum II 
+var combinationSum2 = function (candidates, target) {
+  let ans = [];
+  candidates = candidates.sort();
+  const backtrack = function (start, path, target,) {
+    if (target === 0) ans.push([...path]);
+    if (target < 0) return;
+    for (let i = start; i < candidates.length; i++) {
+      if (i > start && candidates[i - 1] === candidates[i]) continue;
+      path.push(candidates[i]);
+      backtrack(i + 1, path, target - candidates[i]);
+      path.pop();
+    }
+  }
+  backtrack(0, [], target);
+  return ans;
+}
+
+// console.log(combinationSum2(candidates = [10, 1, 2, 7, 6, 1, 5], target = 8)) // output: [[1,1,6],[1,2,5],[1,7],[2,6]]
+// console.log(combinationSum2(candidates = [2, 5, 2, 1, 2], target = 5)) // Output: [[1,2,2],[5]]
+
+//! Leetcode 40. Combination sum II 
+var combinationSum3 = function (candidates, target) {}
