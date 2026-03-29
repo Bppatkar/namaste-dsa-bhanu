@@ -107,9 +107,11 @@ var combinationSum = function (candidates, target) {
 var combinationSum2 = function (candidates, target) {
   let ans = [];
   candidates = candidates.sort();
+
   const backtrack = function (start, path, target,) {
     if (target === 0) ans.push([...path]);
     if (target < 0) return;
+
     for (let i = start; i < candidates.length; i++) {
       if (i > start && candidates[i - 1] === candidates[i]) continue;
       path.push(candidates[i]);
@@ -117,6 +119,7 @@ var combinationSum2 = function (candidates, target) {
       path.pop();
     }
   }
+
   backtrack(0, [], target);
   return ans;
 }
@@ -126,8 +129,18 @@ var combinationSum2 = function (candidates, target) {
 
 //! Leetcode 216. Combination Sum III
 var combinationSum3 = function (k, n) {
-
+  let ans = [];
+  const backtrack = (path, remainingSum, start) => {
+    if (path.length === k && remainingSum === 0) ans.push([...path]);
+    for (let i = start; i <= 9; i++) {
+      path.push(i);
+      backtrack(path, remainingSum - i, i + 1);
+      path.pop();
+    }
+  }
+  backtrack([], n, 1)
+  return ans;
 };
 console.log(combinationSum3(k = 3, n = 7)) // Output: [[1,2,4]]
 console.log(combinationSum3(k = 3, n = 9)) // Output: [[1,2,6],[1,3,5],[2,3,4]]
-console.log(combinationSum3(k = 4, n = 1)) // Output: []
+console.log(combinationSum3(k = 4, n = 1)) // Output: [] 
