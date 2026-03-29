@@ -124,5 +124,10 @@ var combinationSum2 = function (candidates, target) {
 // console.log(combinationSum2(candidates = [10, 1, 2, 7, 6, 1, 5], target = 8)) // output: [[1,1,6],[1,2,5],[1,7],[2,6]]
 // console.log(combinationSum2(candidates = [2, 5, 2, 1, 2], target = 5)) // Output: [[1,2,2],[5]]
 
-//! Leetcode 40. Combination sum II 
-var combinationSum3 = function (candidates, target) {}
+//! Leetcode 216. Combination Sum III
+var combinationSum3 = function (k, n) {
+
+};
+console.log(combinationSum3(k = 3, n = 7)) // Output: [[1,2,4]]
+console.log(combinationSum3(k = 3, n = 9)) // Output: [[1,2,6],[1,3,5],[2,3,4]]
+console.log(combinationSum3(k = 4, n = 1)) // Output: []
