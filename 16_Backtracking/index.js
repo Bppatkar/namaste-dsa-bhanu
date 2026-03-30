@@ -148,6 +148,8 @@ var combinationSum3 = function (k, n) {
 
 //! Leetcode 17. Letter Combinations of a Phone Number
 var letterCombinations = function (digits) {
+  if (!digits.length) return [];
+
   let letters = {
     '2': 'abc',
     '3': 'def',
@@ -170,10 +172,31 @@ var letterCombinations = function (digits) {
       backtrack(path, index + 1);
       path.pop();
     }
+
   }
   backtrack([], 0);
   return ans;
 };
-console.log(letterCombinations(digits = '23')) // Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
-console.log(letterCombinations(digits = '2')) // Output: ["a","b","c"]
+// console.log(letterCombinations(digits = '23')) // Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+// console.log(letterCombinations(digits = '2')) // Output: ["a","b","c"]
 
+//! Leetcode 47. Permutations II
+var permuteUnique = function (nums) {
+  let ans = [];
+  nums.sort();
+  const backtrack = (path, choices) => {
+    if (path.length === nums.length) return ans.push([...path]);
+    for (let i = 0; i < choices.length; i++) {
+      if (i > 0 && choices[i] === choices[i - 1]) continue;
+
+      path.push(choices[i]);
+      backtrack(path, [...choices.slice(0, i), ...choices.slice(i + 1)])
+      path.pop();
+    }
+  }
+  backtrack([], nums);
+  return ans;
+}
+
+console.log(permuteUnique(nums = [1, 1, 2])) // Output: [[1,1,2],[1,2,1],[2,1,1]]
+console.log(permuteUnique(nums = [1, 2, 3])) // Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
