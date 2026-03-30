@@ -141,6 +141,39 @@ var combinationSum3 = function (k, n) {
   backtrack([], n, 1)
   return ans;
 };
-console.log(combinationSum3(k = 3, n = 7)) // Output: [[1,2,4]]
-console.log(combinationSum3(k = 3, n = 9)) // Output: [[1,2,6],[1,3,5],[2,3,4]]
-console.log(combinationSum3(k = 4, n = 1)) // Output: [] 
+// console.log(combinationSum3(k = 3, n = 7)) // Output: [[1,2,4]]
+// console.log(combinationSum3(k = 3, n = 9)) // Output: [[1,2,6],[1,3,5],[2,3,4]]
+// console.log(combinationSum3(k = 4, n = 1)) // Output: [] 
+
+
+//! Leetcode 17. Letter Combinations of a Phone Number
+var letterCombinations = function (digits) {
+  let letters = {
+    '2': 'abc',
+    '3': 'def',
+    '4': 'ghi',
+    '5': 'jkl',
+    '6': 'mno',
+    '7': 'pqrs',
+    '8': 'tuv',
+    '9': 'wxyz'
+  }
+  let ans = [];
+  const backtrack = (path, index) => {
+    // if (path.length === digits.length) return ans.push([...path]);
+    if (index === digits.length) return ans.push(path.join(''));
+
+    let choices = letters[digits[index]] // index 0 means digit 2 means choices = 'abc'   
+
+    for (let i = 0; i < choices.length; i++) {
+      path.push(choices[i]);
+      backtrack(path, index + 1);
+      path.pop();
+    }
+  }
+  backtrack([], 0);
+  return ans;
+};
+console.log(letterCombinations(digits = '23')) // Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+console.log(letterCombinations(digits = '2')) // Output: ["a","b","c"]
+
