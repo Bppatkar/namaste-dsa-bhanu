@@ -187,9 +187,12 @@ var permuteUnique = function (nums) {
   const backtrack = (path, choices) => {
     if (path.length === nums.length) return ans.push([...path]);
     for (let i = 0; i < choices.length; i++) {
+      // if same element just ignore
       if (i > 0 && choices[i] === choices[i - 1]) continue;
 
       path.push(choices[i]);
+      // [1,2,3,4] agar ye hai and hm 3 par hai to hm 3 ko choose nahi kar rhe to avoid repetation
+      // to slice kiya left array ko and right array ko and merge kr diya [12, 4]
       backtrack(path, [...choices.slice(0, i), ...choices.slice(i + 1)])
       path.pop();
     }
@@ -198,5 +201,12 @@ var permuteUnique = function (nums) {
   return ans;
 }
 
-console.log(permuteUnique(nums = [1, 1, 2])) // Output: [[1,1,2],[1,2,1],[2,1,1]]
-console.log(permuteUnique(nums = [1, 2, 3])) // Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+// console.log(permuteUnique(nums = [1, 1, 2])) // Output: [[1,1,2],[1,2,1],[2,1,1]]
+// console.log(permuteUnique(nums = [1, 2, 3])) // Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+//! Leetcode 131. Palindrome Partitioning
+var partition = function (s) { 
+
+}
+console.log(partition(s = "aab")) // Output: [["a","a","b"],["aa","b"]]
+console.log(partition(s = "a")) // Output: [["a"]]
