@@ -380,7 +380,7 @@ var characterReplacement = function (s, k) {
   let i = 0, j = 0, maxWin = 0;
   let map = new Array(26).fill(0);
   map[s.charCodeAt(0) - 65] = 1;
-  console.log(map);
+  // console.log(map);
   while (j < s.length) {
     if (isValidWin(map, k)) {
       maxWin = Math.max(maxWin, j - i + 1)

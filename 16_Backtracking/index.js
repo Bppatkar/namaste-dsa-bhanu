@@ -205,8 +205,37 @@ var permuteUnique = function (nums) {
 // console.log(permuteUnique(nums = [1, 2, 3])) // Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 
 //! Leetcode 131. Palindrome Partitioning
-var partition = function (s) { 
+var partition = function (s) {
+  let result = [];
 
+  let backtrack = (path, remainingString) => {
+
+    if (!remainingString.length) result.push([...path]);
+
+    for (let i = 1; i <= remainingString.length; i++) {
+      let choice = remainingString.substring(0, i);
+
+      if (!isPalindrome(choice)) continue; // don't go furthere just conitnue/ignore
+
+      path.push(choice);
+      backtrack(path, remainingString.substring(i));
+      path.pop();
+    }
+
+
+  }
+  backtrack([], s);
+
+  return result;
 }
+
+const isPalindrome = (s) => {
+  let left = 0, right = s.length - 1;
+  while (left < right) {
+    if (s[left++] != s[right--]) return false;
+  }
+  return true;
+}
+
 console.log(partition(s = "aab")) // Output: [["a","a","b"],["aa","b"]]
 console.log(partition(s = "a")) // Output: [["a"]]
