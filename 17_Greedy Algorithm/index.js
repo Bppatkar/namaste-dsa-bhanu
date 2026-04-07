@@ -103,6 +103,29 @@ var insert = function (intervals, newInterval) {
   }
   return ans;
 }
-console.log(insert(intervals = [[1, 3], [6, 9]], newInterval = [2, 5])) // [[1,5],[6,9]]
-console.log(insert(intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], newInterval = [4, 8])) // [[1,2],[3,10],[12,16]]
+// console.log(insert(intervals = [[1, 3], [6, 9]], newInterval = [2, 5])) // [[1,5],[6,9]]
+// console.log(insert(intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], newInterval = [4, 8])) // [[1,2],[3,10],[12,16]]
 
+//! Leetcode 56. Merge Intervals
+var merge = function (arr) {
+  if (arr.length === 0) return [];
+
+  arr.sort((a, b) => (a[0] - b[0]));
+
+  let ans = [arr[0]];
+
+  for (let i = 1; i < arr.length; i++) {
+    // overlapping interval
+    if (arr[i][0] <= ans[ans.length - 1][1]) {
+      ans[ans.length - 1][1] = Math.max(ans[ans.length - 1][1], arr[i][1])
+    }
+    else {
+      ans.push(arr[i])
+    }
+  }
+  return ans;
+}
+
+// console.log(merge([[1, 3], [2, 6], [8, 10], [15, 18]])) // [[1,6],[8,10],[15,18]]
+// console.log(merge([[1, 4], [4, 5]])) // [[1,5]]
+// console.log(merge([[4, 7], [1, 4]])) // [[1,7]]
