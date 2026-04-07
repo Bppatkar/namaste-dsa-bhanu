@@ -63,3 +63,46 @@ var lemonadeChange = function (bills) {
 // console.log(lemonadeChange([5, 5, 10])) // true
 // console.log(lemonadeChange([5, 5, 10, 10, 20])) // false
 // console.log(lemonadeChange([10, 10])) // false
+
+//! Leetcode 122. Best Time to Buy and Sell Stock II
+var maxProfit = function (prices) {
+  let ans = 0;
+  for (let i = 1; i < prices.length; i++) {
+    let profit = prices[i] - prices[i - 1]
+    if (profit > 0) {
+      ans += profit;
+    }
+  }
+  return ans;
+}
+// console.log(maxProfit([7, 1, 5, 3, 6, 4])) // 7
+// console.log(maxProfit([1, 2, 3, 4, 5])) // 4
+// console.log(maxProfit([7, 6, 4, 3, 1])) // 0
+
+//! Leetcode 57. Insert Interval
+var insert = function (intervals, newInterval) {
+  let ans = [];
+
+  // left non-overlapping intervals
+  let i = 0;
+  while (i < intervals.length && intervals[i][1] < newInterval[0]) {
+    ans.push(intervals[i]);
+    ++i;
+  }
+  // overlapping intervals
+  while (i < intervals.length && intervals[i][0] <= newInterval[1]) {
+    newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+    newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+    ++i;
+  }
+  ans.push(newInterval)
+  // right non overlapping
+  while (i < intervals.length) {
+    ans.push(intervals[i]);
+    ++i;
+  }
+  return ans;
+}
+console.log(insert(intervals = [[1, 3], [6, 9]], newInterval = [2, 5])) // [[1,5],[6,9]]
+console.log(insert(intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], newInterval = [4, 8])) // [[1,2],[3,10],[12,16]]
+
