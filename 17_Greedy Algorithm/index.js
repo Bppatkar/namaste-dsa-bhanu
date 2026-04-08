@@ -214,24 +214,22 @@ var leastInterval = function (tasks, n) {
   // [(n + 1) * (maxFreq - 1)] + number of elem with max frequency
 
   let freq = new Array(26).fill(0);
+  let maxFreq = 0, maxFreqCount = 0;
 
   for (let i = 0; i < tasks.length; i++) {
-    freq[tasks[i].charCodeAt(0) - 65]++;
-    // charcodeat(0) - 65 because A is at 65 in ascii table and we want to start from 0 index
+    let curr = tasks[i].charCodeAt() - 65;
+    freq[curr]++;
+    maxFreq = Math.max(maxFreq, freq[curr]);
   }
-  freq.sort((a, b) => (b - a));
-  let maxFreq = freq[0];
-  let maxFreqCount = 0;
 
-  for (let i = 0; i < freq.length; i++) {
+  for (let i = 0; i < 26; i++) {
     if (freq[i] === maxFreq) {
       maxFreqCount++;
-    } else {
-      break;
     }
   }
-// here n +1 is a given n means the cycle length and +1 is for the task itself and maxFreq - 1 is because we are counting the last task in maxFreqCount
-  return Math.max([tasks.length, (n + 1) * (maxFreq - 1) + maxFreqCount]);
+
+  // here n +1 is a given n means the cycle length and +1 is for the task itself and maxFreq - 1 is because we are counting the last task in maxFreqCount
+  return Math.max(tasks.length, (n + 1) * (maxFreq - 1) + maxFreqCount);
 }
 
 console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 2)) // 8
