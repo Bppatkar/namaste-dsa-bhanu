@@ -167,3 +167,43 @@ var partitionLabels = function (s) {
 
 // console.log(partitionLabels("ababcbacadefegdehijhklij")) // [9,7,8]
 // console.log(partitionLabels("eccbbbbdec")) // [10]
+
+//! Leetcode 435. Non-overlapping Intervals
+var eraseOverlapIntervals = function (intervals) {
+  if (intervals.length === 0) return 0;
+
+  intervals.sort((a, b) => (a[1] - b[1]));
+
+  let ans = 0;
+
+  for (let i = 1; i < intervals.length; i++) {
+    if (intervals[i][0] < intervals[i - 1][1]) {
+      ans++;
+    } else {
+      intervals[i] = intervals[i - 1];
+    }
+  }
+  return ans;
+}
+
+//? Other way to solve
+var eraseOverlapIntervals = function (intervals) {
+  intervals.sort((a, b) => (a[1] - b[1]));
+
+  let removeCount = 0;
+  let k = -Infinity;
+
+  for (let i = 0; i < intervals.length; i++) {
+    // k = end of last non-overlapping interval
+    if (intervals[i][0] < k) {
+      removeCount++;
+    } else {
+      k = intervals[i][1];
+    }
+  }
+  return removeCount;
+}
+
+// console.log(eraseOverlapIntervals([[1, 2], [2, 3], [3, 4], [1, 3]])) // 1
+// console.log(eraseOverlapIntervals([[1, 2], [1, 2], [1, 2]])) // 2
+// console.log(eraseOverlapIntervals([[1, 2], [2, 3]])) // 0
