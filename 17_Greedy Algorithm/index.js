@@ -229,9 +229,31 @@ var leastInterval = function (tasks, n) {
   }
 
   // here n +1 is a given n means the cycle length and +1 is for the task itself and maxFreq - 1 is because we are counting the last task in maxFreqCount
-  return Math.max(tasks.length, (n + 1) * (maxFreq - 1) + maxFreqCount);
+  let cycles = (n + 1) * (maxFreq - 1) + maxFreqCount;
+  return Math.max(tasks.length, cycles);
 }
 
-console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 2)) // 8
-console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 0)) // 6
-console.log(leastInterval(["A", "A", "A", "A", "A", "A", "B", "C", "D", "E", "F", "G"], 2)) // 16
+// console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 2)) // 8
+// console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 0)) // 6
+// console.log(leastInterval(["A", "A", "A", "A", "A", "A", "B", "C", "D", "E", "F", "G"], 2)) // 16
+
+
+//! Leetcode 134. Gas Station
+var canCompleteCircuit = function (gas, cost) { }
+
+console.log(canCompleteCircuit(gas = [1, 2, 3, 4, 5], cost = [3, 4, 5, 1, 2])) // 3
+console.log(canCompleteCircuit(gas = [2, 3, 4], cost = [3, 4, 3])) // -1
+
+//! Leetcode 1094. Car Pooling
+var carPooling = function (trips, capacity) { }
+
+console.log(carPooling(trips = [[2, 1, 5], [3, 3, 7]], capacity = 4)) // false
+console.log(carPooling(trips = [[2, 1, 5], [3, 3, 7]], capacity = 5)) // true
+console.log(carPooling(trips = [[2, 1, 5], [3, 3, 7]], capacity = 6)) // true 
+
+//! Leetcode 135. Candy
+var candy = function (ratings) { }
+
+console.log(candy([1, 0, 2])) // 5
+console.log(candy([1, 2, 2])) // 4
+
