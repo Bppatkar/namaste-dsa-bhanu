@@ -179,7 +179,7 @@ var eraseOverlapIntervals = function (intervals) {
   for (let i = 1; i < intervals.length; i++) {
     if (intervals[i][0] < intervals[i - 1][1]) {
       ans++;
-    } else {
+
       intervals[i] = intervals[i - 1];
     }
   }
@@ -207,3 +207,33 @@ var eraseOverlapIntervals = function (intervals) {
 // console.log(eraseOverlapIntervals([[1, 2], [2, 3], [3, 4], [1, 3]])) // 1
 // console.log(eraseOverlapIntervals([[1, 2], [1, 2], [1, 2]])) // 2
 // console.log(eraseOverlapIntervals([[1, 2], [2, 3]])) // 0
+
+//! Leetcode 621. Task Scheduler
+var leastInterval = function (tasks, n) {
+  // we do it by count the max frequency and creating the formulla
+  // [(n + 1) * (maxFreq - 1)] + number of elem with max frequency
+
+  let freq = new Array(26).fill(0);
+
+  for (let i = 0; i < tasks.length; i++) {
+    freq[tasks[i].charCodeAt(0) - 65]++;
+    // charcodeat(0) - 65 because A is at 65 in ascii table and we want to start from 0 index
+  }
+  freq.sort((a, b) => (b - a));
+  let maxFreq = freq[0];
+  let maxFreqCount = 0;
+
+  for (let i = 0; i < freq.length; i++) {
+    if (freq[i] === maxFreq) {
+      maxFreqCount++;
+    } else {
+      break;
+    }
+  }
+// here n +1 is a given n means the cycle length and +1 is for the task itself and maxFreq - 1 is because we are counting the last task in maxFreqCount
+  return Math.max([tasks.length, (n + 1) * (maxFreq - 1) + maxFreqCount]);
+}
+
+console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 2)) // 8
+console.log(leastInterval(["A", "A", "A", "B", "B", "B"], 0)) // 6
+console.log(leastInterval(["A", "A", "A", "A", "A", "A", "B", "C", "D", "E", "F", "G"], 2)) // 16
