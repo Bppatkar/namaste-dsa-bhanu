@@ -129,3 +129,41 @@ var merge = function (arr) {
 // console.log(merge([[1, 3], [2, 6], [8, 10], [15, 18]])) // [[1,6],[8,10],[15,18]]
 // console.log(merge([[1, 4], [4, 5]])) // [[1,5]]
 // console.log(merge([[4, 7], [1, 4]])) // [[1,7]]
+
+//! Leetcode 763. Partition Labels
+var partitionLabels = function (s) {
+  // we put length in array
+  let ans = [];
+
+  let firstOcc = new Array(26).fill(-1); // filling with -1 so they do not make any problem in indexes
+  let lastOcc = new Array(26).fill(-1);
+
+  for (let i = 0; i < s.length; i++) {
+    let curr = s.charCodeAt(i) - 97;
+    if (firstOcc[curr] < 0) {
+      firstOcc[curr] = i;
+    }
+    lastOcc[curr] = i;
+  }
+
+  // creating two pointer for partitioning
+  let partitionStart = 0, partitionEnd = 0;
+  for (let i = 0; i < s.length; i++) {
+    let curr = s.charCodeAt(i) - 97;
+
+    if (partitionEnd < firstOcc[curr]) {
+      ans.push(partitionEnd - partitionStart + 1)
+      partitionStart = i, partitionEnd = i;
+    }
+
+
+    partitionEnd = Math.max(partitionEnd, lastOcc[curr]);
+  }
+  if (partitionEnd - partitionStart + 1 > 0) {
+    ans.push(partitionEnd - partitionStart + 1)
+  }
+  return ans;
+}
+
+// console.log(partitionLabels("ababcbacadefegdehijhklij")) // [9,7,8]
+// console.log(partitionLabels("eccbbbbdec")) // [10]
