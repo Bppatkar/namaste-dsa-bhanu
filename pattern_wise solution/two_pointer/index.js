@@ -101,7 +101,7 @@ var validWordAbbreviation = function (word, abbr) {
     }
     else if (abbr[j] >= '0' && abbr[j] <= '9') {
       if (abbr[j] === '0') return false;
-    }  
+    }
     else {
       return false;
     }
@@ -116,4 +116,16 @@ var validWordAbbreviation = function (word, abbr) {
 
   }
   return i === word.length && j === abbr.length;
+}
+
+
+//! Leetcode 167. Two Sum II - Input Array Is Sorted
+var twoSum = function (numbers, target) {
+  let i = 0, j = numbers.length - 1;
+  while (i < j) {
+    let sum = numbers[i] + numbers[j];
+    if (sum === target) { return [i + 1, j + 1]; }
+    else if (sum < target) { i++; }
+    else { j--; }
+  }
 }
