@@ -11,7 +11,7 @@
  * Common Patterns:
  * 1. Opposite Direction: One at start (0), one at end (n-1). They move toward each other.
  * 2. Same Direction: Both start at the beginning. One moves faster (Fast/Slow pointers).
- * 3. Variable Window: Pointers define a window that can expand/contract based on conditions. [some called it "sliding window" technique]
+ * 3. Variable Window: Pointers define a window that can expand/contract. Note: While "Two Pointers" is the mechanism, "Sliding Window" is the specific strategy used to track a range (subarray/substring). Two pointers often search for a pair, while sliding window usually searches for a range.
  * 4. Circular Array: Pointers wrap around the end of the array to the beginning.
  * 5. Multiple Pointers: More than two pointers to solve complex problems (e.g., 3-sum).  
  *  for instance - in 3 sum problem, we can fix one pointer and use two pointers to find pairs that sum up to the negative of the fixed pointer's value.  
@@ -89,7 +89,7 @@ const isPalindromeRange = (s, i, j) => {
 
 //* Neetcode 408. Valid Word Abbreviation
 var validWordAbbreviation = function (word, abbr) {
-  // step 1 - initialize two pointers for word and abbr
+  // step 1 - initialize two pointers for word and abbr in the starting position
   // step 2 - iterate through both strings until we reach the end of either string
   // step 3 - if characters match, move both pointers
   // step 4 - if characters don't match, check if the current character in abbr is a digit and if it is, calculate the number and move the word pointer accordingly and if it's not a digit, return false
@@ -101,7 +101,7 @@ var validWordAbbreviation = function (word, abbr) {
     }
     else if (abbr[j] >= '0' && abbr[j] <= '9') {
       if (abbr[j] === '0') return false;
-    }
+    }  
     else {
       return false;
     }
@@ -117,6 +117,3 @@ var validWordAbbreviation = function (word, abbr) {
   }
   return i === word.length && j === abbr.length;
 }
-
-console.log(validWordAbbreviation("internationalization", "i12iz4n")) // true
-console.log(validWordAbbreviation("apple", "a2e")) // false
