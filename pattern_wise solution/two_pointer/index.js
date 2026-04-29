@@ -1,5 +1,7 @@
 /***
  *! TWO POINTER TECHNIQUE [work on sorted array + linear data structure]
+ //* [Array + sorted + linear data structure (string, linked list) + searching, partitioning, comparison problems]
+ *! 'Comparision', 'searching' [pair of elements], and 'partitioning' [PCS - (partitioning, comparison, searching)] problems are commonly solved using two pointer technique.
  * --------------------
  * Core Idea: Use two indices (pointers) to traverse a linear data strcture (like an array or string or linked list) from different ends or at different speeds to solve problems efficiently.
  *
@@ -17,7 +19,6 @@
  *  for instance - in 3 sum problem, we can fix one pointer and use two pointers to find pairs that sum up to the negative of the fixed pointer's value.  
  * 
  * 
- *! 'Comparision', 'searching' [pair of elements], and 'partitioning' [PCS - (partitioning, comparison, searching)] problems are commonly solved using two pointer technique.
  */
 
 
@@ -129,3 +130,18 @@ var twoSum = function (numbers, target) {
     else { j--; }
   }
 }
+
+//! Leetcode 26. Remove Duplicates from Sorted Array
+var removeDuplicates = function (nums) {
+  let i = 0, j = 1;
+  while (j < nums.length) {
+    if (nums[i] !== nums[j]) {
+      i++;
+      nums[i] = nums[j];
+    }
+    j++;
+  }
+  return i + 1;
+}
+console.log(removeDuplicates([1, 1, 2])); // Output: 2, nums = [1, 2, _]
+console.log(removeDuplicates([0, 0, 1, 1, 1, 2, 2, 3, 3, 4])); // Output: 5, nums = [0, 1, 2, 3, 4, _, _, _, _, _]
