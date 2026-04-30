@@ -143,5 +143,130 @@ var removeDuplicates = function (nums) {
   }
   return i + 1;
 }
-console.log(removeDuplicates([1, 1, 2])); // Output: 2, nums = [1, 2, _]
-console.log(removeDuplicates([0, 0, 1, 1, 1, 2, 2, 3, 3, 4])); // Output: 5, nums = [0, 1, 2, 3, 4, _, _, _, _, _]
+
+//! Leetcode 977. Squares of a Sorted Array
+var sortedSquares = function (nums) {
+  let ans = [], i = 0, j = nums.length - 1;
+  while (i <= j) {
+    if (Math.abs(nums[i] ** 2) < Math.abs(nums[j] ** 2)) {
+      ans.unshift(nums[j] ** 2);
+      j--;
+    } else {
+      ans.unshift(nums[i] ** 2);
+      i++;
+    }
+  }
+  return ans;
+}
+// time complexity - O(n) because we are iterating through the array once
+// space complexity - O(n) because we are creating a new array to store the squares of the numbers
+
+//* Brute Force Solution - O(n log n) time complexity because we are sorting the array after calculating the squares of the numbers
+var sortedSquares = function (nums) {
+  let ans = [];
+  for (let i = 0; i < nums.length; i++) {
+    ans.push(nums[i] ** 2);  // calculating the squares of the numbers - O(n)
+  }
+  ans.sort((a, b) => a - b); // sorting - nlogn
+  return ans; // total time complexity - O(n log n)
+}
+
+//! Leetcode 15. 3Sum
+var threeSum = function (nums) {
+  // step 1 - sort the array
+  // step 2 - iterate through the array and for each element, use two pointers to find pairs that sum up to the negative of the current element
+  nums.sort((a, b) => a - b); // we can't do this nums.sort() because it will sort the array in lexicographical/alphabetical order and we want to sort it in numerical order
+  let ans = [];
+  // we run loop until nums.length - 2 because we need at least 3 elements to form a triplet and in question explicitly mentioned that i!=left, i!=right, and left!=right
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue; // skip duplicates
+    // we start left pointer from i + 1 because we can't use the same element twice and we start right pointer from the end of the array
+    let left = i + 1, right = nums.length - 1;
+    let target = -nums[i]; // we need to find pairs that sum up to the negative of the current element
+    // means a+b+c = 0 => a+b = -c => a+b = target which is -c means -nums[i], we need to find left + right which is equal to target
+    while (left < right) {
+      let sum = nums[left] + nums[right];
+      if (sum === target) {
+        ans.push([nums[i], nums[left], nums[right]]);
+        left++;
+        right--;
+        // skip duplicates for left pointer
+        while (left < right && nums[left] === nums[left - 1]) left++;
+        // skip duplicates for right pointer
+        while (left < right && nums[right] === nums[right + 1]) right--;
+      }
+      else if (sum < target) {
+        left++;
+      }
+      else {
+        right--;
+      }
+    }
+  }
+  return ans;
+}
+// whole code again without comments
+var threesum = function (nums) {
+  let ans = [];
+  nums.sort((a, b) => a - b);
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue;
+    let left = i + 1, right = nums.length - 1;
+    let target = -nums[i];
+    while (left < right) {
+      if (nums[left] + nums[right] === target) {
+        ans.push([nums[i], nums[left], nums[right]]);
+        left++;
+        right--;
+        while (left < right && nums[left] === nums[left - 1]) left++;
+        while (left < right && nums[right] === nums[right + 1]) right--;
+      } else if (nums[left] + nums[right] < target) {
+        left++;
+      } else {
+        right--;
+      }
+    }
+  }
+  return ans;
+}
+
+//! Leetcode 16. 3Sum Closest
+var threeSumClosest = function (nums, target) {
+  // same approach as 3 sum but instead of finding pairs that sum up to the negative of the current element, 
+  // we need to find pairs that sum up to the target and we need to keep track of the closest sum we have found so far
+
+  // step 1 - sort the array
+  // step 2 - iterate through the array and for each element, use two pointers to find pairs that sum up to the target and keep track of the closest sum we have found so far
+
+  nums.sort((a, b) => a - b);
+  let maxSumDiff = Infinity, closestSum = 0;
+
+  for (let i = 0; i < nums.length - 2; i++) {
+    let left = i + 1, right = nums.length - 1;
+
+    while (left < right) {
+      let sum = nums[i] + nums[left] + nums[right];
+      let sumDiff = Math.abs(sum - target);
+
+      if (sumDiff < maxSumDiff) {
+        maxSumDiff = sumDiff;
+        closestSum = sum;
+      }
+
+      if (sum === target) {
+        return sum;
+      } else if (sum < target) {
+        left++;
+      } else {
+        right--;
+      }
+    }
+  }
+  return closestSum;
+}
+
+console.log(threeSumClosest([-1, 2, 1, -4], 1)); // Output: 2
+// Explanation: The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+console.log(threeSumClosest([0, 0, 0], 1)); // Output: 0
+
+//! GFG - Triplet with smaller sum
