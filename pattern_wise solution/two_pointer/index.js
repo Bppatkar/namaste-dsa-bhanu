@@ -265,8 +265,30 @@ var threeSumClosest = function (nums, target) {
   return closestSum;
 }
 
-console.log(threeSumClosest([-1, 2, 1, -4], 1)); // Output: 2
-// Explanation: The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
-console.log(threeSumClosest([0, 0, 0], 1)); // Output: 0
 
 //! GFG - Triplet with smaller sum
+var countTriplets = function (arr, target) {
+  arr.sort((a, b) => a - b);
+  let count = 0;
+
+  for (let i = 0; i < arr.length - 2; i++) {
+    let left = i + 1, right = arr.length - 1;
+    while (left < right) {
+      let sum = arr[i] + arr[left] + arr[right];
+      if (sum < target) {
+        // if the sum of the triplet is less than the target, then all the triplets formed by the current element and the elements between left and right pointers will also be less than the target because the array is sorted. So we can count all those triplets at once by adding (right - left) to the count and then move the left pointer to the right to check for the next triplet.
+        count += right - left;
+        left++;
+      } else {
+        right--;
+      }
+    }
+  }
+  return count;
+}
+console.log(countTriplets([-2, 0, 1, 3], 2)); // Output: 2 (triplets are (-2, 0, 1) and (-2, 0, 3))
+console.log(countTriplets([5, 1, 3, 4, 7], 12)); // Output: 4 (triplets are (1, 3, 4), (1, 3, 5), (1, 4, 5), and (3, 4, 5))
+
+//! Leetcode 75. Sort Colors
+var sortColors = function (nums) { }
+console.log(sortColors([2, 0, 2, 1, 1, 0])); // Output: [0,0,1,1,2,2]
