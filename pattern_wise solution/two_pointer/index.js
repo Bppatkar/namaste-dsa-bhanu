@@ -286,9 +286,30 @@ var countTriplets = function (arr, target) {
   }
   return count;
 }
-console.log(countTriplets([-2, 0, 1, 3], 2)); // Output: 2 (triplets are (-2, 0, 1) and (-2, 0, 3))
-console.log(countTriplets([5, 1, 3, 4, 7], 12)); // Output: 4 (triplets are (1, 3, 4), (1, 3, 5), (1, 4, 5), and (3, 4, 5))
+
 
 //! Leetcode 75. Sort Colors
-var sortColors = function (nums) { }
+
+const swapNums = (nums, i, j) => {
+  let temp = nums[i];
+  nums[i] = nums[j];
+  nums[j] = temp;
+};
+
+var sortColors = function (nums) {
+  let i = 0, j = 0, k = nums.length - 1;
+  while (i <= k) {
+    if (nums[i] === 0) {
+      swapNums(nums, i, j);
+      i++;
+      j++;
+    } else if (nums[i] === 1) {
+      i++;
+    } else {
+      swapNums(nums, i, k);
+      k--;
+    }
+  }
+  return nums;
+}
 console.log(sortColors([2, 0, 2, 1, 1, 0])); // Output: [0,0,1,1,2,2]
