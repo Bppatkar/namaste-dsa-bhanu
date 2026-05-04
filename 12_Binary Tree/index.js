@@ -205,7 +205,7 @@ var postorderTraversal = function (root) {
 }
 
 //*--------------------------------------------
-//! DFS vs BFS [in tree] (but that DFS , BFS can use in tree graphs etc)
+//! DFS vs BFS [in tree] (but that DFS , BFS can use in tree , graphs etc)
 //*--------------------------------------------
 //! 1) Depth First Search
 //? DFS explore a tree by going as deep as possible along a branch before backtracking
