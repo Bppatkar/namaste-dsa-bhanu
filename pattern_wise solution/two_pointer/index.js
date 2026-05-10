@@ -1,25 +1,52 @@
-/***
- *! TWO POINTER TECHNIQUE [work on sorted array + linear data structure]
- //* [Array + sorted + linear data structure (string, linked list) + searching, partitioning, comparison problems]
- *! 'Comparision', 'searching' [pair of elements], and 'partitioning' [PCS - (partitioning, comparison, searching)] problems are commonly solved using two pointer technique.
- * --------------------
- * Core Idea: Use two indices (pointers) to traverse a linear data strcture (like an array or string or linked list) from different ends or at different speeds to solve problems efficiently.
- *
- * Key Rules:
- * 1. Usually requires a SORTED array.
- * 2. Initialize pointers (start/end or both at start).
- * 3. Move pointers based on a specific condition until they meet or cross.
- *
- * Common Patterns:
- * 1. Opposite Direction: One at start (0), one at end (n-1). They move toward each other.
- * 2. Same Direction: Both start at the beginning. One moves faster (Fast/Slow pointers).
- * 3. Variable Window: Pointers define a window that can expand/contract. Note: While "Two Pointers" is the mechanism, "Sliding Window" is the specific strategy used to track a range (subarray/substring). Two pointers often search for a pair, while sliding window usually searches for a range.
- * 4. Circular Array: Pointers wrap around the end of the array to the beginning.
- * 5. Multiple Pointers: More than two pointers to solve complex problems (e.g., 3-sum).  
- *  for instance - in 3 sum problem, we can fix one pointer and use two pointers to find pairs that sum up to the negative of the fixed pointer's value.  
- * 
- * 
- */
+//!---------------------------------------------------
+//! Two Pointers — Quick Notes
+//!---------------------------------------------------
+
+//? Definition: Two Pointers is a technique that uses two indices (pointers) to traverse a linear data structure (array, string, linked list) to solve problems efficiently by avoiding nested loops.
+
+//* When to use:
+//? - Find pairs/triplets/subarrays: locating element combinations meeting a condition.
+//? - Sorted data: array already sorted or can be sorted cheaply.
+//? - Optimize brute-force: replace O(n^2) nested loops with near-linear solutions (often O(n)).
+
+//* Core idea: Use two indices that move according to a rule (toward each other, same direction with different speeds, or to expand/contract a window) until they meet or cross.
+
+//* Key rules:
+//? - Sorted requirement: Many two-pointer approaches assume sorted input.
+//? - Initialization: Pointers start at 0 and n-1, or both at 0 (one faster), depending on the pattern.
+//? - Movement: Advance one or both pointers based on a condition; stop when pointers cross or reach the end.
+
+//* Common patterns:
+//? - Opposite direction: one at start (0), one at end (n-1), move inward — useful for pair-sum, partitioning.
+//? - Same direction (fast/slow): both start at beginning; one moves faster — useful for cycle detection, removing duplicates, kth-from-end.
+//? - Variable/window (sliding window): pointers define a window that expands or contracts to satisfy window conditions (sum, distinct count).
+//? - Circular array: pointers wrap around the end to the beginning.
+//? - Multiple pointers: fix one pointer and use two pointers for remaining elements (e.g., 3-sum).
+
+//* Typical approach / steps:
+//? 1. Initialize two pointers (e.g., left = 0, right = n-1).
+//? 2. Check condition for current pointers (sum, equality, window constraint).
+//? 3. Move pointers:
+//?    - If condition not met, move left or right pointer to try to satisfy it.
+//?    - If condition met, record result (or adjust pointers to find more solutions).
+//? 4. Repeat until pointers cross or end conditions hit.
+
+//* Examples of problems:
+//? - Pair sum in sorted array (two-sum II) — O(n).
+//? - Reverse string / palindrome checks — O(n).
+//? - 3-sum, 3-sum-closest (fix one index, two-pointer for the rest) — O(n^2).
+//? - Sliding window tasks (max subarray length, sum constraints) — O(n).
+//? - Remove duplicates in-place, partitioning (Dutch National Flag / sort colors) — O(n).
+
+//* Complexities:
+//? - Time: Typically O(n) for single pass two-pointer solutions; O(n^2) when combined with an outer loop (e.g., 3-sum).
+//? - Space: Often O(1) in-place, unless building a new result array.
+
+//* Tips & pitfalls:
+//? - Ensure input sorted when algorithm relies on ordering.
+//? - Carefully handle duplicates (skip equal neighbors).
+//? - For string problems, normalize input (lowercase, remove non-alphanumeric).
+//!---------------------------------------------------
 
 
 //! Leetcode 125. Valid Palindrome
@@ -130,6 +157,10 @@ var twoSum = function (numbers, target) {
     else { j--; }
   }
 }
+
+// time complexity - O(n) because we are iterating through the array once
+// space complexity - O(1) because we are not using any extra space
+//? we can't use a hash map to store the indices of the numbers because we are not allowed to use extra space and also the array is sorted so we can use two pointers to find the target sum in O(n) time complexity and O(1) space complexity
 
 //! Leetcode 26. Remove Duplicates from Sorted Array
 var removeDuplicates = function (nums) {
@@ -313,3 +344,20 @@ var sortColors = function (nums) {
   return nums;
 }
 
+//! Leetcode 11. Container With Most Water
+var maxArea = function (height) {
+  // steps in simple words [short and crisp]:
+  // 1. i in the beginning and j in the end
+  // 2. calculate area using simple math formula area = width * height => area = (j - i) * min(height[i], height[j])
+  // 3. if height[i] < height[j] then we can move i to the right because we want to find a taller line to increase the area and if height[i] >= height[j] then we can move j to the left because we want to find a taller line to increase the area
+  let i = 0, j = height.length - 1, maxwater = 0;
+  while (i < j) {
+    let area = (j - i) * Math.min(height[i], height[j]);
+    maxwater = Math.max(maxwater, area);
+    if (height[i] < height[j]) {
+      i++;
+    } else { j--; }
+
+  }
+  return maxwater;
+}
