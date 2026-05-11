@@ -361,3 +361,17 @@ var maxArea = function (height) {
   }
   return maxwater;
 }
+
+//! Leetcode 283. Move Zeroes
+var moveZeroes = function (nums) {
+  let i = 0, j = 0;
+  while (j < nums.length) {
+    if (nums[j] != 0) {
+      let temp = nums[i];
+      nums[i] = nums[j];
+      nums[j] = temp;
+      i++;
+    }
+    j++;
+  }
+}
