@@ -376,14 +376,18 @@ var moveZeroes = function (nums) {
   }
 }
 
-//! Leetcode 344. Reverse String
-var reverseString = function (s) {
-  let i = 0, j = s.length - 1;
-  while (i < j) {
-    let temp = s[i];
-    s[i] = s[j];
-    s[j] = temp;
-    i++;
-    j--;
+//! Leetcode 713. Subarray Product Less Than K
+var numSubarrayProductLessThanK = function (nums, k) {
+  if (k <= 1) return 0;
+  let i = 0, j = 0, product = 1, count = 0;
+  while (j < nums.length) {
+    product *= nums[j];
+    while (product >= k) {
+      product /= nums[i];
+      i++;
+    }
+    count += j - i + 1;
+    j++;
   }
+  return count;
 }
