@@ -407,6 +407,7 @@ Index: 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8 ✓ Sab fill hain
 3. 🔹 Uske baad koi aur node nahi aani chahiye
 
 **Example:**
+
 - ✅ `1,2,3,4,5,6` (Valid)
 - ❌ `1,2,3,4,6,7` (Invalid - 4 ke baad 5 missing, phir 6,7)
 
@@ -423,6 +424,7 @@ Agar tree ko array mein represent kar rahe ho:
 3. 🔹 Koi bhi index gap nahi hona chahiye
 
 **Example:**
+
 - ✅ `[-,1,2,3,4,5,6]` Valid
 - ❌ `[-,1,2,3,4,5,7]` Invalid (6 missing)
 
@@ -516,6 +518,7 @@ Height `h` ke liye:
 - 📊 **Maximum nodes** = `2^(h+1) - 1`
 
 **Example:** Height 2 ke liye
+
 - Min nodes = 4 (2^2)
 - Max nodes = 7 (2^3 - 1)
 
@@ -615,19 +618,23 @@ Parent index `i` ke liye:
 <div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #00FA9A;">
 
 ### 1️⃣ HEAP DATA STRUCTURE
+
 - Priority Queue implementation
 - Heap Sort
 - Always uses Complete Binary Tree
 
 ### 2️⃣ SEGMENT TREES
+
 - Used in competitive programming
 - Array representation uses complete binary tree concept
 
 ### 3️⃣ BINARY HEAP
+
 - Min Heap / Max Heap
 - Must be a complete binary tree
 
 ### 4️⃣ PRIORITY QUEUES
+
 - Operating system scheduling
 - Dijkstra's algorithm
 - Prim's algorithm
@@ -664,18 +671,16 @@ Parent index `i` ke liye:
 
 ### <span style="color:#DA70D6">📊 Visual Summary Table</span>
 
-| Tree Type | All levels filled except last | Last level left to right | Example |
-|:---|:---:|:---:|:---|
-| ✅ <span style="color:#32CD32">**Complete**</span> | ✓ | ✓ | 1,2,3,4,5,6 |
-| ❌ <span style="color:#FF0000">**Not Complete**</span> | ✓ | ✗ | 1,2,3,4,6,7 |
-| ✅ <span style="color:#1E90FF">**Full**</span> | All nodes have 0/2 children | - | 1,2,3,4,5,6,7 |
-| ✅ <span style="color:#FFD700">**Perfect**</span> | All levels completely filled | - | 1,2,3,4,5,6,7 |
+| Tree Type                                              | All levels filled except last | Last level left to right | Example       |
+| :----------------------------------------------------- | :---------------------------: | :----------------------: | :------------ |
+| ✅ <span style="color:#32CD32">**Complete**</span>     |               ✓               |            ✓             | 1,2,3,4,5,6   |
+| ❌ <span style="color:#FF0000">**Not Complete**</span> |               ✓               |            ✗             | 1,2,3,4,6,7   |
+| ✅ <span style="color:#1E90FF">**Full**</span>         |  All nodes have 0/2 children  |            -             | 1,2,3,4,5,6,7 |
+| ✅ <span style="color:#FFD700">**Perfect**</span>      | All levels completely filled  |            -             | 1,2,3,4,5,6,7 |
 
 ---
 
 ---
-
-
 
 ## <span style="color:#FF6347">🔥 Heap</span>
 
@@ -742,6 +747,7 @@ Parent ki value hamesha apne dono children se chhoti ya barabar hoti hai.
 **📝 Note:** Jin problems ko aap heap se solve kar sakte hain, unhe dusre data structures se bhi solve kiya ja sakta hai. Lekin, heap ka use aksar problem ki **time complexity ko kam** karne ke liye hota hai.
 
 🧩 Kuch problems jo heap se solve ho sakti hain:
+
 - 🔹 **Kth largest**, Kth smallest, Kth minimum, Kth maximum
 - 🔹 **Top K values**, Bottom K values
 - 🔹 **Median** of a stream of data
@@ -877,6 +883,7 @@ Internet par aksar Heaps mein indexing `1` se start hoti hai, lekin JavaScript (
 <div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #9370DB; margin-top:10px;">
 
 **🔢 For 1-based indexing:**
+
 - ⬅️ Left Child = `2 * i`
 - ➡️ Right Child = `2 * i + 1`
 - ⬆️ Parent Node = `Math.floor(i / 2)`
@@ -886,6 +893,7 @@ Internet par aksar Heaps mein indexing `1` se start hoti hai, lekin JavaScript (
 <div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32; margin-top:10px;">
 
 **🔢 For 0-based indexing (Hum ye use karenge):** ⭐
+
 - ⬅️ Left Child = `2 * i + 1`
 - ➡️ Right Child = `2 * i + 2`
 - ⬆️ Parent Node = `Math.floor((i - 1) / 2)`
@@ -959,3 +967,1421 @@ Jab hum new element ko insert karte hai to hum usko sabse last position pe inser
 Jab hum root node ko remove karte hain, to hum sabse last element ko root node par le aate hain. Phir, hum usko uske children (left aur right) se compare karte hain. Agar parent apne children se chota hai (Max Heap ke case mein), to hum uske sabse bade child ke sath swap karte hain. Yeh process tab tak chalta rehta hai jab tak node apni sahi jagah par na aa jaye ya leaf node na ban jaye.
 
 </div>
+
+---
+
+# 🔬 HEAPIFY UP & HEAPIFY DOWN — COMPLETE DEEP DIVE
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+
+Ab tak humne dekha ki Heap mein **insert** aur **remove** kaise hote hain. Lekin asli magic **Heapify Up** aur **Heapify Down** mein hai. Is section mein hum yeh dono cheezein **step-by-step visuals** ke saath samjhenge.
+
+</div>
+
+---
+
+## <span style="color:#FFD700">❓ SABSE PEHLE: NAAM KYUN AISA HAI?</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+Naam **direction** se aaya hai — element tree mein kis taraf **travel** karta hai.
+
+- ⬆️ **Heapify UP** → Element **neeche se upar** jaata hai (leaf ➜ root ki taraf)
+- ⬇️ **Heapify DOWN** → Element **upar se neeche** jaata hai (root ➜ leaf ki taraf)
+
+</div>
+
+### <span style="color:#32CD32">⬆️ Heapify Up — Kyun?</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+Jab naya element insert hota hai, wo hamesha **last position (sabse neeche)** par daala jaata hai. Phir wo apne **parent** se compare hota hai aur agar bada hai to **swap** hoke **ek level upar** chala jaata hai.
+
+➡️ Yeh process tab tak chalta hai jab tak element **root tak na pahunch jaye** ya **parent se chhota na ho jaye**.
+
+Isliye naam **"Heapify UP"** — kyunki element har swap ke baad **UPAR** move karta hai.
+
+</div>
+
+### <span style="color:#FF4500">⬇️ Heapify Down — Kyun?</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+Jab root remove hota hai, hum **last element** ko uthakar **root par** rakh dete hain. Ab yeh element galat jagah par hai (chhota hone ke bawajood root par baitha hai). Ab hum ise apne **children** se compare karte hain aur agar koi bada child hai to uske saath **swap** hoke **ek level neeche** chala jaata hai.
+
+➡️ Yeh process tab tak chalta hai jab tak element **leaf na ban jaye** ya **dono children se bada na ho jaye**.
+
+Isliye naam **"Heapify DOWN"** — kyunki element har swap ke baad **NEECHE** move karta hai.
+
+</div>
+
+---
+
+## <span style="color:#00CED1">⏰ KAB CALL KARTE HAIN? (WHEN TO CALL)</span>
+
+| Situation                                              | Kya karte hain?                                        |   Kaunsa Heapify?   |
+| :----------------------------------------------------- | :----------------------------------------------------- | :-----------------: |
+| ✅ Naya element **insert** karna hai                   | Last position par daalo, phir upar sift karo           |  ⬆️ **Heapify Up**  |
+| ✅ Root (min/max) **remove** karna hai                 | Last element ko root par lao, phir neeche sift karo    | ⬇️ **Heapify Down** |
+| ✅ **Build Heap** from random array                    | Last non-leaf node se root tak, har node par call karo | ⬇️ **Heapify Down** |
+| ✅ Kisi bhi node ki value **badh gayi** (increase key) | Us node se upar sift karo                              |  ⬆️ **Heapify Up**  |
+| ✅ Kisi bhi node ki value **ghat gayi** (decrease key) | Us node se neeche sift karo                            | ⬇️ **Heapify Down** |
+
+<div style="background-color:#0d1a3d; padding:15px; border-radius:10px; border-left:5px solid #00BFFF;">
+
+**📌 RULE OF THUMB:**
+
+- 🔼 Element agar **apni sahi jagah se neeche** hai → **UP** karo
+- 🔽 Element agar **apni sahi jagah se upar** hai → **DOWN** karo
+
+</div>
+
+---
+
+## <span style="color:#32CD32">⬆️ HEAPIFY UP — STEP BY STEP VISUAL</span>
+
+### <span style="color:#FFD700">📦 Initial Max Heap (7 nodes)</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #1E90FF;">
+
+```
+        50          ← Index 0 (root)
+      /    \
+    30      20      ← Index 1, 2
+   /  \    /  \
+  10   15 8    9    ← Index 3, 4, 5, 6
+```
+
+📦 Array: `[50, 30, 20, 10, 15, 8, 9]`
+
+</div>
+
+### <span style="color:#FF69B4">🎯 Goal: Insert `60` into Max Heap</span>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 1: Naya element last position par daalo</span>
+
+```
+        50                  ← Index 0
+      /    \
+    30      20              ← Index 1, 2
+   /  \    /  \
+  10   15 8    9            ← Index 3, 4, 5, 6
+ /
+60                          ← Index 7 (naya element)
+```
+
+📦 Array: `[50, 30, 20, 10, 15, 8, 9, 60]`
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 7 ka parent = `floor((7-1)/2) = 3` → value = `10`
+
+`60 > 10`? ✅ **Haan** → **SWAP** karo!
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 2: 60 apne parent (10) se swap hua → ek level UPAR</span>
+
+```
+        50                  ← Index 0
+      /    \
+    30      20              ← Index 1, 2
+   /  \    /  \
+  60   15 8    9            ← Index 3 (ab 60 yahan hai)
+ /
+10                          ← Index 7 (ab 10 yahan)
+```
+
+📦 Array: `[50, 30, 20, 60, 15, 8, 9, 10]`
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 3 ka parent = `floor((3-1)/2) = 1` → value = `30`
+
+`60 > 30`? ✅ **Haan** → **SWAP** karo!
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 3: 60 apne parent (30) se swap hua → ek aur level UPAR</span>
+
+```
+        50                  ← Index 0
+      /    \
+    60      20              ← Index 1 (ab 60 yahan)
+   /  \    /  \
+  30   15 8    9            ← Index 3 (ab 30 yahan)
+ /
+10
+```
+
+📦 Array: `[50, 60, 20, 30, 15, 8, 9, 10]`
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 1 ka parent = `floor((1-1)/2) = 0` → value = `50`
+
+`60 > 50`? ✅ **Haan** → **SWAP** karo!
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 4: 60 root par pahunch gaya → 50 se swap hua</span>
+
+```
+        60                  ← Index 0 (60 root ban gaya!)
+      /    \
+    50      20              ← Index 1 (ab 50 yahan)
+   /  \    /  \
+  30   15 8    9
+ /
+10
+```
+
+📦 Array: `[60, 50, 20, 30, 15, 8, 9, 10]`
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+**🛑 STOP!** Index 0 = root hai, upar koi parent nahi. Heap property satisfied ✅
+
+**🎉 Final Max Heap:** `[60, 50, 20, 30, 15, 8, 9, 10]`
+
+**⏱️ Total swaps:** 3 = height of tree = `O(log n)`
+
+</div>
+
+---
+
+## <span style="color:#FF4500">⬇️ HEAPIFY DOWN — STEP BY STEP VISUAL</span>
+
+### <span style="color:#FFD700">📦 Initial Max Heap (8 nodes)</span>
+
+```
+        60                  ← Index 0
+      /    \
+    50      20              ← Index 1, 2
+   /  \    /  \
+  30   15 8    9            ← Index 3, 4, 5, 6
+ /
+10                          ← Index 7
+```
+
+📦 Array: `[60, 50, 20, 30, 15, 8, 9, 10]`
+
+### <span style="color:#FF69B4">🎯 Goal: Remove maximum element (root = 60)</span>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 1: Root hatao → last element (10) ko root par lao</span>
+
+```
+        10                  ← Index 0 (last element root par)
+      /    \
+    50      20              ← Index 1, 2
+   /  \    /  \
+  30   15 8    9            ← Index 3, 4, 5, 6
+```
+
+📦 Array: `[10, 50, 20, 30, 15, 8, 9]` (60 removed, 10 moved to root)
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 0 ke children = Index 1 (`50`) aur Index 2 (`20`)
+
+Sabse bada child = `50`. `10 < 50`? ✅ **Haan** → **SWAP** with 50!
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 2: 10 apne bade child (50) se swap hua → ek level NEECHE</span>
+
+```
+        50                  ← Index 0 (50 ab root par)
+      /    \
+    10      20              ← Index 1 (ab 10 yahan)
+   /  \    /  \
+  30   15 8    9
+```
+
+📦 Array: `[50, 10, 20, 30, 15, 8, 9]`
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 1 ke children = Index 3 (`30`) aur Index 4 (`15`)
+
+Sabse bada child = `30`. `10 < 30`? ✅ **Haan** → **SWAP** with 30!
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 3: 10 apne bade child (30) se swap hua → ek aur level NEECHE</span>
+
+```
+        50                  ← Index 0
+      /    \
+    30      20              ← Index 1 (ab 30 yahan)
+   /  \    /  \
+  10   15 8    9            ← Index 3 (ab 10 yahan)
+```
+
+📦 Array: `[50, 30, 20, 10, 15, 8, 9]`
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+**🧮 Compare:** Index 3 ke children = Index 7 aur Index 8
+
+Array ki length = `7`, toh Index 7 aur 8 **out of bounds** hain. `10` ab **leaf** hai.
+
+</div>
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 4: 10 leaf ban gaya → STOP</span>
+
+```
+        50
+      /    \
+    30      20
+   /  \    /  \
+  10   15 8    9
+```
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+**🛑 STOP!** 10 ab leaf node hai, koi child nahi. Heap property satisfied ✅
+
+**🎉 Final Max Heap:** `[50, 30, 20, 10, 15, 8, 9]`
+
+**🗑️ Removed maximum:** `60` (return value)
+
+**⏱️ Total swaps:** 2 = height of tree = `O(log n)`
+
+</div>
+
+---
+
+## <span style="color:#9370DB">🏗️ BUILD HEAP — SIRF HEAPIFY DOWN SE</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #9370DB;">
+
+Ek random array ko heap mein convert karna ho, toh hum **last non-leaf node** se **root** tak jaate hain aur har node par **Heapify Down** call karte hain.
+
+**Kyun last non-leaf se?** Kyunki leaf nodes already valid heaps hote hain (unke paas koi child nahi hota). Toh unpar kaam karne ki zaroorat nahi.
+
+**Last non-leaf index** = `floor(n/2) - 1` (0-based indexing)
+
+</div>
+
+### <span style="color:#FFD700">📦 Example: Random array `[3, 9, 2, 1, 4, 5]` ko Max Heap banao</span>
+
+```
+Initial Tree:
+        3
+      /   \
+     9     2
+    / \   /
+   1   4 5
+```
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+n = 6, last non-leaf index = `floor(6/2) - 1 = 2`
+
+Toh hum **Index 2 ➜ 1 ➜ 0** par Heapify Down karenge.
+
+</div>
+
+### <span style="color:#FFD700">🔹 i = 2 (value 2): children = 5 (idx 5). 5 > 2 → swap</span>
+
+```
+        3
+      /   \
+     9     5
+    / \   /
+   1   4 2
+```
+
+### <span style="color:#FFD700">🔹 i = 1 (value 9): children = 1, 4. 9 sabse bada → no swap</span>
+
+```
+        3
+      /   \
+     9     5
+    / \   /
+   1   4 2
+```
+
+### <span style="color:#FFD700">🔹 i = 0 (value 3): children = 9, 5. 9 sabse bada → swap</span>
+
+```
+        9
+      /   \
+     3     5
+    / \   /
+   1   4 2
+```
+
+### <span style="color:#FFD700">🔹 Continue Heapify Down on Index 1 (value 3): children = 1, 4. 4 > 3 → swap</span>
+
+```
+        9
+      /   \
+     4     5
+    / \   /
+   1   3 2
+```
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+**🎉 Final Max Heap:** `[9, 4, 5, 1, 3, 2]` ✅
+
+**⏱️ Build Heap Time Complexity:** `O(n)` (na ki O(n log n) — kyunki zyada nodes leaf ke paas hain jinko kam kaam karna padta hai)
+
+</div>
+
+---
+
+## <span style="color:#DA70D6">📊 QUICK COMPARISON TABLE</span>
+
+| Feature               |          ⬆️ Heapify Up           |            ⬇️ Heapify Down             |
+| :-------------------- | :------------------------------: | :------------------------------------: |
+| **Direction**         |           Leaf ➜ Root            |              Root ➜ Leaf               |
+| **Compare with**      |              Parent              |            Children (dono)             |
+| **Swap with**         |     Parent (agar child bada)     |        Sabse bada/chhota child         |
+| **Kab call hota hai** |          Insert ke baad          |      Remove ke baad / Build Heap       |
+| **Time Complexity**   |            `O(log n)`            |               `O(log n)`               |
+| **Space Complexity**  |              `O(1)`              |           `O(1)` (iterative)           |
+| **Alternative names** | Sift Up, Bubble Up, Percolate Up | Sift Down, Bubble Down, Percolate Down |
+| **Kitne swaps max?**  |          Height of tree          |             Height of tree             |
+
+---
+
+## <span style="color:#FFD700">🎯 EK LINE MEIN YAAD RAKHO</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+> ⬆️ **INSERT** karo → Last mein daalo → **HEAPIFY UP** (parent se compare)
+>
+> ⬇️ **REMOVE** karo → Last ko root par lao → **HEAPIFY DOWN** (children se compare)
+>
+> 🏗️ **BUILD HEAP** → Last non-leaf se root tak → **HEAPIFY DOWN**
+
+</div>
+
+---
+
+---
+
+## <span style="color:#00FA9A">💻 JAVASCRIPT IMPLEMENTATION</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #00FA9A;">
+
+Ab poora **Max Heap** JavaScript mein likhte hain — `insert`, `remove`, `peek`, `heapifyUp`, `heapifyDown`, aur `buildHeap` — sab kuch! (0-based indexing use karenge ⭐)
+
+</div>
+
+### <span style="color:#FFD700">📝 Complete MaxHeap Class</span>
+
+```javascript
+class MaxHeap {
+  constructor() {
+    this.heap = [];
+  }
+
+  // ---------- 🔢 INDEX HELPERS (0-based) ----------
+  parent(i) {
+    return Math.floor((i - 1) / 2);
+  }
+  leftChild(i) {
+    return 2 * i + 1;
+  }
+  rightChild(i) {
+    return 2 * i + 2;
+  }
+
+  swap(i, j) {
+    [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
+  }
+
+  // ---------- 👀 PEEK : O(1) ----------
+  peek() {
+    return this.heap.length > 0 ? this.heap[0] : null;
+  }
+
+  // ---------- ✅ INSERT : O(log n) ----------
+  insert(value) {
+    this.heap.push(value); // 1. last position par daalo
+    this.heapifyUp(this.heap.length - 1); // 2. phir upar sift karo
+  }
+
+  // ---------- ⬆️ HEAPIFY UP : O(log n) ----------
+  heapifyUp(index) {
+    while (index > 0) {
+      const parentIdx = this.parent(index);
+
+      // Max Heap: agar child parent se bada hai to swap
+      if (this.heap[index] > this.heap[parentIdx]) {
+        this.swap(index, parentIdx);
+        index = parentIdx; // ⬆️ upar chalo
+      } else {
+        break; // ✅ sahi jagah mil gayi
+      }
+    }
+  }
+
+  // ---------- ❌ REMOVE (max) : O(log n) ----------
+  remove() {
+    if (this.heap.length === 0) return null;
+    if (this.heap.length === 1) return this.heap.pop();
+
+    const max = this.heap[0]; // 1. root = max
+    this.heap[0] = this.heap.pop(); // 2. last element root par
+    this.heapifyDown(0); // 3. neeche sift karo
+    return max;
+  }
+
+  // ---------- ⬇️ HEAPIFY DOWN : O(log n) ----------
+  heapifyDown(index) {
+    const n = this.heap.length;
+
+    while (true) {
+      let largest = index;
+      const left = this.leftChild(index);
+      const right = this.rightChild(index);
+
+      // Left child se compare
+      if (left < n && this.heap[left] > this.heap[largest]) {
+        largest = left;
+      }
+      // Right child se compare
+      if (right < n && this.heap[right] > this.heap[largest]) {
+        largest = right;
+      }
+
+      if (largest === index) break; // ✅ heap property satisfied
+
+      this.swap(index, largest);
+      index = largest; // ⬇️ neeche chalo
+    }
+  }
+
+  // ---------- 🏗️ BUILD HEAP : O(n) ----------
+  buildHeap(array) {
+    this.heap = [...array];
+
+    // Last non-leaf node se start karo (floor(n/2) - 1), root tak
+    const lastNonLeaf = Math.floor(this.heap.length / 2) - 1;
+
+    for (let i = lastNonLeaf; i >= 0; i--) {
+      this.heapifyDown(i);
+    }
+  }
+
+  // ---------- 🖨️ PRINT ----------
+  print() {
+    console.log(this.heap);
+  }
+}
+```
+
+---
+
+### <span style="color:#00BFFF">🧪 Usage Example — Insert & Heapify Up</span>
+
+```javascript
+const heap = new MaxHeap();
+
+// Insert karte jaao
+[50, 30, 20, 10, 15, 8, 9].forEach((v) => heap.insert(v));
+heap.print();
+// 👉 [50, 30, 20, 10, 15, 8, 9]
+
+// Ab 60 insert karo → Heapify Up trigger hoga
+heap.insert(60);
+heap.print();
+// 👉 [60, 50, 20, 30, 15, 8, 9, 10]  ✅ 60 root par
+```
+
+---
+
+### <span style="color:#00BFFF">🧪 Usage Example — Remove & Heapify Down</span>
+
+```javascript
+const heap = new MaxHeap();
+heap.buildHeap([60, 50, 20, 30, 15, 8, 9, 10]);
+heap.print();
+// 👉 [60, 50, 20, 30, 15, 8, 9, 10]
+
+const max = heap.remove();
+console.log('Removed:', max); // 👉 Removed: 60
+heap.print();
+// 👉 [50, 30, 20, 10, 15, 8, 9]  ✅ Heapify Down ne sambhal liya
+```
+
+---
+
+### <span style="color:#00BFFF">🧪 Usage Example — Build Heap from Random Array</span>
+
+```javascript
+const heap = new MaxHeap();
+heap.buildHeap([3, 9, 2, 1, 4, 5]);
+heap.print();
+// 👉 [9, 4, 5, 1, 3, 2]  ✅
+```
+
+---
+
+### <span style="color:#FF69B4">🔁 Min Heap banane ke liye sirf 2 line badlo</span>
+
+<div style="background-color:#2d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF8C00;">
+
+**Heapify Up** mein `>` ko `<` karo, aur **Heapify Down** mein `>` ko `<` karo — bas!
+
+```javascript
+// ⬆️ Heapify Up (Min Heap version)
+if (this.heap[index] < this.heap[parentIdx]) { ... }
+
+// ⬇️ Heapify Down (Min Heap version)
+if (left < n && this.heap[left] < this.heap[smallest]) smallest = left;
+if (right < n && this.heap[right] < this.heap[smallest]) smallest = right;
+```
+
+</div>
+
+---
+
+## <span style="color:#FFD700">🎯 FINAL SUMMARY</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+
+1. 🔼 **Heapify Up** = leaf se root ki taraf sift. **Insert** ke baad call hota hai.
+2. 🔽 **Heapify Down** = root se leaf ki taraf sift. **Remove** ke baad aur **Build Heap** mein call hota hai.
+3. 🕐 Dono ki time complexity = `O(log n)` = tree ki height.
+4. 🏗️ **Build Heap** = `O(n)` (kyunki zyada nodes bottom ke paas hain, unhe kam kaam karna padta hai).
+5. 🎯 Heap mein **koi bhi random node** remove nahi kar sakte — sirf **root**.
+6. 💡 **Rule of Thumb:** Element agar sahi jagah se **neeche hai → UP**, agar **upar hai → DOWN**.
+
+</div>
+
+> 🔥 **REMEMBER:** Insert = Last mein daalo + **UP** | Remove = Last ko root par lao + **DOWN**
+
+---
+
+# <span style="color:#FF4500">🔥 MAX HEAP vs MIN HEAP — DEEP COMPARISON</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+Ab tak humne **Min Heap** aur **Max Heap** dono ke baare mein baat ki. Lekin dono mein **asli farak sirf 3 comparisons** ka hai. Baaki poora structure, code, aur logic **bilkul same** rehta hai.
+
+</div>
+
+---
+
+## <span style="color:#FFD700">📊 Sirf 3 Comparisons Ka Farak</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+| Comparison              | Min Heap                       | Max Heap                      |
+| :---------------------- | :----------------------------- | :---------------------------- |
+| **heapifyUp**           | `heap[idx] < heap[parent]`     | `heap[idx] > heap[parent]`    |
+| **heapifyDown (left)**  | `heap[left] < heap[smallest]`  | `heap[left] > heap[largest]`  |
+| **heapifyDown (right)** | `heap[right] < heap[smallest]` | `heap[right] > heap[largest]` |
+| **Root**                | Sabse chhota                   | Sabse bada                    |
+| **Variable name**       | `smallestElem`                 | `largestElem`                 |
+
+</div>
+
+---
+
+## <span style="color:#00CED1">🔑 Rule Yaad Rakhne Ka</span>
+
+<div style="background-color:#0d2d2d; padding:15px; border-radius:10px; border-left:5px solid #00CED1;">
+
+Poora structure same — sirf **`<`** ki jagah **`>`** (comparisons ulti).
+
+Min Heap: Parent < Children (chhota upar)
+Max Heap: Parent > Children (bada upar)
+
+Bas yahi ek line yaad rakh. Baaki sab isi se derive ho jata hai.
+
+</div>
+
+---
+
+## <span style="color:#FF69B4">📌 Visual Example — Same Values, Different Heaps</span>
+
+### <span style="color:#00BFFF">⬇️ Min Heap (chhota upar)</span>
+
+```text
+         1
+       /   \
+      3     5
+     / \   /
+    8   12 18
+📦 Array: [1, 3, 5, 8, 12, 18]
+```
+
+<div style="background-color:#0d1a3d; padding:15px; border-radius:10px; border-left:5px solid #00BFFF;">
+🏆 Root = 1 → sabse chhota element (O(1) me nikal sakte)
+</div>
+
+### <span style="color:#FF4500">⬆️ Max Heap (bada upar)</span>
+
+```text
+         18
+       /    \
+      12     5
+     /  \   /
+    8    3 1
+📦 Array: [18, 12, 5, 8, 3, 1]
+```
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+🏆 Root = 18 → sabse bada element (O(1) me nikal sakte)
+</div>
+
+### <span style="color:#9370DB">⚡ Ek Line Me Summary</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #9370DB;">
+Min Heap: Parent apne children se chhota
+Max Heap: Parent apne children se bada
+Farak: Sirf comparisons ulti — baaki sab same
+</div>
+
+### <span style="color:#DA70D6">🎯 GENERIC HEAP — EK CLASS, DO HEAPS</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+Do alag classes (MinHeap, MaxHeap) banane ki zaroorat nahi hai. Ek hi generic Heap class banao, aur ek comparator function pass karo. Code duplicate nahi hoga, aur class flexible rahegi.
+</div>
+
+### <span style="color:#FFD700">🔑 Comparator Kya Karta Hai?</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+compare(a, b) batata hai — "kya a, b se BETTER hai?"
+
+✅ true → a better hai, upar jayega
+
+❌ false → b better hai, wahi rahega
+
+Examples:
+
+```javascript
+(a, b) => a < b   //  Min Heap (chhota upar)
+(a, b) => a > b   //  Max Heap (bada upar)
+```
+
+</div>
+
+### <span style="color:#00FA9A">💻 Complete Generic Heap Class</span>
+
+```javascript
+class Heap {
+  constructor(comparator) {
+    this.heap = [];
+    this.compare = comparator; // (a, b) => boolean
+  }
+
+  // ---------- 🔢 INDEX HELPERS ----------
+  getLeftChildIdx(i) {
+    return 2 * i + 1;
+  }
+  getRightChildIdx(i) {
+    return 2 * i + 2;
+  }
+  getParentIdx(i) {
+    return Math.floor((i - 1) / 2);
+  }
+
+  // ---------- ✅ INSERT : O(log n) ----------
+  insert(val) {
+    this.heap.push(val);
+    let lastIdx = this.heap.length - 1;
+    this.heapifyUp(lastIdx);
+  }
+
+  // ---------- ⬆️ HEAPIFY UP ----------
+  heapifyUp(idx) {
+    while (idx > 0) {
+      let parentIdx = this.getParentIdx(idx);
+
+      // Agar child parent se "better" hai (compare true), to swap
+      if (this.compare(this.heap[idx], this.heap[parentIdx])) {
+        [this.heap[idx], this.heap[parentIdx]] = [
+          this.heap[parentIdx],
+          this.heap[idx],
+        ];
+        idx = parentIdx;
+      } else {
+        break;
+      }
+    }
+  }
+
+  // ---------- ❌ DELETE ROOT : O(log n) ----------
+  deleteRoot() {
+    if (this.heap.length === 0) return null;
+    if (this.heap.length === 1) return this.heap.pop();
+
+    let root = this.heap[0];
+    let lastIdx = this.heap.length - 1;
+    [this.heap[0], this.heap[lastIdx]] = [this.heap[lastIdx], this.heap[0]];
+
+    this.heap.pop();
+    this.heapifyDown(0);
+
+    return root;
+  }
+
+  // ---------- ⬇️ HEAPIFY DOWN ----------
+  heapifyDown(idx) {
+    let leftChildIdx = this.getLeftChildIdx(idx);
+    let rightChildIdx = this.getRightChildIdx(idx);
+
+    let best = idx;
+    let heapLength = this.heap.length;
+
+    // Left child agar "better" hai to best update karo
+    if (
+      leftChildIdx < heapLength &&
+      this.compare(this.heap[leftChildIdx], this.heap[best])
+    ) {
+      best = leftChildIdx;
+    }
+
+    // Right child agar "better" hai to best update karo
+    if (
+      rightChildIdx < heapLength &&
+      this.compare(this.heap[rightChildIdx], this.heap[best])
+    ) {
+      best = rightChildIdx;
+    }
+
+    if (best !== idx) {
+      [this.heap[idx], this.heap[best]] = [this.heap[best], this.heap[idx]];
+      this.heapifyDown(best);
+    }
+  }
+
+  // ---------- 👀 PEEK : O(1) ----------
+  peek() {
+    return this.heap[0] ?? null;
+  }
+
+  // ---------- 📏 SIZE ----------
+  size() {
+    return this.heap.length;
+  }
+}
+```
+
+### <span style="color:#00BFFF">🧪 Usage — Min Heap vs Max Heap</span>
+
+```javascript
+// ⬇️ Min Heap — chhota upar
+let minHeap = new Heap((a, b) => a < b);
+minHeap.insert(8);
+minHeap.insert(3);
+minHeap.insert(5);
+minHeap.insert(1);
+console.log(minHeap.heap); // 👉 [1, 3, 5, 8]
+console.log(minHeap.deleteRoot()); // 👉 1
+console.log(minHeap.heap); // 👉 [3, 8, 5]
+
+// ⬆️ Max Heap — bada upar
+let maxHeap = new Heap((a, b) => a > b);
+maxHeap.insert(8);
+maxHeap.insert(3);
+maxHeap.insert(5);
+maxHeap.insert(1);
+console.log(maxHeap.heap); // 👉 [8, 3, 5, 1]
+console.log(maxHeap.deleteRoot()); // 👉 8
+console.log(maxHeap.heap); // 👉 [5, 3, 1]
+```
+
+### <span style="color:#FF8C00">🎨 Custom Comparator Ke Examples</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF8C00;">
+
+```javascript
+// 🔢 Numbers — Min Heap
+new Heap((a, b) => a < b);
+
+// 🔢 Numbers — Max Heap
+new Heap((a, b) => a > b);
+
+// 📦 Objects — chhota priority pehle
+new Heap((a, b) => a.priority < b.priority);
+
+// 📦 Objects — bada priority pehle
+new Heap((a, b) => a.priority > b.priority);
+
+// 🔗 Pairs — pehle first compare, phir second
+new Heap((a, b) => (a[0] !== b[0] ? a[0] < b[0] : a[1] < b[1]));
+```
+
+</div>
+
+### <span style="color:#32CD32">📊 Do Alag Classes vs Ek Generic Class</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+Point	Two Classes (MinHeap, MaxHeap)	One Generic Class
+Code	Duplicate hota hai	Ek hi baar
+Flexibility	Fixed min/max	Koi bhi comparator
+Readability	Explicit naam	Thoda abstract
+Reusability	Kam	Zyada
+Objects ke liye	Nahi kaam karta	Bilkul kaam karega
+Interview me	Theek	Impressive
+</div>
+
+### <span style="color:#FFD700">⚡ Quick Reference — Yaad Rakhne Ka Rule</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+compare(a, b) — "kya a, b se pehle aana chahiye?"
+
+Min Heap → compare = (a, b) => a < b "chhota pehle"
+Max Heap → compare = (a, b) => a > b "bada pehle"
+Heapify me sirf yahi compare use hota hai — baaki sab same:
+
+heapifyUp → child parent se better? → swap
+
+heapifyDown → child best se better? → value update
+
+root → sabse better element
+
+</div>
+
+
+---
+
+# <span style="color:#9370DB">📊 HEAP SORT — COMPLETE DEEP DIVE</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #9370DB;">
+
+**Heap Sort** ek **comparison-based sorting algorithm** hai jo **Heap data structure** ka use karke array ko sort karta hai.
+
+⏱️ **Time Complexity:** `O(n log n)`  
+💾 **Space Complexity:** `O(1)` — **In-place** sort  
+🔀 **Stable?** ❌ Nahi — equal elements ka order badal sakta hai
+
+</div>
+
+---
+
+## <span style="color:#FFD700">🎯 Heap Sort Ka Core Idea</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+Man lo hamare paas ek array hai: `[5, 22, 10, 20, 30]`
+
+### 🔹 Agar Min Heap banaye:
+
+```text
+        5
+      /   \
+     22     10
+    /  \
+   20   30
+```
+
+### 🔹 Agar Max Heap banaye:
+
+```text
+        30
+      /   \
+     22     10
+    /  \
+   20   5
+```
+
+**Sorted order chahiye to pehle heap banao — Max ya Min.**
+
+</div>
+
+---
+
+## <span style="color:#FF4500">🔑 Kaunsa Heap — Ascending vs Descending?</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+| Order Chahiye | Kaunsa Heap Banao | Kyun? |
+|:---|:---|:---|
+| ⬆️ **Ascending** | **Max Heap** | Max value end me jaata hai |
+| ⬇️ **Descending** | **Min Heap** | Min value end me jaata hai |
+
+### 🔥 Yaad Rakhne Ka Rule:
+
+> **In-place Heap Sort me ULTA hota hai** —  
+> Max Heap banate ho, **ascending** milta hai.
+
+**Kyunki:** Max heap ka max **end me** swap hota hai (step-by-step), aur smallest **sabse aakhir** me. Isliye array **start se end** tak **ascending** ban jaata hai.
+
+</div>
+
+---
+
+## <span style="color:#32CD32">📋 Heap Sort Ke 4 Steps</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+### 🔹 Step 1: **Max/Min Heap Banao**
+
+Array se Max Heap (ascending ke liye) ya Min Heap (descending ke liye) banao — **bina extra space** ke.
+
+### 🔹 Step 2: **First aur Last Swap Karo**
+
+Root (max) ko **last element** se swap karo. Ab max apni **sahi jagah** pe pahunch gaya.
+
+### 🔹 Step 3: **Heap Size Reduce Karo**
+
+Last element sorted hai — usko **ignore** kar do. Heap ka size `1` kam karo.
+
+### 🔹 Step 4: **Heapify Down Karo**
+
+Root pe **heapify down** call karo. Ab naya max root pe aa jayega.
+
+### 🔁 Step 2 → 4 Repeat Karo
+
+Jab tak poora array sorted na ho jaye.
+
+</div>
+
+---
+
+## <span style="color:#FF69B4">🎬 STEP BY STEP VISUAL — Ascending Order</span>
+
+### <span style="color:#FFD700">📦 Input Array</span>
+
+```text
+[4, 10, 3, 5, 1]
+```
+
+---
+
+### <span style="color:#00BFFF">🔹 STEP 1: Max Heap Banao</span>
+
+```text
+Initial Tree:
+        4
+      /   \
+     10    3
+    /  \
+   5    1
+```
+
+**Heapify Down (last non-leaf se root tak):**
+
+```text
+        10
+      /    \
+     5      3
+    / \
+   4   1
+```
+
+📦 Array: `[10, 5, 3, 4, 1]` ✅ Max Heap ban gaya
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 2: Swap Root ↔ Last</span>
+
+```text
+Swap 10 ↔ 1:
+        1
+      /   \
+     5     3
+    / \
+   4   10  ← 10 sorted (last position)
+```
+
+📦 Array: `[1, 5, 3, 4 | 10]`
+
+---
+
+### <span style="color:#FF4500">🔹 STEP 3: Heap Size Reduce + Heapify Down</span>
+
+Heap size `5 → 4` (10 ignore karo)
+
+```text
+Heapify Down on [1, 5, 3, 4]:
+        5
+      /   \
+     4     3
+    /
+   1
+```
+
+📦 Array: `[5, 4, 3, 1 | 10]`
+
+---
+
+### <span style="color:#FFD700">🔹 STEP 2 (Repeat): Swap Root ↔ Last</span>
+
+```text
+Swap 5 ↔ 1:
+        1
+      /   \
+     4     3
+    /
+   5  ← 5 sorted
+```
+
+📦 Array: `[1, 4, 3 | 5, 10]`
+
+---
+
+### <span style="color:#FF4500">🔹 STEP 3+4 (Repeat): Heapify Down</span>
+
+```text
+Heapify Down on [1, 4, 3]:
+        4
+      /   \
+     1     3
+```
+
+📦 Array: `[4, 1, 3 | 5, 10]`
+
+---
+
+### <span style="color:#FFD700">🔹 Continue...</span>
+
+```text
+Swap 4 ↔ 3:  [3, 1 | 4, 5, 10]
+Heapify:     [3, 1 | 4, 5, 10]
+
+Swap 3 ↔ 1:  [1 | 3, 4, 5, 10]
+Heapify:     [1 | 3, 4, 5, 10]
+```
+
+---
+
+### <span style="color:#32CD32">🎉 Final Sorted Array</span>
+
+```text
+[1, 3, 4, 5, 10]  ✅ Ascending
+```
+
+</div>
+
+---
+
+## <span style="color:#9370DB">🏗️ Build Heap Without Extra Space</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #9370DB;">
+
+**Challenge:** Array se Max Heap banana **bina extra array** ke — `O(1)` space.
+
+**Solution:** Array ko hi heap maan lo (complete binary tree ka array representation), aur **bottom-up heapify down** karo.
+
+### 🔑 Last Non-Leaf Node Ka Formula
+
+```text
+Last non-leaf index = Math.floor(n / 2) - 1
+```
+
+**Kyun?** Kyunki `n/2` se aage ke saare nodes **leaf** hote hain — unke children nahi hote, unhe heapify karne ki zaroorat nahi.
+
+</div>
+
+---
+
+### <span style="color:#FFD700">📦 Example: `[3, 9, 2, 1, 4, 5]` ko Max Heap banao</span>
+
+```text
+Initial Tree:
+        3
+      /   \
+     9     2
+    / \   /
+   1   4 5
+```
+
+**n = 6**, last non-leaf = `floor(6/2) - 1 = 2`
+
+**Loop: i = 2 → 1 → 0 (Heapify Down)**
+
+### 🔹 i = 2 (value 2): children = 5. 5 > 2 → swap
+
+```text
+        3
+      /   \
+     9     5
+    / \   /
+   1   4 2
+```
+
+### 🔹 i = 1 (value 9): children = 1, 4. 9 sabse bada → no swap
+
+### 🔹 i = 0 (value 3): children = 9, 5. 9 sabse bada → swap
+
+```text
+        9
+      /   \
+     3     5
+    / \   /
+   1   4 2
+```
+
+**Continue Heapify Down on i = 1 (value 3): children = 1, 4. 4 > 3 → swap**
+
+```text
+        9
+      /   \
+     4     5
+    / \   /
+   1   3 2
+```
+
+### <span style="color:#32CD32">🎉 Final Max Heap: `[9, 4, 5, 1, 3, 2]` ✅</span>
+
+---
+
+## <span style="color:#FF6347">💻 Complete Code — JavaScript</span>
+
+```javascript
+function heapSort(arr) {
+  let n = arr.length;
+
+  // ---------- STEP 1: BUILD MAX HEAP ----------
+  // Last non-leaf node se root tak heapify down
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    heapifyDown(arr, i, n);
+  }
+
+  // ---------- STEP 2-4: SORT ----------
+  // Root (max) ko last se swap karo, phir heapify down
+  for (let i = n - 1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]]; // swap root ↔ last
+    heapifyDown(arr, 0, i);              // heapify with reduced size
+  }
+
+  return arr;
+}
+
+// ---------- HEAPIFY DOWN : O(log n) ----------
+function heapifyDown(arr, idx, n) {
+  let largest = idx;
+  let left = (2 * idx) + 1;
+  let right = (2 * idx) + 2;
+
+  // Left child compare
+  if (left < n && arr[left] > arr[largest]) largest = left;
+  // Right child compare
+  if (right < n && arr[right] > arr[largest]) largest = right;
+
+  if (largest !== idx) {
+    [arr[idx], arr[largest]] = [arr[largest], arr[idx]];
+    heapifyDown(arr, largest, n);
+  }
+}
+
+// ---------- USAGE ----------
+let arr = [1, 4, 10, 5, 3, 7, 9, 2];
+console.log(heapSort(arr)); // 👉 [1, 2, 3, 4, 5, 7, 9, 10]
+```
+
+---
+
+## <span style="color:#00FA9A">📊 TIME COMPLEXITY ANALYSIS</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #00FA9A;">
+
+### 🔹 Build Heap (Optimized): **O(n)**
+
+**Do tarike hain:**
+
+| Method | Kyun | Complexity |
+|:---|:---|:---|
+| Insert ek-ek karke | Har insert `O(log n)` | `O(n log n)` ❌ |
+| **Heapify Down (last non-leaf se)** | Bottom ke nodes ko kam kaam | **`O(n)`** ✅ |
+
+**Mathematical Proof:**
+
+- Leaf nodes (n/2) → kuch nahi karna (0 work)
+- Level 1 (n/4 nodes) → max 1 swap
+- Level 2 (n/8 nodes) → max 2 swaps
+- Level 3 (n/16 nodes) → max 3 swaps
+
+**Total work** = `n/4·1 + n/8·2 + n/16·3 + ...` = **`O(n)`**
+
+---
+
+### 🔹 Extract/Delete: **O(n log n)**
+
+Har extract me:
+
+- Swap root ↔ last = `O(1)`
+- Heapify Down = `O(log n)`
+
+Total extracts = `n - 1`
+
+**Total delete cost** = `(n-1) × O(log n)` = **`O(n log n)`**
+
+---
+
+### 🔹 Total Time Complexity
+
+```text
+Build Heap (Optimized)   =  O(n)
+(n-1) Extract Operations =  O(n log n)
+────────────────────────────────────
+TOTAL                    =  O(n) + O(n log n)
+FINAL                    =  O(n log n)
+```
+
+</div>
+
+---
+
+## <span style="color:#00BFFF">💾 SPACE COMPLEXITY ANALYSIS</span>
+
+<div style="background-color:#0d1a3d; padding:15px; border-radius:10px; border-left:5px solid #00BFFF;">
+
+### 🔹 In-Place Sorting
+
+Heap Sort ki **sabse badi advantage** — **in-place** sort karta hai.
+
+**Matlab kya?**
+
+- ✅ Extra array nahi lete
+- ✅ Original array ko hi heap mein convert karte hain
+- ✅ Ussi array ko sort karte hain
+
+### 🔹 Space Breakdown
+
+| Component | Space |
+|:---|:---|
+| Input Array | Already given — extra nahi |
+| Temporary Variables | `O(1)` |
+| Recursion Stack (heapifyDown) | `O(log n)` |
+| **Total** | **`O(1)` ya `O(log n)`** |
+
+**Conclusion:**
+
+- Iterative `heapifyDown` → **`O(1)`**
+- Recursive `heapifyDown` → **`O(log n)` stack space**
+- **Standard answer:** `O(1)` ya `O(log n)` — dono acceptable
+
+</div>
+
+---
+
+## <span style="color:#FFD700">📊 COMPLEXITY TABLE</span>
+
+<div style="background-color:#2d2d0d; padding:15px; border-radius:10px; border-left:5px solid #FFD700;">
+
+| Case | Time Complexity | Space Complexity | In-Place? |
+|:---|:---:|:---:|:---:|
+| **Best Case** | `O(n log n)` | `O(1)` | ✅ Yes |
+| **Worst Case** | `O(n log n)` | `O(1)` | ✅ Yes |
+| **Average Case** | `O(n log n)` | `O(1)` | ✅ Yes |
+
+**🔥 Yehi Heap Sort ki khaas baat hai — har case mein `O(n log n)`.**
+
+</div>
+
+---
+
+## <span style="color:#FF8C00">⚖️ COMPARISON WITH OTHER SORTS</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF8C00;">
+
+| Algorithm | Average | Worst | Space | Stable? |
+|:---|:---:|:---:|:---:|:---:|
+| **Quick Sort** | `O(n log n)` | ❌ `O(n²)` | `O(log n)` | ❌ No |
+| **Merge Sort** | `O(n log n)` | ✅ `O(n log n)` | ❌ `O(n)` | ✅ Yes |
+| **Heap Sort** | ✅ `O(n log n)` | ✅ `O(n log n)` | ✅ `O(1)` | ❌ No |
+
+### 🔹 Heap Sort Ke Fayde
+
+- ✅ **Guaranteed** `O(n log n)` — worst case me bhi
+- ✅ **In-place** — sabse kam space
+- ✅ **No worst case degradation** (Quick Sort me `O(n²)` ho sakta hai)
+
+### 🔹 Heap Sort Ke Nuksan
+
+- ❌ **Cache friendly nahi** — array me jump jump karna padta hai
+- ❌ **Unstable** — equal elements ka order badal sakta hai
+- ❌ **Quick Sort se slow** — practically (constant factors)
+
+### 🔥 Kab Use Kare
+
+> **Jab guaranteed `O(n log n)` chahiye aur memory limited ho → Heap Sort best hai.**
+
+</div>
+
+---
+
+## <span style="color:#DA70D6">🔍 Extra — Leaf Nodes Ka Formula</span>
+
+<div style="background-color:#1a1a2e; padding:15px; border-radius:10px; border-left:5px solid #DA70D6;">
+
+**Leaf nodes nikalne ka tarika:**
+
+```
+Total nodes = n
+Parent nodes = Math.floor(n / 2)
+Leaf nodes = n - Math.floor(n / 2)
+```
+
+### 🔹 Example
+
+```text
+          1                 → Node count 1
+       /      \
+      5          7          → Node count 1 + 2 = 3
+    /  \       /   \
+   4    3     2     8       → Node count 3 + 4 = 7
+  / \  / \    /
+ 0  20 21 23  0             → Node count 7 + 5 = 12
+```
+
+**n = 12**
+
+- Parents = `Math.floor(12/2) = 6`
+- Leaves = `12 - 6 = 6`
+
+Matlab **6 parents** hain, **6 leaves** hain.
+
+**Isliye Build Heap me `n/2` se start karte hain** — kyunki leaf nodes ko heapify karne ki zaroorat nahi.
+
+</div>
+
+---
+
+## <span style="color:#FF4500">⚡ Ek Line Me Yaad Rakh</span>
+
+<div style="background-color:#3d1a0d; padding:15px; border-radius:10px; border-left:5px solid #FF4500;">
+
+> 🔼 **Ascending chahiye** → **Max Heap** banao  
+> 🔽 **Descending chahiye** → **Min Heap** banao  
+> 🏗️ **Build Heap** → `n/2 - 1` se `0` tak heapify down  
+> 🔄 **Sort** → Root ↔ Last swap, size `-1`, heapify down, repeat
+
+</div>
+
+---
+
+## <span style="color:#32CD32">🎯 FINAL SUMMARY</span>
+
+<div style="background-color:#0d3320; padding:15px; border-radius:10px; border-left:5px solid #32CD32;">
+
+1. 🔹 **Heap Sort** = Selection Sort ka **upgraded version**
+2. 🔹 Selection Sort: `O(n²)` — min find karne me `O(n)`
+3. 🔹 Heap Sort: `O(n log n)` — min/max find in `O(log n)`
+4. 🔹 **In-place** sort — `O(1)` extra space
+5. 🔹 **Unstable** sort — equal elements ka order badal sakta hai
+6. 🔹 **Guaranteed** `O(n log n)` — best, worst, average sab me
+
+> 💡 **REMEMBER:** Heap Sort = **Selection Sort + Heap ka power**  
+> 🚀 **Best Use Case:** Limited memory + Guaranteed performance chahiye
+
+</div>
+```

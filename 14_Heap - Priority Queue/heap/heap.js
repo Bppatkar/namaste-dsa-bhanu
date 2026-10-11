@@ -233,7 +233,7 @@ class MinHeap2 {
       //? agar left child value i se chhota hai to ham smallest ko left child index se update karenge
       smallest = leftChildIndex;
     }
-    if (rightChildIndex < this.heapLength && this.heap[rightChildIndex] < this.heap[smallest]) {
+    if (rightChildIndex < heapLength && this.heap[rightChildIndex] < this.heap[smallest]) {
       //? agar right child value i se chhota hai to ham smallest ko right child index se update karenge
       smallest = rightChildIndex;
     }
@@ -434,6 +434,42 @@ function heapSort(arr) {
     // we have to hepify each and every value
     heapifyDown(arr, i, n); // heapify the array, and the ith value
   }
+
+
+  // visuals -
+  // we have this given array visually we can see the max heap array like this
+  //        1
+  //      /   \
+  //     4     10
+  //    / \   / \
+  //   5   3 7   9
+  //  /
+  // 2
+
+  // we do this
+  //        10
+  //      /    \
+  //     4      1
+
+  // now we compare 1 with its left and right child 7 and 9, and we swap 1 with 9 because 9 is greater than 1, so we swap them and same thing we do with 4, we compare 4 with its left and right child 5 and 3, and we swap 4 with 5 because 5 is greater than 4, so we swap them and now we have a max heap array like this
+  //         10
+  //       /    \
+  //      5      9
+  //     / \    / \
+  //    4   3  7   1
+
+  // doing same thing and we got this
+
+  // we get this after checking left and right child of each node and swapping the value if the child is greater than the parent node
+  //         10
+  //       /    \
+  //      5      9
+  //     / \    / \
+  //    4   3  7   1
+  //   /
+  //  2
+
+
   // sort the array 
   // again
   // run a loop from end to front and heapify down for getting final sorted array
@@ -497,6 +533,44 @@ for (let i = n - 1; i >= 0; i--) {
 }
 
 //!---------------------------------------------
+//! code without comment
+
+let newArr = [1, 4, 10, 5, 3, 7, 9, 2]
+function heapSort(arr) {
+  let n = arr.length;
+
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+    heapifyDown(arr, i, n);
+  }
+  // for (let i = n - 1; i >= 0; i--) {
+  //   heapifyDown(arr, i, n);
+  // }
+
+  for (let i = n - 1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapifyDown(arr, 0, i);
+  }
+  return arr;
+}
+
+function heapifyDown(arr, idx, n) {
+  let largest = idx;
+  let left = (2 * idx) + 1;
+  let right = (2 * idx) + 2;
+
+  if (left < n && arr[left] > arr[largest]) largest = left;
+  if (right < n && arr[right] > arr[largest]) largest = right;
+
+  if (largest !== idx) {
+    [arr[idx], arr[largest]] = [arr[largest], arr[idx]];
+    idx = largest;
+    heapifyDown(arr, idx, n);
+  }
+}
+
+console.log(heapSort(newArr));
+
+//!---------------------------------------------
 
 //! Heap Sort Time and Space Complexity
 
@@ -518,7 +592,7 @@ for (let i = n - 1; i >= 0; i--) {
 //* Tarika 2: HeapifyDown use karna (Optimized tarika)
 // Jaisa tune last mein likha hai - leaf nodes ko chhodkar
 // sirf parents ko heapify karo
-// Mathematical proof: 
+// Mathematical proof:
 // - Leaf nodes (n/2) ko kuch nahi karna
 // - Level 1 (n/4 nodes) -> max 1 swap
 // - Level 2 (n/8 nodes) -> max 2 swaps
@@ -548,15 +622,15 @@ for (let i = n - 1; i >= 0; i--) {
 //! FINAL                     = O(n log n)
 
 //? Best Case  : O(n log n) - Jab array already sorted ho
-//? Worst Case : O(n log n) - Jab array reverse sorted ho  
+//? Worst Case : O(n log n) - Jab array reverse sorted ho
 //? Average Case: O(n log n) - Har haal mein same
 
-//TODO: Yehi Heap Sort ki khaas baat hai - 
+//TODO: Yehi Heap Sort ki khaas baat hai -
 //TODO: Har case mein O(n log n) deta hai
 //! Space Complexity Analysis
 //? In-Place Sorting ka Concept
 
-//* Heap Sort ki sabse badi advantage - 
+//* Heap Sort ki sabse badi advantage -
 //* Ye in-place sort karta hai
 
 // Matlab kya?
@@ -586,14 +660,14 @@ for (let i = n - 1; i >= 0; i--) {
 //! Standard answer: O(1) ya O(log n) - dono acceptable
 //! Complexity Table
 
-/* 
+/*
 ╔══════════════╦═════════════════╦══════════════════╦══════════════╗
 ║   Case       ║ Time Complexity ║ Space Complexity ║ In - Place ? ║
 ╠══════════════╬═════════════════╬══════════════════╬══════════════╣
 ║ Best Case    ║   O(n log n)    ║     O(1)         ║    Yes       ║
 ║ Worst Case   ║   O(n log n)    ║     O(1)         ║    Yes       ║
 ║ Average Case ║   O(n log n)    ║     O(1)         ║    Yes       ║
-╚══════════════╩═════════════════╩══════════════════╩══════════════╝ 
+╚══════════════╩═════════════════╩══════════════════╩══════════════╝
 */
 //! Comparison with Other Sorts
 

@@ -1,5 +1,5 @@
 //! Binary Search Tree
-//* Binary Search Tree is a data structure that stores data in a hierarchical manner. BST is a special type of binary tree with almost 2 children.
+//* Binary Search Tree is a data structure that stores data in a hierarchical manner. BST is a special type of binary tree with at-most 2 children.
 
 //? For every node: -
 //  - all nodes of left subtree have smaller value
