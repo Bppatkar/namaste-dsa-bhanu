@@ -159,16 +159,16 @@ Same concept PQ me apply hota hai. Heap internal mechanism hai, par bahar se hum
 ---
 
 ---
-**Iska seedha sa matalb hai :** 
- we can use heap data structure as an pq 
- 
-  simple matlab hme poora sb kuch scratch s nahi likhna padega ki heap ka code scratch s banana pade, hme bane banaye method mil jayege bs use kro simple) 
-  
-  -  bharosha na h to is website par jao  https://support.leetcode.com/hc/en-us/articles/360011833974-What-are-the-environments-for-the-programming-languages 
-  - isme javascript mein - simple likha h ki leetcode particular datastrcture k liye ye cheez use kr rha h wo b bana banaya to bs use krlo simple  https://datastructures-js.info/docs/priority-queue
+
+**Iska seedha sa matalb hai :**
+we can use heap data structure as an pq
+
+simple matlab hme poora sb kuch scratch s nahi likhna padega ki heap ka code scratch s banana pade, hme bane banaye method mil jayege bs use kro simple)
+
+- bharosha na h to is website par jao https://support.leetcode.com/hc/en-us/articles/360011833974-What-are-the-environments-for-the-programming-languages
+- isme javascript mein - simple likha h ki leetcode particular datastrcture k liye ye cheez use kr rha h wo b bana banaya to bs use krlo simple https://datastructures-js.info/docs/priority-queue
+
 ---
-
-
 
 ## <span style="color:#00CED1">8️⃣ Types of Priority Queue</span>
 
@@ -225,7 +225,7 @@ class PriorityQueue {
   }
 
   peek() {
-    return this.queue; // O(1)
+    return this.queue[0]; // O(1)
   }
 
   isEmpty() {
@@ -253,55 +253,56 @@ class MaxPriorityQueue {
     this.heap = [];
   }
 
-  // Helper to swap elements in the heap
   swap(i, j) {
     [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
   }
 
-  // ✅ Enqueue an item - O(log n)
+  // ✅ Enqueue - O(log n)
   enqueue(val, priority) {
     this.heap.push({ val, priority });
-    this.heapifyUp();
+    let lastIdx = this.heap.length - 1; // ← lastIdx nikala
+    this.heapifyUp(lastIdx); // ← pass kiya
   }
 
-  heapifyUp() {
-    let index = this.heap.length - 1;
+  heapifyUp(index) {
+    // ← parameter me index
     while (index > 0) {
       let parentIndex = Math.floor((index - 1) / 2);
-      // For MaxHeap, parent priority should be greater than or equal to child
+
+      // Max Heap: child chhota/equal hai parent se? Ruk jao
       if (this.heap[index].priority <= this.heap[parentIndex].priority) break;
+
       this.swap(index, parentIndex);
       index = parentIndex;
     }
   }
 
-  // ✅ Dequeue highest-priority item - O(log n)
+  // ✅ Dequeue - O(log n)
   dequeue() {
     if (this.heap.length === 0) return null;
-    if (this.heap.length === 1) return this.heap.pop(); // Handle single element case
+    if (this.heap.length === 1) return this.heap.pop();
 
-    let max = this.heap; // Store the highest priority item (root)
-    this.heap = this.heap.pop(); // Move the last element to the root
-    this.heapifyDown(); // Restore heap property
+    let max = this.heap[0]; // ← root element save
+    this.heap[0] = this.heap.pop(); // ← last ko root pe rakho
+    this.heapifyDown(0); // ← 0 pass kiya
     return max;
   }
 
-  heapifyDown() {
-    let index = 0;
+  heapifyDown(index) {
+    // ← parameter me index
     let length = this.heap.length;
+
     while (true) {
       let leftChildIndex = 2 * index + 1;
       let rightChildIndex = 2 * index + 2;
-      let largest = index; // Assume current node is the largest
+      let largest = index;
 
-      // Compare with left child
       if (
         leftChildIndex < length &&
         this.heap[leftChildIndex].priority > this.heap[largest].priority
       ) {
         largest = leftChildIndex;
       }
-      // Compare with right child
       if (
         rightChildIndex < length &&
         this.heap[rightChildIndex].priority > this.heap[largest].priority
@@ -309,27 +310,24 @@ class MaxPriorityQueue {
         largest = rightChildIndex;
       }
 
-      // If largest is not the current node, swap and continue heapifying down
       if (largest !== index) {
         this.swap(index, largest);
         index = largest;
       } else {
-        break; // Heap property restored
+        break;
       }
     }
   }
 
-  // ✅ View front item (highest priority) - O(1)
+  // ✅ Peek - O(1)
   front() {
-    return this.heap.length > 0 ? this.heap : null; // Return the root element
+    return this.heap.length > 0 ? this.heap[0] : null; // ← sirf root
   }
 
-  // Get current size of the priority queue - O(1)
   size() {
     return this.heap.length;
   }
 
-  // Check if the priority queue is empty - O(1)
   isEmpty() {
     return this.heap.length === 0;
   }
